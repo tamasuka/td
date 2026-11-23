@@ -1,0 +1,2057 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0d111a">
+<title>地球防衛・神話兵器録 v1.0</title>
+<style>
+:root {
+  --bg: #0c1018;
+  --bg-card: #151b28;
+  --bg-card2: #1c2436;
+  --border: #2a3550;
+  --text: #eef2f9;
+  --muted: #93a1be;
+  --gold: #f5c542;
+  --gold-dim: #b68c24;
+  --cyan: #38e4ff;
+  --cyan-dim: #1d8ba8;
+  --purple: #b87dff;
+  --green: #4ade80;
+  --red: #ff5c77;
+  --amber: #fb923c;
+  --radius: 14px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+button, input, textarea, select { font-family: inherit; }
+button {
+  cursor: pointer; border: none; border-radius: 10px;
+  font-weight: 700; transition: transform 0.08s ease, opacity 0.15s ease, filter 0.15s ease;
+}
+button:active { transform: scale(0.96); }
+button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+/* Header */
+.app-header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(12, 16, 24, 0.94);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 12px 8px;
+}
+.header-top {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.app-title {
+  font-size: 15px; font-weight: 800; letter-spacing: 0.03em;
+  background: linear-gradient(90deg, var(--gold), #fff4c2, var(--cyan));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  display: flex; align-items: center; gap: 6px;
+}
+.btn-report {
+  background: linear-gradient(135deg, #2563eb, #0891b2);
+  color: #fff; font-size: 12px; padding: 7px 11px; border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(56, 228, 255, 0.25);
+  white-space: nowrap;
+}
+.resource-bar {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px;
+}
+.res-pill {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 5px 8px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.res-label { font-size: 10px; color: var(--muted); }
+.res-val { font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.res-val.gold { color: var(--gold); }
+.res-val.cyan { color: var(--cyan); }
+.res-val.green { color: var(--green); }
+
+/* Main container */
+.main-wrap {
+  max-width: 760px; margin: 0 auto;
+  padding: 12px 12px calc(86px + var(--safe-bottom));
+}
+.tab-panel { display: none; animation: fadeIn 0.18s ease; }
+.tab-panel.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* Cards */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+}
+.card-title {
+  font-size: 14px; font-weight: 800; color: var(--gold);
+  margin: 0 0 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.sub-text { font-size: 12px; color: var(--muted); }
+
+/* Wave Banner */
+.wave-box {
+  background: radial-gradient(circle at top right, rgba(255, 92, 119, 0.18), transparent 60%), var(--bg-card2);
+  border: 1px solid #3f2b40;
+  border-radius: var(--radius);
+  padding: 14px; margin-bottom: 12px;
+}
+.wave-badge {
+  display: inline-block; background: rgba(255, 92, 119, 0.2); color: #ff8aa0;
+  border: 1px solid rgba(255, 92, 119, 0.45);
+  font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 99px;
+}
+.wave-name { font-size: 17px; font-weight: 800; margin: 6px 0 4px; color: #fff; }
+.wave-desc { font-size: 12px; color: #c7d1e4; margin-bottom: 10px; }
+.power-meter-wrap { margin: 10px 0; }
+.power-row {
+  display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 4px;
+}
+.bar-bg {
+  height: 12px; background: #0a0e16; border-radius: 99px; overflow: hidden;
+  border: 1px solid var(--border);
+}
+.bar-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, var(--cyan), var(--gold));
+  transition: width 0.35s ease;
+}
+.bar-fill.ready {
+  background: linear-gradient(90deg, #4ade80, #f5c542, #38e4ff);
+  box-shadow: 0 0 12px rgba(74, 222, 128, 0.6);
+}
+.btn-defend {
+  width: 100%; padding: 13px; font-size: 15px; border-radius: 12px; margin-top: 8px;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #fff; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+}
+.btn-defend.ready-pulse {
+  animation: pulseGlow 1.5s infinite;
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 197, 66, 0.6); }
+  50% { box-shadow: 0 0 0 10px rgba(245, 197, 66, 0); }
+}
+
+/* Step input */
+.step-input-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.input-field {
+  flex: 1; background: #0a0e16; border: 1px solid var(--border); color: var(--text);
+  border-radius: 10px; padding: 10px 12px; font-size: 16px; font-weight: 700;
+  outline: none;
+}
+.input-field:focus { border-color: var(--cyan); }
+.quick-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+.btn-quick {
+  background: var(--bg-card2); border: 1px solid var(--border); color: var(--cyan);
+  padding: 8px 4px; font-size: 12px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #06b6d4, #2563eb); color: #fff;
+  padding: 11px 16px; font-size: 14px;
+}
+.btn-gold {
+  background: linear-gradient(135deg, #eab308, #d97706); color: #111827;
+  padding: 11px 16px; font-size: 14px;
+}
+.btn-secondary {
+  background: var(--bg-card2); border: 1px solid var(--border); color: var(--text);
+  padding: 9px 12px; font-size: 13px;
+}
+.btn-danger {
+  background: rgba(255, 92, 119, 0.16); border: 1px solid rgba(255, 92, 119, 0.45);
+  color: #ff8aa0; padding: 9px 12px; font-size: 12px;
+}
+.rate-note {
+  background: rgba(56, 228, 255, 0.08); border: 1px solid rgba(56, 228, 255, 0.22);
+  border-radius: 10px; padding: 8px 10px; font-size: 12px; color: #bfefff; margin-bottom: 10px;
+}
+.step-log { max-height: 150px; overflow-y: auto; margin-top: 8px; }
+.step-log-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; border-bottom: 1px dashed rgba(255,255,255,0.08); font-size: 12px;
+}
+
+/* Gacha */
+.gacha-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+.gacha-tab {
+  padding: 10px 6px; font-size: 12px; background: var(--bg-card2);
+  border: 1px solid var(--border); color: var(--muted); border-radius: 10px;
+}
+.gacha-tab.active {
+  background: linear-gradient(135deg, rgba(245,197,66,0.2), rgba(56,228,255,0.16));
+  border-color: var(--gold); color: #fff;
+}
+.gacha-banner {
+  background: radial-gradient(circle at 50% 20%, rgba(184,125,255,0.22), transparent 65%), var(--bg-card2);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px; text-align: center; margin-bottom: 12px;
+}
+.gacha-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.gacha-results {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 8px; margin-top: 12px;
+}
+
+/* Rarity badges & borders */
+.r4 { border-color: #f5c542 !important; box-shadow: 0 0 12px rgba(245, 197, 66, 0.25); }
+.r3 { border-color: #b87dff !important; }
+.r2 { border-color: #38bdf8 !important; }
+.r1 { border-color: #4ade80 !important; }
+.badge {
+  display: inline-block; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 6px;
+}
+.badge-r4 { background: rgba(245,197,66,0.2); color: #fde047; }
+.badge-r3 { background: rgba(184,125,255,0.2); color: #d8b4fe; }
+.badge-r2 { background: rgba(56,189,248,0.2); color: #7dd3fc; }
+.badge-r1 { background: rgba(74,222,128,0.2); color: #86efac; }
+.badge-late { background: linear-gradient(90deg, #ef4444, #f59e0b); color: #fff; }
+.badge-new { background: #ef4444; color: #fff; }
+.badge-dup { background: #0891b2; color: #fff; }
+.badge-type-god { background: rgba(245,197,66,0.16); color: #fcd34d; }
+.badge-type-weapon { background: rgba(56,228,255,0.16); color: #67e8f9; }
+
+/* Unit mini card */
+.unit-card {
+  background: var(--bg-card2); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 8px; cursor: pointer;
+  display: flex; flex-direction: column; gap: 6px; position: relative;
+  transition: transform 0.12s ease;
+}
+.unit-card:active { transform: scale(0.97); }
+.unit-card.unowned { opacity: 0.42; filter: grayscale(0.75); }
+.thumb-box {
+  width: 100%; aspect-ratio: 16 / 10; border-radius: 8px; overflow: hidden;
+  background: #080c14; border: 1px solid rgba(255,255,255,0.08);
+  position: relative; display: flex; align-items: center; justify-content: center;
+}
+.thumb-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumb-box svg { width: 100%; height: 100%; display: block; }
+.thumb-region {
+  position: absolute; bottom: 3px; left: 4px; right: 4px;
+  background: rgba(8, 12, 20, 0.78); color: #e2e8f0;
+  font-size: 9px; padding: 1px 5px; border-radius: 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center;
+}
+.unit-name { font-size: 13px; font-weight: 800; line-height: 1.25; }
+.unit-meta { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.unit-stat { font-size: 11px; color: var(--cyan); font-weight: 700; display: flex; justify-content: space-between; }
+
+/* Deck Slots */
+.deck-slot {
+  background: var(--bg-card2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 10px; margin-bottom: 10px;
+}
+.deck-slot-head {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; font-weight: 800; color: var(--gold); margin-bottom: 8px;
+}
+.deck-pair { display: grid; grid-template-columns: 1fr 22px 1fr; gap: 6px; align-items: center; }
+.deck-x { text-align: center; font-weight: 900; color: var(--muted); font-size: 14px; }
+.slot-picker {
+  background: #0b101b; border: 1px dashed var(--border); border-radius: 10px;
+  padding: 8px; min-height: 76px; cursor: pointer;
+  display: flex; flex-direction: column; justify-content: center; gap: 4px;
+}
+.slot-picker.filled { border-style: solid; }
+.slot-empty { text-align: center; font-size: 12px; color: var(--muted); }
+
+/* Map */
+.world-map-wrap {
+  background: #070b12; border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden; position: relative;
+}
+.map-legend {
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  font-size: 11px; color: var(--muted); margin-top: 8px;
+}
+.filter-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.chip {
+  background: var(--bg-card2); border: 1px solid var(--border); color: var(--muted);
+  padding: 6px 10px; border-radius: 99px; font-size: 12px;
+}
+.chip.active { background: var(--cyan-dim); color: #fff; border-color: var(--cyan); }
+.grid-list {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px;
+}
+
+/* Bottom Nav */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 60;
+  background: rgba(12, 16, 24, 0.96);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  padding-bottom: var(--safe-bottom);
+}
+.nav-btn {
+  background: transparent; color: var(--muted); border-radius: 0;
+  padding: 8px 2px 7px; font-size: 10px; font-weight: 700;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.nav-btn .ico { font-size: 18px; line-height: 1.1; }
+.nav-btn.active { color: var(--gold); }
+
+/* Modal */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(5, 8, 14, 0.82); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center; padding: 14px;
+}
+.modal-backdrop.open { display: flex; }
+.modal-box {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; width: 100%; max-width: 520px; max-height: 88vh;
+  overflow-y: auto; padding: 16px; position: relative;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+}
+.modal-close {
+  position: sticky; top: 0; float: right; z-index: 5;
+  background: var(--bg-card2); color: var(--text); border: 1px solid var(--border);
+  width: 32px; height: 32px; border-radius: 50%; font-size: 16px;
+}
+.detail-img-wrap {
+  width: 100%; aspect-ratio: 16 / 10; border-radius: 12px; overflow: hidden;
+  background: #070b12; border: 1px solid var(--border); margin: 8px 0 10px;
+  position: relative;
+}
+.detail-img-wrap img, .detail-img-wrap svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lore-box {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 10px 12px; font-size: 13px; color: #dde5f5;
+  margin: 10px 0; line-height: 1.65;
+}
+.skill-box {
+  background: rgba(245, 197, 66, 0.08); border: 1px solid rgba(245, 197, 66, 0.3);
+  border-radius: 10px; padding: 9px 11px; font-size: 12px; margin: 8px 0;
+}
+.upgrade-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
+textarea.code-area {
+  width: 100%; min-height: 92px; background: #080c14; color: #bfefff;
+  border: 1px solid var(--border); border-radius: 10px; padding: 8px;
+  font-size: 11px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Toast */
+.toast {
+  position: fixed; top: 68px; left: 50%; transform: translateX(-50%) translateY(-10px);
+  background: #10b981; color: #052e16; font-weight: 800; font-size: 13px;
+  padding: 9px 16px; border-radius: 99px; z-index: 200; opacity: 0; pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s; box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+  max-width: 90vw; text-align: center;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Pulse animation for map pins */
+@keyframes ping {
+  0% { r: 3; opacity: 0.9; }
+  100% { r: 12; opacity: 0; }
+}
+.pin-ring { animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+
+/* Passive list */
+.passive-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.passive-item {
+  background: var(--bg-card2); border: 1px solid var(--border);
+  border-radius: 9px; padding: 7px 9px; font-size: 11px;
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-top">
+    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v1.0</span></div>
+    <button class="btn-report" onclick="copyReport()">📋 じぇみーへ報告</button>
+  </div>
+  <div class="resource-bar">
+    <div class="res-pill">
+      <span class="res-label">💎 召喚石</span>
+      <span class="res-val gold" id="ui-stones">0</span>
+    </div>
+    <div class="res-pill">
+      <span class="res-label">⚡ 歩数エネ</span>
+      <span class="res-val cyan" id="ui-energy">0</span>
+    </div>
+    <div class="res-pill">
+      <span class="res-label">🛡️ 総戦力</span>
+      <span class="res-val green" id="ui-power">0</span>
+    </div>
+  </div>
+</header>
+
+<main class="main-wrap">
+
+  <!-- TAB 1: 防衛＆歩数 -->
+  <section id="tab-home" class="tab-panel active">
+    <div class="wave-box" id="wave-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="wave-badge" id="wave-badge">WAVE 1</span>
+        <span class="sub-text" id="wave-reward">撃退報酬: 💎+50 / ⚡+1,500</span>
+      </div>
+      <div class="wave-name" id="wave-name">トンチキ先遣・お試し観測ポッド</div>
+      <div class="wave-desc" id="wave-desc"></div>
+      <div class="power-meter-wrap">
+        <div class="power-row">
+          <span>地球軍 総戦力: <strong id="wave-my-power" style="color:var(--cyan);">0</strong></span>
+          <span>脅威度: <strong id="wave-req-power" style="color:#ff8aa0;">100</strong></span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" id="wave-bar" style="width:0%"></div></div>
+      </div>
+      <button class="btn-defend" id="btn-defend" onclick="defendWave()">🚀 抑止力を見せつける（迎撃）</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span>👟 歩数を換金する（手入力）</span>
+        <span class="sub-text">累計: <strong id="ui-total-steps" style="color:var(--text);">0</strong> 歩</span>
+      </div>
+      <div class="rate-note">
+        やさしい防衛レート：<strong>300歩 ＝ 💎召喚石10個（単発1回）</strong> ＋ <strong>1歩 ＝ ⚡歩数エネ10</strong><br>
+        <span style="opacity:0.85;">※ 端数も切り捨てず次回へ自動で繰り越されます。体操や家事の自分ボーナス入力もOK！</span>
+      </div>
+      <div class="step-input-row">
+        <input type="number" id="step-input" class="input-field" placeholder="歩数を入力 (例: 500)" min="1" inputmode="numeric">
+        <button class="btn-primary" onclick="submitSteps()">換金！</button>
+      </div>
+      <div class="quick-steps">
+        <button class="btn-quick" onclick="addQuickStep(300)">+300歩</button>
+        <button class="btn-quick" onclick="addQuickStep(500)">+500歩</button>
+        <button class="btn-quick" onclick="addQuickStep(1000)">+1,000歩</button>
+        <button class="btn-quick" onclick="addQuickStep(3000)">+3,000歩</button>
+      </div>
+      <input type="text" id="step-memo" class="input-field" style="width:100%;font-size:13px;font-weight:400;padding:8px 10px;" placeholder="ひとことメモ（任意：買い物、体操ボーナス等）">
+      <div class="sub-text" style="margin-top:8px;" id="step-carry-note">次回召喚石まであと: 30歩（30歩ごとに💎+1）</div>
+      <div class="step-log" id="step-log"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>✨ 現在の地球防衛デッキ（概要）</span><button class="btn-secondary" style="padding:5px 10px;font-size:11px;" onclick="switchTab('deck')">編成へ →</button></div>
+      <div id="home-deck-summary" class="sub-text">まだ編成されていません。ガチャを引いて編成しよう！</div>
+    </div>
+  </section>
+
+  <!-- TAB 2: ガチャ -->
+  <section id="tab-gacha" class="tab-panel">
+    <div class="gacha-tabs">
+      <button class="gacha-tab active" data-pool="mix" onclick="setGachaPool('mix', this)">🌌 歴史ミックス</button>
+      <button class="gacha-tab" data-pool="god" onclick="setGachaPool('god', this)">👑 神話の神々</button>
+      <button class="gacha-tab" data-pool="weapon" onclick="setGachaPool('weapon', this)">⚔️ 人類史兵器</button>
+    </div>
+    <div class="gacha-banner">
+      <div style="font-size:16px;font-weight:800;color:var(--gold);" id="gacha-title">🌌 歴史ミックス召喚</div>
+      <div class="sub-text" id="gacha-desc" style="margin-top:4px;">世界中の神話の神様＆人類史の兵器がすべて出現！被ると自動で限界突破(+25%強化)！</div>
+      <div class="sub-text" style="margin-top:6px;font-size:11px;">排出率：★4 10% / ★3 25% / ★2 40% / ★1 25%（10連は★3以上1枠確定！）</div>
+      <div class="gacha-actions">
+        <button class="btn-primary" onclick="pullGacha(1)">単発召喚<br><span style="font-size:11px;">💎 10個</span></button>
+        <button class="btn-gold" onclick="pullGacha(10)">10連召喚！<br><span style="font-size:11px;">💎 100個</span></button>
+      </div>
+    </div>
+    <div class="card" id="gacha-result-card" style="display:none;">
+      <div class="card-title">
+        <span>✨ 召喚結果</span>
+        <span class="sub-text">カードタップで解説＆着せ替え</span>
+      </div>
+      <div class="gacha-results" id="gacha-results"></div>
+    </div>
+  </section>
+
+  <!-- TAB 3: デッキ編成＆パッシブ -->
+  <section id="tab-deck" class="tab-panel">
+    <div class="card">
+      <div class="card-title">
+        <span>🛡️ 防衛デッキ編成（5枠）</span>
+        <button class="btn-gold" style="padding:6px 10px;font-size:12px;" onclick="autoBuildDeck()">⚡ 最強自動編成</button>
+      </div>
+      <div class="sub-text" style="margin-bottom:10px;">
+        神様1柱 × 人類史兵器1種でペアを組みます。ペアが揃うと戦力<strong>1.25倍</strong>！<br>
+        同じ地域・文化圏のペアなら「地元シナジー」でさらに<strong>+15%</strong>！
+      </div>
+      <div id="deck-slots"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span>🏺 アーティファクト効果（図鑑パッシブ）</span>
+        <span style="color:var(--cyan);font-size:13px;" id="passive-total-mult">×1.00</span>
+      </div>
+      <div class="sub-text" style="margin-bottom:8px;">デッキ外の所持神様・兵器も持っているだけで全体の総戦力を底上げします（ムダゼロ仕様）。</div>
+      <div class="passive-grid" id="passive-list"></div>
+    </div>
+  </section>
+
+  <!-- TAB 4: 世界地図＆図鑑 -->
+  <section id="tab-map" class="tab-panel">
+    <div class="card">
+      <div class="card-title">
+        <span>🗺️ 世界制覇マップ</span>
+        <span class="sub-text" id="map-progress">発見: 0 / 48 (0%)</span>
+      </div>
+      <div class="world-map-wrap" id="global-map-box"></div>
+      <div class="map-legend">
+        <span>🟡 神話の神々（タップで詳細）</span>
+        <span>🔵 人類史兵器（タップで詳細）</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>📖 歴史図鑑（タップで解説・強化・画像着せ替え）</span></div>
+      <div class="filter-row">
+        <button class="chip active" onclick="setDexFilter('all', this)">すべて</button>
+        <button class="chip" onclick="setDexFilter('god', this)">👑 神様</button>
+        <button class="chip" onclick="setDexFilter('weapon', this)">⚔️ 兵器</button>
+        <button class="chip" onclick="setDexFilter('owned', this)">所持のみ</button>
+        <button class="chip" onclick="setDexFilter('late', this)">🔥 大器晩成</button>
+      </div>
+      <div class="grid-list" id="dex-grid"></div>
+    </div>
+  </section>
+
+  <!-- TAB 5: 共有・増築・セーブ -->
+  <section id="tab-system" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span>📋 じぇみーへ戦果報告</span></div>
+      <div class="sub-text" style="margin-bottom:8px;">今の歩数・デッキ編成・最新ガチャ結果をチャットに貼れる形式でコピーします。</div>
+      <button class="btn-primary" style="width:100%;" onclick="copyReport()">📋 戦果＆編成レポートをコピー</button>
+      <textarea id="report-preview" class="code-area" style="margin-top:8px;" readonly placeholder="ボタンを押すとここにレポートが表示されます"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>🏗️ 沢マン式・拡張パック増築</span></div>
+      <div class="sub-text" style="margin-bottom:8px;">
+        じぇみーが作った新神様・新兵器のJSONデータを貼り付けて「増築」を押すと、アプリ本体を書き換えずにガチャと図鑑へ無限に追加できます！
+      </div>
+      <textarea id="expansion-input" class="code-area" placeholder='ここに拡張パックJSONを貼り付け...'></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+        <button class="btn-gold" style="flex:1;" onclick="installExpansion()">🏗️ パックを増築する</button>
+        <button class="btn-secondary" onclick="loadSampleExpansion()">🧪 お試しミニパック読込</button>
+      </div>
+      <div class="sub-text" style="margin-top:8px;" id="expansion-status">現在の増築済みアイテム数: 0件</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>💾 復活の呪文（バックアップ＆端末移行）</span></div>
+      <div class="sub-text" style="margin-bottom:8px;">
+        プレイデータと着せ替え画像はこの端末に<strong>完全自動セーブ</strong>されます。<br>
+        スマホ⇔タブレット間の引っ越しや念のためのバックアップには下の「復活の呪文」を使ってください（※着せ替え画像は各端末のローカル保存になります）。
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <button class="btn-primary" style="flex:1;" onclick="exportSaveString()">📤 呪文を書き出してコピー</button>
+        <button class="btn-secondary" style="flex:1;" onclick="downloadSaveFile()">⬇️ JSONファイル保存</button>
+      </div>
+      <textarea id="save-code-area" class="code-area" placeholder="ここに復活の呪文を貼り付けて「復元する」を押します"></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="btn-gold" style="flex:1;" onclick="importSaveString()">📥 復活の呪文から復元</button>
+        <button class="btn-danger" onclick="resetAllData()">🗑️ 初期化</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-tab="home" onclick="switchTab('home')"><span class="ico">🚀</span>防衛/歩数</button>
+  <button class="nav-btn" data-tab="gacha" onclick="switchTab('gacha')"><span class="ico">✨</span>召喚ガチャ</button>
+  <button class="nav-btn" data-tab="deck" onclick="switchTab('deck')"><span class="ico">🛡️</span>デッキ編成</button>
+  <button class="nav-btn" data-tab="map" onclick="switchTab('map')"><span class="ico">🗺️</span>地図&図鑑</button>
+  <button class="nav-btn" data-tab="system" onclick="switchTab('system')"><span class="ico">🏗️</span>増築/保存</button>
+</nav>
+
+<!-- Detail / Picker / Defend Modal -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="if(event.target===this) closeModal()">
+  <div class="modal-box" id="modal-body"></div>
+</div>
+
+<!-- Hidden file input for custom image -->
+<input type="file" id="img-file-input" accept="image/*" style="display:none;">
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// 1. BASE DATA: 24 GODS + 24 WEAPONS (Equirectangular lat/lon)
+// ============================================================
+const BASE_ITEMS = [
+  // ---- GODS ★4 ----
+  {
+    id: "g_zeus", type: "god", name: "ゼウス", rarity: 4, baseAtk: 180,
+    group: "ギリシャ神話", region: "ギリシャ（オリンポス山）", lat: 40.08, lon: 22.35,
+    lore: "ギリシャ神話の最高神にして雷霆を操る天空神。巨神族ティターンとの大戦を制し、全宇宙の覇者となった。威厳たっぷりの主神だが、無類の浮気性ゆえに妻ヘラの怒りを買うトラブルメーカーな一面も有名。"
+  },
+  {
+    id: "g_amaterasu", type: "god", name: "天照大御神", rarity: 4, baseAtk: 185,
+    group: "日本神話", region: "日本（高天原・伊勢）", lat: 34.45, lon: 136.72,
+    lore: "日本神話の最高神・太陽の女神。イザナギの左目から生まれ、高天原を治める。弟スサノオの乱暴に怒って天岩戸に引きこもり、世界を真っ暗闇にしてしまった神話は日本の芸能・祭礼の起源ともされる。"
+  },
+  {
+    id: "g_odin", type: "god", name: "オーディン", rarity: 4, baseAtk: 178,
+    group: "北欧神話", region: "北欧（スカンジナビア）", lat: 60.5, lon: 14.5,
+    lore: "北欧神話の主神であり、戦争・死・魔術・詩・知識を司る隻眼の老神。知恵を得るために片目を泉に捧げ、ルーン文字を会得するために世界樹ユグドラシルに9日間自らを吊るした筋金入りの知識オタク。"
+  },
+  {
+    id: "g_shiva", type: "god", name: "シヴァ", rarity: 4, baseAtk: 190,
+    group: "インド神話", region: "インド（ヒマラヤ・カイラス山）", lat: 31.06, lon: 81.31,
+    lore: "ヒンドゥー教の三大最高神のひとり。世界の破壊と再生を司り、額の第三の目を開くとあらゆるものを灰にする。普段はヒマラヤで瞑想するヨガの祖だが、世界を滅ぼすほどの激しい舞踊（ターンダヴァ）の名手でもある。"
+  },
+  {
+    id: "g_ra", type: "god", name: "ラー", rarity: 4, baseAtk: 176,
+    group: "エジプト神話", region: "エジプト（ヘリオポリス）", lat: 30.13, lon: 31.30,
+    lore: "隼の頭に太陽円盤を載せたエジプト神話の太陽神。昼は太陽の舟で空を渡り、夜は冥界を航行しながら混沌の大蛇アポピスと毎晩ガチバトルを繰り広げて翌朝の日の出を守っている勤労神。"
+  },
+
+  // ---- GODS ★3 ----
+  {
+    id: "g_athena", type: "god", name: "アテナ", rarity: 3, baseAtk: 112,
+    group: "ギリシャ神話", region: "ギリシャ（アテネ）", lat: 37.98, lon: 23.72,
+    lore: "知恵・工芸・戦略的戦争を司る処女神。父ゼウスの頭痛が爆発して頭蓋骨を斧で割ったところ、完全武装の大人サイズで飛び出してきたというインパクト抜群の誕生秘話を持つ。"
+  },
+  {
+    id: "g_susanoo", type: "god", name: "スサノオ", rarity: 3, baseAtk: 118,
+    group: "日本神話", region: "日本（出雲）", lat: 35.37, lon: 132.75,
+    lore: "海原と嵐を司る荒ぶる神。高天原では大暴れして追放されたが、降り立った出雲では八岐大蛇（ヤマタノオロチ）に強い酒を飲ませて退治し、尾から草薙剣を見つけた英雄かつ和歌の祖。"
+  },
+  {
+    id: "g_quetzal", type: "god", name: "ケツァルコアトル", rarity: 3, baseAtk: 115,
+    group: "アステカ神話", region: "メキシコ（テオティワカン）", lat: 19.69, lon: -98.84,
+    lore: "「羽毛ある蛇」の名を持つメソアメリカの文化神・風神。人類にトウモロコシや暦、学問をもたらした平和的な神で、人身御供を嫌ったと伝えられる。金星（明けの明星）の象徴でもある。"
+  },
+  {
+    id: "g_anubis", type: "god", name: "アヌビス", rarity: 3, baseAtk: 108,
+    group: "エジプト神話", region: "エジプト（アビュドス）", lat: 26.18, lon: 31.91,
+    lore: "黒いジャッカルの頭を持つミイラ作りと冥界の案内神。死者の心臓と「真実の羽根（マアト）」を天秤にかけ、生前の行いを厳正に計測する。墓荒らしから死者を守る実直な仕事人。"
+  },
+  {
+    id: "g_ishtar", type: "god", name: "イシュタル", rarity: 3, baseAtk: 116,
+    group: "メソポタミア神話", region: "イラク（ウルク・バビロン）", lat: 31.32, lon: 45.63,
+    lore: "シュメール神話のイナンナに起源を持つ、愛と美と豊穣、そして激しい戦いの女神。金星の化身であり、英雄ギルガメシュに求婚して断られた腹いせに天の牡牛を放つなど気性の激しさは神話界屈指。"
+  },
+  {
+    id: "g_lugh", type: "god", name: "ルー", rarity: 3, baseAtk: 114,
+    group: "ケルト神話", region: "アイルランド（タラの丘）", lat: 53.57, lon: -6.61,
+    lore: "「あらゆる技能を極めた者（サウィルダナフ）」の異名を持つケルト神話の太陽と光の神。鍛冶・竪琴・詩・魔術・武芸すべてに長け、必中の魔槍ブリューナクや投石紐を操り魔族フォモールを打ち倒した。"
+  },
+  {
+    id: "g_maui", type: "god", name: "マウイ", rarity: 3, baseAtk: 106,
+    group: "ポリネシア神話", region: "ニュージーランド／ポリネシア", lat: -38.6, lon: 176.0,
+    lore: "太平洋の島々で語り継がれる大英雄・半神のトリックスター。魔法の釣り針でニュージーランド北島やハワイ諸島を海底から釣り上げ、太陽を縄で縛って昼の時間を長くした規格外の行動力の持ち主。"
+  },
+
+  // ---- GODS ★2 ----
+  {
+    id: "g_hephaestus", type: "god", name: "ヘパイストス", rarity: 2, baseAtk: 74,
+    group: "ギリシャ神話", region: "ギリシャ（リムノス島）", lat: 39.92, lon: 25.20,
+    lore: "火と鍛冶と彫刻を司る職人神。神々の武具やゼウスの雷霆、さらには自動で動く黄金のロボット召使いまで作り上げた超絶エンジニア。オリンポスで最も手先が器用な実務派。"
+  },
+  {
+    id: "g_ebisu", type: "god", name: "恵比寿", rarity: 2, baseAtk: 68,
+    group: "日本神話", region: "日本（西宮）", lat: 34.73, lon: 135.33,
+    lore: "七福神の中で唯一の日本由来の神様。元は海の彼方から流れ着く寄り神（クジラや漂着神）や、イザナギ・イザナミの最初の子ヒルコと習合し、大漁と商売繁盛の福神となった。"
+  },
+  {
+    id: "g_thor", type: "god", name: "トール", rarity: 2, baseAtk: 82,
+    group: "北欧神話", region: "ノルウェー／北欧", lat: 61.5, lon: 8.5,
+    lore: "雷神にして北欧最強の武闘派。投げれば必ず手元に戻るハンマー「ミョルニル」を振るい、巨人族を片っ端から粉砕する。脳筋かつ大食漢だが、農民からは作物を守る気さくな兄貴分として愛された。"
+  },
+  {
+    id: "g_ganesha", type: "god", name: "ガネーシャ", rarity: 2, baseAtk: 72,
+    group: "インド神話", region: "インド（マハーラーシュトラ）", lat: 19.07, lon: 72.87,
+    lore: "象の頭と太鼓腹を持つ障害除去と学問・商業の神。シヴァに誤って首を刎ねられ、代わりに象の頭を継がれたという豪快な経緯を持つ。折れた自分の牙をペンにして大叙事詩『マハーバーラタ』を筆記した。"
+  },
+  {
+    id: "g_shango", type: "god", name: "シャンゴ", rarity: 2, baseAtk: 78,
+    group: "ヨルバ神話", region: "ナイジェリア（オヨ）", lat: 7.85, lon: 3.93,
+    lore: "西アフリカ・ヨルバ族の雷と火と太鼓（バタ・ドラム）を司るオリシャ（神格）。実在したオヨ王国の第4代王が神格化されたとされ、両刃の斧オシェを掲げて正義とリズムを轟かせる。"
+  },
+  {
+    id: "g_pele", type: "god", name: "ペレ", rarity: 2, baseAtk: 76,
+    group: "ポリネシア神話", region: "ハワイ（キラウエア火山）", lat: 19.41, lon: -155.28,
+    lore: "ハワイのキラウエア火山に棲む火と溶岩とフラの女神。情熱的で誇り高く、怒ると溶岩流で島を焼き尽くすが、冷えた溶岩は新たな大地となるため「破壊と創造」の象徴として深く敬われている。"
+  },
+  {
+    id: "g_anansi", type: "god", name: "アナンシ", rarity: 2, baseAtk: 66,
+    group: "西アフリカ神話", region: "ガーナ（アシャンティ）", lat: 6.68, lon: -1.62,
+    lore: "西アフリカ・アカン族に伝わる蜘蛛の姿をした知恵と物語のトリックスター。力では敵わない大蛇やスズメバチ、ヒョウを機転だけで次々と捕まえ、天空神から「世界中の物語」を買い取った。"
+  },
+
+  // ---- GODS ★1 (incl. Late Bloomers) ----
+  {
+    id: "g_dosojin", type: "god", name: "名もなき道祖神", rarity: 1, baseAtk: 4, lateBloomer: true,
+    awakeSkill: "step_atk", awakeTitle: "果てなき旅路の絶対値",
+    awakeDesc: "【Lv.10覚醒】累計歩数 × 0.8 をそのままこの神のATKに加算！（歩けば歩くほど全主神を抜き去る）",
+    group: "日本神話", region: "日本（路傍の辻）", lat: 36.14, lon: 139.38,
+    lore: "村境や辻にひっそりと立つ石の境界神。外から来る疫病や悪霊をバウンダリーでせき止め、旅人の足腰を黙って見守る。普段はただの素朴な石像だが、踏みしめた歩数の重みを知る者には計り知れない力を貸す。"
+  },
+  {
+    id: "g_kawayagami", type: "god", name: "厠神（かわやがみ）", rarity: 1, baseAtk: 3, lateBloomer: true,
+    awakeSkill: "team_mult", awakeTitle: "聖域の絶対境界",
+    awakeDesc: "【Lv.10覚醒】デッキ編成時、地球軍の総戦力を無条件で 1.50倍 に引き上げる！",
+    group: "日本神話", region: "日本（家屋の隅）", lat: 35.01, lon: 135.76,
+    lore: "便所を守護する極めて現実的かつ尊い生活神。安産や健康、さらには金運まで司るとされ、「ケツアナは万人に共通する不動点である」という宇宙の真理を誰よりも静かに見届けてきた。"
+  },
+  {
+    id: "g_loki", type: "god", name: "ロキ", rarity: 1, baseAtk: 42,
+    group: "北欧神話", region: "アイスランド／北欧", lat: 64.96, lon: -19.02,
+    lore: "北欧神話の悪戯と変身の神。神々のピンチを悪知恵で救うことも多いが、だいたいピンチの原因そのものもロキ。最終戦争ラグナロクでは神々に反旗を翻す厄介なポジション。"
+  },
+  {
+    id: "g_coyote", type: "god", name: "コヨーテ", rarity: 1, baseAtk: 40,
+    group: "北米先住民神話", region: "アメリカ（大平原・南西部）", lat: 36.1, lon: -109.5,
+    lore: "北米先住民の多くの部族で語られるトリックスターかつ創造の協力者。人間に火を盗んで与えたり川を作ったりする一方、欲を出して自爆するドジ話も多く、人間の愚かさと愛嬌の象徴。"
+  },
+  {
+    id: "g_medjed", type: "god", name: "メジェド", rarity: 1, baseAtk: 46,
+    group: "エジプト神話", region: "エジプト（テーベ）", lat: 25.70, lon: 32.64,
+    lore: "『死者の書』の挿絵に突如現れる、シーツを被って足だけ生えた謎のビジュアルで現代ネットを席巻した神。「打ち倒す者」を意味し、目から怪光線を放って敵を撃つらしいが詳細はほぼ不明。"
+  },
+
+  // ---- WEAPONS ★4 ----
+  {
+    id: "w_yamato", type: "weapon", name: "戦艦大和", rarity: 4, baseAtk: 192,
+    group: "近代兵器", region: "日本（呉海軍工廠）", lat: 34.23, lon: 132.55,
+    lore: "1941年竣工、史上最大の46cm三連装主砲3基9門を搭載した大艦巨砲主義の極致。排水量約7万トン、最大射程42kmを誇ったが、時代が航空主兵へ移り変わる転換点に生まれた孤高の巨艦。"
+  },
+  {
+    id: "w_b2", type: "weapon", name: "B-2 ステルス爆撃機", rarity: 4, baseAtk: 186,
+    group: "現代兵器", region: "アメリカ（カリフォルニア）", lat: 34.63, lon: -118.08,
+    lore: "尾翼を持たない全翼機形状とレーダー波吸収素材により、大型機でありながら鳥ほどのレーダー反射断面積しか持たない戦略爆撃機。1機あたり約20億ドルという天文学的な建造費で知られる。"
+  },
+  {
+    id: "w_enterprise", type: "weapon", name: "原子力空母エンタープライズ", rarity: 4, baseAtk: 188,
+    group: "現代兵器", region: "アメリカ（バージニア）", lat: 36.98, lon: -76.43,
+    lore: "1961年就役、世界初の原子力推進航空母艦（CVN-65）。原子炉をなんと8基も詰め込み、全長342mの巨体で半世紀にわたり海上の動く航空基地として運用された冷戦期の怪物。"
+  },
+  {
+    id: "w_tsarbomba", type: "weapon", name: "ツァーリ・ボンバ", rarity: 4, baseAtk: 198,
+    group: "現代兵器", region: "ロシア（ノヴァヤゼムリャ）", lat: 73.85, lon: 54.50,
+    lore: "1961年にソ連が実験した人類史上最大の水素爆弾（正式名AN602）。出力は広島型原爆の約3,300倍（50メガトン）に達し、衝撃波が地球を3周した。あまりの威力に実戦配備はされなかった。"
+  },
+  {
+    id: "w_gustav", type: "weapon", name: "80cm列車砲グスタフ", rarity: 4, baseAtk: 180,
+    group: "近代兵器", region: "ドイツ（エッセン・クルップ社）", lat: 51.45, lon: 7.01,
+    lore: "第二次世界大戦中にドイツが製造した史上最大口径（80cm）の列車砲。重量1,350トン、重さ7トンの徹甲弾を約37km先へ撃ち込むが、運用と移動だけで数千人の兵員と複線線路が必要だった。"
+  },
+
+  // ---- WEAPONS ★3 ----
+  {
+    id: "w_zero", type: "weapon", name: "零式艦上戦闘機", rarity: 3, baseAtk: 115,
+    group: "近代兵器", region: "日本（名古屋）", lat: 35.10, lon: 136.88,
+    lore: "堀越二郎らが設計した大戦初期の傑作艦上戦闘機。新開発の超々ジュラルミンと徹底した軽量化により、圧倒的な航続距離（2,000km超）と格闘戦性能を両立させた設計思想の結晶。"
+  },
+  {
+    id: "w_tiger", type: "weapon", name: "ティーガーI 重戦車", rarity: 3, baseAtk: 118,
+    group: "近代兵器", region: "ドイツ（カッセル）", lat: 51.31, lon: 9.48,
+    lore: "強力な88mm戦車砲と分厚い装甲を備えたドイツの重戦車。連合軍戦車を遠距離から一方的に撃破する戦闘力を誇った一方、複雑な転輪構造ゆえに整備性と燃費は地獄だった。"
+  },
+  {
+    id: "w_trebuchet", type: "weapon", name: "トレビュシェット", rarity: 3, baseAtk: 110,
+    group: "中世兵器", region: "フランス／西欧", lat: 47.2, lon: 2.4,
+    lore: "巨大なカウンターウェイト（平衡錘）の重力落下とテコの原理を利用して、100kg超の巨石を300m以上先へ正確に放り込む中世最強の攻城兵器。力学的な完成度が異常に高い。"
+  },
+  {
+    id: "w_greekfire", type: "weapon", name: "ギリシアの火", rarity: 3, baseAtk: 116,
+    group: "中世兵器", region: "トルコ（コンスタンティノープル）", lat: 41.00, lon: 28.97,
+    lore: "東ローマ帝国が海戦で用いた伝説の焼夷兵器。銅管から高圧噴射され、水の上でも消えずに燃え続けた。配合は最高国家機密とされ、帝国滅亡とともに完全にロストテクノロジー化した。"
+  },
+  {
+    id: "w_gatling", type: "weapon", name: "ガトリング砲", rarity: 3, baseAtk: 112,
+    group: "近代兵器", region: "アメリカ（インディアナ）", lat: 39.76, lon: -86.15,
+    lore: "1861年にリチャード・ガトリングが発明した手回し式の多銃身機関砲。「1人で大勢分の火力を出せば戦場に出る兵士が減って死傷者が減るはず」という真逆の平和的動機から生まれた。"
+  },
+  {
+    id: "w_urban", type: "weapon", name: "ウルバン砲", rarity: 3, baseAtk: 114,
+    group: "中世兵器", region: "トルコ（エディルネ）", lat: 41.67, lon: 26.55,
+    lore: "1453年のコンスタンティノープル攻略でオスマン帝国が投入した全長8m超の巨大青銅製砲。600kg近い石弾を飛ばして難攻不落のテオドシウスの城壁を粉砕したが、1日に7発しか撃てなかった。"
+  },
+  {
+    id: "w_a10", type: "weapon", name: "A-10 サンダーボルトII", rarity: 3, baseAtk: 120,
+    group: "現代兵器", region: "アメリカ（メリーランド）", lat: 39.64, lon: -77.72,
+    lore: "「巨大な30mmガトリング砲（GAU-8）に翼とエンジンをくっつけた」と評される近接航空支援機。操縦席はチタン装甲のバスタブで覆われ、片翼が吹っ飛んでも帰還できる頑丈さで愛される。"
+  },
+
+  // ---- WEAPONS ★2 ----
+  {
+    id: "w_katana", type: "weapon", name: "日本刀（打刀）", rarity: 2, baseAtk: 76,
+    group: "中世兵器", region: "日本（備前長船）", lat: 34.68, lon: 134.10,
+    lore: "硬い刃金と粘り強い心鉄を組み合わせ、焼入れによる反りを生み出すことで「折れず、曲がらず、よく斬れる」を極めた冶金技術の傑作。美術工芸品としても世界最高峰。"
+  },
+  {
+    id: "w_shamshir", type: "weapon", name: "ダマスカス鋼のシャムシール", rarity: 2, baseAtk: 74,
+    group: "中世兵器", region: "シリア（ダマスカス）", lat: 33.51, lon: 36.27,
+    lore: "インド産ウーツ鋼から鍛えられ、表面に美しい木目模様が浮かぶ中東の湾刀。現代の電子顕微鏡解析で、内部にカーボンナノチューブ状の構造が含まれていたことが判明している。"
+  },
+  {
+    id: "w_mongolbow", type: "weapon", name: "モンゴル複合弓", rarity: 2, baseAtk: 78,
+    group: "中世兵器", region: "モンゴル（カラコルム）", lat: 47.20, lon: 102.84,
+    lore: "木・動物の角・腱を膠（にかわ）で貼り合わせた短く強力な再帰弓。騎乗したまま高速で360度射撃でき、ユーラシア大陸を席巻したモンゴル帝国の機動戦術を支えた。"
+  },
+  {
+    id: "w_sarissa", type: "weapon", name: "長槍サリッサ", rarity: 2, baseAtk: 70,
+    group: "古代兵器", region: "ギリシャ（マケドニア）", lat: 40.76, lon: 22.52,
+    lore: "アレクサンドロス大王の父フィリッポス2世が導入した全長5〜6mにも及ぶ超長槍。密集隊形（ファランクス）を組んで突き出すと、敵歩兵も騎兵も一切近づけない移動要塞と化した。"
+  },
+  {
+    id: "w_tanegashima", type: "weapon", name: "火縄銃（種子島）", rarity: 2, baseAtk: 75,
+    group: "近代兵器", region: "日本（種子島・堺）", lat: 30.73, lon: 131.00,
+    lore: "1543年にポルトガル人から伝来したマッチロック式小銃。日本の刀鍛冶たちが「ネジ」の概念を独力で再現し、わずか数十年で当時の世界最大の銃保有国へと爆速普及させた。"
+  },
+  {
+    id: "w_gladius", type: "weapon", name: "グラディウス", rarity: 2, baseAtk: 68,
+    group: "古代兵器", region: "イタリア（ローマ）", lat: 41.90, lon: 12.49,
+    lore: "古代ローマ軍団の主力短剣。大盾スクートゥムで身を守りながら密集陣形の隙間から高速で「刺突」することに特化しており、地中海世界を統一する原動力となった実戦主義の刃。"
+  },
+  {
+    id: "w_chukonu", type: "weapon", name: "連弩（諸葛弩）", rarity: 2, baseAtk: 72,
+    group: "古代兵器", region: "中国（成都・蜀）", lat: 30.65, lon: 104.06,
+    lore: "上部の弾倉に矢をまとめて装填し、レバーを前後させるだけで次々と連続発射できる古代中国の機械式クロスボウ。威力より手数と扱いやすさを重視した防衛向きの発明。"
+  },
+
+  // ---- WEAPONS ★1 (incl. Late Bloomers) ----
+  {
+    id: "w_obsidian", type: "weapon", name: "ただの黒曜石の破片", rarity: 1, baseAtk: 4, lateBloomer: true,
+    awakeSkill: "weapon_count_mult", awakeTitle: "全人類兵器の始原",
+    awakeDesc: "【Lv.10覚醒】所持している兵器の種類数 × 25% をこの武器の乗算火力に加算！（図鑑が埋まるほど化ける）",
+    group: "古代兵器", region: "エチオピア／東アフリカ大地溝帯", lat: 9.0, lon: 40.5,
+    lore: "旧石器時代、人類が石を打ち欠いて生み出した最古の刃。ただの割れた火山ガラスだが、分子レベルで見れば現代の鋼鉄製メスより鋭い刃先を持ち、あらゆる人類史兵器の原点となった。"
+  },
+  {
+    id: "w_panjandrum", type: "weapon", name: "パンジャンドラム", rarity: 1, baseAtk: 3, lateBloomer: true,
+    awakeSkill: "pair_boost", awakeTitle: "制御不能のロマン砲",
+    awakeDesc: "【Lv.10覚醒】装備した神様ペアの戦力を 3.50倍 に跳ね上げる！（直進するかは神のみぞ知る）",
+    group: "近代兵器", region: "イギリス（ウェストワード・ホー！海岸）", lat: 51.04, lon: -4.23,
+    lore: "第二次大戦中、イギリス海軍がノルマンディー上陸用に試作したロケット推進の巨大糸巻き型爆弾。実験では浜辺で暴走して犬に追いかけられ、観戦していた将軍たちに突っ込んで開発中止になった迷兵器の王。"
+  },
+  {
+    id: "w_atlatl", type: "weapon", name: "アトラトル（投げ槍器）", rarity: 1, baseAtk: 40,
+    group: "古代兵器", region: "メキシコ／先史世界", lat: 20.5, lon: -100.3,
+    lore: "腕の延長となる棒状の器具でテコの原理を利用し、投げ槍の初速を時速150km以上に跳ね上げる先史時代のハイテク道具。マンモス狩りからアステカ戦士の対スペイン戦まで長く使われた。"
+  },
+  {
+    id: "w_sling", type: "weapon", name: "投石紐（スリング）", rarity: 1, baseAtk: 44,
+    group: "古代兵器", region: "スペイン（バレアレス諸島）", lat: 39.69, lon: 3.01,
+    lore: "ただの紐に石や鉛玉を挟んで振り回して飛ばす最古の遠距離兵器だが、熟練したバレアレスの投石兵が放つ鉛玉は当時の弓矢を凌ぐ射程と頭蓋骨を砕く貫通力を持っていた。"
+  },
+  {
+    id: "w_tsartank", type: "weapon", name: "ツァーリ・タンク", rarity: 1, baseAtk: 42,
+    group: "近代兵器", region: "ロシア（ドミトロフ）", lat: 56.34, lon: 37.52,
+    lore: "第一次大戦中にロシア帝国が試作した、直径9メートルの巨大な自転車型車輪を2つ持つ三輪戦車。「車輪がデカければ塹壕も余裕！」と作ったが、小さい後輪が泥にハマって一歩も動けず終了した。"
+  }
+];
+
+const SAMPLE_EXPANSION = [
+  {
+    id: "g_bastet", type: "god", name: "バステト", rarity: 3, baseAtk: 110,
+    group: "エジプト神話", region: "エジプト（ブバスティス）", lat: 30.57, lon: 31.51,
+    lore: "猫の頭を持つ音楽・舞踊・家庭守護の女神。元は凶暴な雌ライオン神だったが、猫がネズミから穀物を守る益獣として愛されるにつれ、穏やかで気まぐれな愛玩の守護神へと変化した。"
+  },
+  {
+    id: "w_catapult", type: "weapon", name: "ローマ式オナゲル投石機", rarity: 2, baseAtk: 73,
+    group: "古代兵器", region: "イタリア（ローマ帝国）", lat: 42.3, lon: 13.4,
+    lore: "ねじった動物の腱（トーション）の復元力で腕を跳ね上げて岩を飛ばす古代ローマの投石機。発射時の反動で後部が跳ね上がる姿が野生のロバ（オナゲル）の蹴りに似ていることから名付けられた。"
+  }
+];
+
+const WAVES = [
+  { wave: 1, name: "トンチキ先遣・お試し観測ポッド", req: 220, stones: 50, energy: 1500, desc: "「地球の連中はまだ石ころを投げているらしいぞ、ガハハ！」と舐め腐って降りてきた偵察機。" },
+  { wave: 2, name: "トンチキ偵察艦・ちくわ砲搭載型", req: 650, stones: 60, energy: 2500, desc: "艦首に巨大な穴あき練り物キャノンを積んだ謎のフリゲート艦。地球の防衛ラインを探っている。" },
+  { wave: 3, name: "トンチキ第3駆逐隊・夜食強奪班", req: 1400, stones: 70, energy: 4000, desc: "地球のうまい弁当と牛タンをすべて押収しようと企む迷惑な強襲部隊。" },
+  { wave: 4, name: "トンチキ宣伝放送船・マウントスピーカー", req: 2800, stones: 80, energy: 6000, desc: "「俺のほうが苦労してるんだぞ！」と大音量で相対マウント電波を撒き散らす厄介な電子戦艦。" },
+  { wave: 5, name: "トンチキ中隊長・黄金のタワマン要塞", req: 5200, stones: 100, energy: 9000, desc: "見栄だけで無駄に高層化された宇宙要塞。構造の純度はスカスカだがサイズだけデカい。" },
+  { wave: 6, name: "トンチキ気象兵器・ぜんぶもやし発生機", req: 9000, stones: 110, energy: 13000, desc: "世界中の野菜炒めを全部もやしに変換して人類の気力を削ごうとする卑劣な軌道衛星。" },
+  { wave: 7, name: "トンチキ第7機動艦隊・ぐるぐる回転盤", req: 15000, stones: 120, energy: 18000, desc: "縦画面と横画面を勝手に切り替えさせて敵の集中力を奪う、極めて陰湿な戦術艦隊。" },
+  { wave: 8, name: "トンチキ親衛隊・ハイパー過積載戦艦", req: 25000, stones: 140, energy: 25000, desc: "トンチキ王が「かっこいい砲塔をあるだけ載せろ！」と命じて重心が狂った超弩級戦艦。" },
+  { wave: 9, name: "トンチキ参謀長・自称絶対値レーザー", req: 42000, stones: 160, energy: 35000, desc: "「これが世論の絶対値だ！」と言い張るが、よく見るとただの忖度ビームである。" },
+  { wave: 10, name: "トンチキ王・直卒フラッグシップ『大銀河お祭り丸』", req: 70000, stones: 250, energy: 60000, desc: "ついにトンチキ王本人が出撃！地球の歴史と神々を舐め切った宇宙最大級のトンチキ要塞！" }
+];
+
+function getWaveInfo(w) {
+  if (w <= WAVES.length) return WAVES[w - 1];
+  const extra = w - WAVES.length;
+  const req = Math.round(70000 * Math.pow(1.48, extra));
+  const titles = [
+    "トンチキ王の懲りないリベンジ艦隊",
+    "超トンチキ銀河・第" + w + "次増築要塞",
+    "トンチキ星・予算オーバー超兵器",
+    "ネオ・トンチキ大艦隊（反省の色なし）"
+  ];
+  return {
+    wave: w,
+    name: titles[extra % titles.length] + " Mk." + extra,
+    req,
+    stones: 150 + Math.min(200, extra * 15),
+    energy: 50000 + extra * 18000,
+    desc: "前回あんなにビビって逃げたのに、喉元を過ぎてまた地球へちょっかいを出しに来たトンチキ軍。"
+  };
+}
+
+// ============================================================
+// 2. STATE & PERSISTENCE (localStorage + IndexedDB for Images)
+// ============================================================
+const SAVE_KEY = "tonchiki_myth_defense_v1";
+const DB_NAME = "tonchiki_myth_images_v1";
+const DB_STORE = "images";
+
+function createDefaultState() {
+  return {
+    version: 1,
+    totalSteps: 0,
+    stepCarry: 0,
+    stones: 100,       // Initial gift: 10-pull!
+    energy: 3000,      // Initial gift: upgrade energy
+    wave: 1,
+    owned: {},         // id -> { lv: 1, dup: 0 }
+    deck: [
+      { god: null, weapon: null },
+      { god: null, weapon: null },
+      { god: null, weapon: null },
+      { god: null, weapon: null },
+      { god: null, weapon: null }
+    ],
+    stepLogs: [],      // { date, steps, memo }
+    lastPulls: [],     // { id, isNew }
+    expansions: []     // custom items array
+  };
+}
+
+let state = createDefaultState();
+let customImages = {}; // id -> dataURL (loaded from IndexedDB)
+let currentGachaPool = "mix";
+let currentDexFilter = "all";
+let currentImageTargetId = null;
+
+function getAllItems() {
+  const map = new Map();
+  BASE_ITEMS.forEach(it => map.set(it.id, it));
+  (state.expansions || []).forEach(it => {
+    if (it && it.id && it.name && (it.type === "god" || it.type === "weapon")) {
+      map.set(it.id, it);
+    }
+  });
+  return Array.from(map.values());
+}
+function getItemById(id) {
+  return getAllItems().find(x => x.id === id) || null;
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  } catch (e) {
+    console.error("Save failed:", e);
+  }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      state = Object.assign(createDefaultState(), parsed);
+      if (!Array.isArray(state.deck) || state.deck.length !== 5) {
+        state.deck = createDefaultState().deck;
+      }
+    }
+  } catch (e) {
+    console.error("Load failed:", e);
+    state = createDefaultState();
+  }
+}
+
+// IndexedDB for custom images
+function openImageDB() {
+  return new Promise((resolve, reject) => {
+    if (!window.indexedDB) return resolve(null);
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(DB_STORE)) db.createObjectStore(DB_STORE);
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => resolve(null);
+  });
+}
+
+async function loadAllCustomImages() {
+  const db = await openImageDB();
+  if (!db) return;
+  return new Promise(resolve => {
+    const tx = db.transaction(DB_STORE, "readonly");
+    const store = tx.objectStore(DB_STORE);
+    const req = store.openCursor();
+    req.onsuccess = e => {
+      const cursor = e.target.result;
+      if (cursor) {
+        customImages[cursor.key] = cursor.value;
+        cursor.continue();
+      } else {
+        resolve();
+      }
+    };
+    req.onerror = () => resolve();
+  });
+}
+
+async function saveCustomImage(id, dataUrl) {
+  customImages[id] = dataUrl;
+  const db = await openImageDB();
+  if (!db) return;
+  return new Promise(resolve => {
+    const tx = db.transaction(DB_STORE, "readwrite");
+    tx.objectStore(DB_STORE).put(dataUrl, id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => resolve();
+  });
+}
+
+async function deleteCustomImage(id) {
+  delete customImages[id];
+  const db = await openImageDB();
+  if (!db) return;
+  return new Promise(resolve => {
+    const tx = db.transaction(DB_STORE, "readwrite");
+    tx.objectStore(DB_STORE).delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => resolve();
+  });
+}
+
+// ============================================================
+// 3. POWER CALCULATION (Bokukoro3-style Deck + Artifact + Late Bloomers)
+// ============================================================
+function getUpgradeCost(item, currentLv) {
+  const rarityMult = [0, 0.7, 1.0, 1.35, 1.8][item.rarity] || 1;
+  const lateMult = item.lateBloomer ? 5.2 : 1.0;
+  return Math.round(120 * Math.pow(currentLv, 1.42) * rarityMult * lateMult);
+}
+
+function getOwnedWeaponCount() {
+  return getAllItems().filter(x => x.type === "weapon" && state.owned[x.id]).length;
+}
+
+function getUnitAtk(item) {
+  const ow = state.owned[item.id];
+  if (!ow) return item.baseAtk;
+  const lv = ow.lv || 1;
+  const dup = ow.dup || 0;
+  const dupMult = 1 + dup * 0.25; // +25% per duplicate!
+  const lvScale = item.lateBloomer
+    ? (lv < 10 ? 1 + (lv - 1) * 0.15 : 1 + (lv - 1) * 1.4)
+    : (1 + (lv - 1) * 0.34);
+
+  let atk = item.baseAtk * lvScale * dupMult;
+
+  // Late Bloomer Awakenings at Lv.10+
+  if (item.lateBloomer && lv >= 10) {
+    if (item.awakeSkill === "step_atk") {
+      atk += Math.round(state.totalSteps * 0.8 * dupMult) + 350;
+    } else if (item.awakeSkill === "weapon_count_mult") {
+      const wCount = getOwnedWeaponCount();
+      atk = (atk + 220) * (1 + wCount * 0.25);
+    } else if (item.awakeSkill === "team_mult" || item.awakeSkill === "pair_boost") {
+      atk += 180 * dupMult;
+    }
+  }
+  return Math.round(atk);
+}
+
+function getArtifactPassives() {
+  const all = getAllItems();
+  const ownedItems = all.filter(it => state.owned[it.id]);
+  const totalOwned = ownedItems.length;
+  const groupCounts = {};
+  ownedItems.forEach(it => {
+    groupCounts[it.group] = (groupCounts[it.group] || 0) + 1;
+  });
+
+  // Base collection bonus: +4% per unique discovered item
+  const baseBonus = totalOwned * 0.04;
+  // Group milestones: +6% per item in groups with 2+ items
+  let groupBonus = 0;
+  const breakdown = [];
+  breakdown.push({ name: "歴史図鑑コンプ補正", detail: `${totalOwned}種所持`, pct: Math.round(baseBonus * 100) });
+
+  Object.entries(groupCounts).sort((a,b) => b[1] - a[1]).forEach(([grp, cnt]) => {
+    if (cnt >= 2) {
+      const p = cnt * 0.05;
+      groupBonus += p;
+      breakdown.push({ name: grp, detail: `${cnt}種共鳴`, pct: Math.round(p * 100) });
+    }
+  });
+
+  return {
+    mult: 1 + baseBonus + groupBonus,
+    breakdown
+  };
+}
+
+function getSlotPower(slot) {
+  const g = slot.god ? getItemById(slot.god) : null;
+  const w = slot.weapon ? getItemById(slot.weapon) : null;
+  if (!g && !w) return { power: 0, tags: [] };
+
+  const gAtk = (g && state.owned[g.id]) ? getUnitAtk(g) : 0;
+  const wAtk = (w && state.owned[w.id]) ? getUnitAtk(w) : 0;
+  let total = gAtk + wAtk;
+  const tags = [];
+
+  if (g && w && state.owned[g.id] && state.owned[w.id]) {
+    total *= 1.25;
+    tags.push("ペア共鳴 ×1.25");
+    // Same region synergy check (first country/region word match)
+    const gReg = (g.region || "").split(/[（(／/]/)[0];
+    const wReg = (w.region || "").split(/[（(／/]/)[0];
+    if (gReg && wReg && gReg === wReg) {
+      total *= 1.15;
+      tags.push(`地元シナジー(${gReg}) ×1.15`);
+    }
+    // Panjandrum Lv10 awakening
+    if (w.awakeSkill === "pair_boost" && (state.owned[w.id].lv || 1) >= 10) {
+      total *= 3.5;
+      tags.push("🔥パンジャンドラム覚醒 ×3.5");
+    }
+  }
+  return { power: Math.round(total), tags };
+}
+
+function getTotalPower() {
+  let rawSum = 0;
+  let kawayagamiBoost = false;
+  state.deck.forEach(slot => {
+    rawSum += getSlotPower(slot).power;
+    if (slot.god) {
+      const g = getItemById(slot.god);
+      if (g && g.awakeSkill === "team_mult" && state.owned[g.id] && (state.owned[g.id].lv || 1) >= 10) {
+        kawayagamiBoost = true;
+      }
+    }
+  });
+  const passives = getArtifactPassives();
+  let total = rawSum * passives.mult;
+  if (kawayagamiBoost) total *= 1.5;
+  return { total: Math.round(total), rawSum, passiveMult: passives.mult, kawayagamiBoost };
+}
+
+function fmtNum(n) {
+  if (n >= 1e8) return (n / 1e8).toFixed(2) + "億";
+  if (n >= 1e5) return (n / 1e4).toFixed(1) + "万";
+  return Math.round(n).toLocaleString("ja-JP");
+}
+
+// ============================================================
+// 4. WORLD MAP SVG GENERATOR (Equirectangular 360x180: x=lon+180, y=90-lat)
+// ============================================================
+const WORLD_LAND_PATHS = `
+  <!-- North America -->
+  <path d="M15,20 L52,18 L78,24 L105,22 L120,30 L118,43 L103,50 L98,60 L86,62 L81,73 L95,80 L88,83 L74,73 L63,62 L52,50 L40,36 L18,30 Z"/>
+  <!-- Greenland -->
+  <path d="M126,10 L158,12 L152,28 L136,30 L124,20 Z"/>
+  <!-- South America -->
+  <path d="M98,80 L115,82 L134,94 L145,103 L135,123 L118,144 L108,146 L104,126 L98,108 L94,92 Z"/>
+  <!-- Europe -->
+  <path d="M170,54 L173,44 L182,38 L186,25 L202,20 L215,26 L218,38 L212,48 L202,52 L192,50 L184,54 Z"/>
+  <!-- UK & Ireland -->
+  <path d="M171,34 L177,33 L179,40 L174,41 Z"/>
+  <!-- Africa -->
+  <path d="M164,56 L192,55 L212,60 L223,78 L231,82 L222,100 L213,118 L201,126 L193,122 L188,102 L181,88 L166,84 L161,72 Z"/>
+  <!-- Madagascar -->
+  <path d="M225,104 L230,104 L228,116 L224,115 Z"/>
+  <!-- Asia & Middle East -->
+  <path d="M206,50 L216,32 L245,18 L295,18 L335,24 L348,30 L328,44 L318,52 L310,56 L305,68 L292,76 L284,88 L278,80 L264,74 L256,82 L247,68 L236,68 L224,74 L214,62 Z"/>
+  <!-- Japan -->
+  <path d="M318,46 L325,47 L322,55 L314,59 L311,56 L317,51 Z"/>
+  <!-- SE Asia Islands -->
+  <path d="M278,92 L292,94 L296,98 L282,98 Z M298,86 L306,86 L305,94 L297,94 Z M308,92 L322,94 L322,100 L308,98 Z"/>
+  <!-- Australia -->
+  <path d="M294,104 L318,102 L334,114 L331,129 L316,132 L296,124 L292,114 Z"/>
+  <!-- New Zealand -->
+  <path d="M350,126 L357,128 L352,138 L346,136 Z"/>
+`;
+
+function latLonToXY(lat, lon) {
+  const x = Math.max(4, Math.min(356, (Number(lon) || 0) + 180));
+  const y = Math.max(4, Math.min(176, 90 - (Number(lat) || 0)));
+  return { x, y };
+}
+
+function renderSingleItemMapSVG(item, compact = true) {
+  const { x, y } = latLonToXY(item.lat, item.lon);
+  const color = item.type === "god" ? "#f5c542" : "#38e4ff";
+  // Zoom slightly around the pin for card clarity while keeping world context
+  const vx = compact ? Math.max(0, Math.min(180, x - 90)) : 0;
+  const vy = compact ? Math.max(0, Math.min(90, y - 45)) : 0;
+  const vw = compact ? 180 : 360;
+  const vh = compact ? 90 : 180;
+  const pinR = compact ? 3.2 : 4.2;
+
+  return `
+    <svg viewBox="${vx} ${vy} ${vw} ${vh}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="360" height="180" fill="#070d18"/>
+      <g stroke="#162338" stroke-width="0.6">
+        <line x1="0" y1="90" x2="360" y2="90"/>
+        <line x1="0" y1="45" x2="360" y2="45"/>
+        <line x1="0" y1="135" x2="360" y2="135"/>
+        <line x1="180" y1="0" x2="180" y2="180"/>
+        <line x1="90" y1="0" x2="90" y2="180"/>
+        <line x1="270" y1="0" x2="270" y2="180"/>
+      </g>
+      <g fill="#1c2d47" stroke="#2f4a73" stroke-width="0.7">${WORLD_LAND_PATHS}</g>
+      <line x1="${x}" y1="0" x2="${x}" y2="180" stroke="${color}" stroke-opacity="0.22" stroke-width="0.6" stroke-dasharray="2,2"/>
+      <line x1="0" y1="${y}" x2="360" y2="${y}" stroke="${color}" stroke-opacity="0.22" stroke-width="0.6" stroke-dasharray="2,2"/>
+      <circle cx="${x}" cy="${y}" r="8" fill="none" stroke="${color}" stroke-width="1" class="pin-ring"/>
+      <circle cx="${x}" cy="${y}" r="${pinR}" fill="${color}" stroke="#070d18" stroke-width="1"/>
+    </svg>
+  `;
+}
+
+function renderGlobalMapSVG() {
+  const all = getAllItems();
+  let pins = "";
+  all.forEach(it => {
+    const owned = !!state.owned[it.id];
+    const { x, y } = latLonToXY(it.lat, it.lon);
+    if (!owned) {
+      pins += `<circle cx="${x}" cy="${y}" r="1.8" fill="#475569" opacity="0.45"/>`;
+    } else {
+      const col = it.type === "god" ? "#f5c542" : "#38e4ff";
+      pins += `
+        <g style="cursor:pointer;" onclick="openItemModal('${it.id}')">
+          <circle cx="${x}" cy="${y}" r="6" fill="${col}" opacity="0.22"/>
+          <circle cx="${x}" cy="${y}" r="3.4" fill="${col}" stroke="#070d18" stroke-width="0.9"/>
+          <title>${it.name} (${it.region})</title>
+        </g>`;
+    }
+  });
+  return `
+    <svg viewBox="0 0 360 180" style="width:100%;display:block;" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="360" height="180" fill="#070d18"/>
+      <g stroke="#132033" stroke-width="0.6">
+        <line x1="0" y1="90" x2="360" y2="90"/>
+        <line x1="0" y1="45" x2="360" y2="45"/>
+        <line x1="0" y1="135" x2="360" y2="135"/>
+        <line x1="180" y1="0" x2="180" y2="180"/>
+        <line x1="90" y1="0" x2="90" y2="180"/>
+        <line x1="270" y1="0" x2="270" y2="180"/>
+      </g>
+      <g fill="#192840" stroke="#2c456b" stroke-width="0.7">${WORLD_LAND_PATHS}</g>
+      ${pins}
+    </svg>
+  `;
+}
+
+function getThumbHTML(item) {
+  const img = customImages[item.id];
+  if (img) {
+    return `<div class="thumb-box"><img src="${img}" alt="${escapeHtml(item.name)}"><div class="thumb-region">📍 ${escapeHtml(item.region)}</div></div>`;
+  }
+  return `<div class="thumb-box">${renderSingleItemMapSVG(item, true)}<div class="thumb-region">📍 ${escapeHtml(item.region)}</div></div>`;
+}
+
+function escapeHtml(s) {
+  return String(s || "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+// ============================================================
+// 5. ACTIONS: STEPS, GACHA, DECK, UPGRADE, WAVE DEFEND
+// ============================================================
+function addQuickStep(n) {
+  const inp = document.getElementById("step-input");
+  const cur = parseInt(inp.value, 10) || 0;
+  inp.value = cur + n;
+}
+
+function submitSteps() {
+  const inp = document.getElementById("step-input");
+  const memoInp = document.getElementById("step-memo");
+  const steps = parseInt(inp.value, 10);
+  if (!steps || steps <= 0) {
+    showToast("歩数を1以上で入力してね！");
+    return;
+  }
+  state.totalSteps += steps;
+  const totalForStone = state.stepCarry + steps;
+  const gainedStones = Math.floor(totalForStone / 30); // 300歩 = 10石 -> 30歩 = 1石
+  state.stepCarry = totalForStone % 30;
+  const gainedEnergy = steps * 10;
+
+  state.stones += gainedStones;
+  state.energy += gainedEnergy;
+
+  const now = new Date();
+  const ds = `${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  state.stepLogs.unshift({
+    date: ds,
+    steps,
+    memo: (memoInp.value || "").trim(),
+    stones: gainedStones
+  });
+  if (state.stepLogs.length > 30) state.stepLogs.pop();
+
+  inp.value = "";
+  memoInp.value = "";
+  saveState();
+  renderAll();
+  showToast(`👟 ${steps.toLocaleString()}歩換金！ 💎+${gainedStones} / ⚡+${gainedEnergy.toLocaleString()}`);
+}
+
+function setGachaPool(pool, btn) {
+  currentGachaPool = pool;
+  document.querySelectorAll(".gacha-tab").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  const titles = {
+    mix: ["🌌 歴史ミックス召喚", "世界中の神話の神様＆人類史の兵器がすべて出現！被ると自動で限界突破(+25%強化)！"],
+    god: ["👑 神話の神々ピックアップ", "世界中の神話の神様だけが出現！新たな主神や大器晩成の道祖神を狙おう！"],
+    weapon: ["⚔️ 人類史兵器ピックアップ", "旧石器から戦艦・ステルス爆撃機・迷兵器まで、人類史の兵器だけが出現！"]
+  };
+  document.getElementById("gacha-title").textContent = titles[pool][0];
+  document.getElementById("gacha-desc").textContent = titles[pool][1];
+}
+
+function rollRarity(guarantee3Plus = false) {
+  const r = Math.random() * 100;
+  if (guarantee3Plus) return r < 28 ? 4 : 3;
+  if (r < 10) return 4;
+  if (r < 35) return 3;
+  if (r < 75) return 2;
+  return 1;
+}
+
+function pullGacha(count) {
+  const cost = count * 10;
+  if (state.stones < cost) {
+    showToast(`召喚石が足りません（必要: 💎${cost}）`);
+    return;
+  }
+  const all = getAllItems().filter(it => currentGachaPool === "mix" ? true : it.type === currentGachaPool);
+  if (!all.length) return;
+
+  state.stones -= cost;
+  const results = [];
+
+  for (let i = 0; i < count; i++) {
+    const guarantee = (count === 10 && i === 9);
+    const rar = rollRarity(guarantee);
+    let candidates = all.filter(it => it.rarity === rar);
+    if (!candidates.length) candidates = all;
+    const picked = candidates[Math.floor(Math.random() * candidates.length)];
+    const isNew = !state.owned[picked.id];
+    if (isNew) {
+      state.owned[picked.id] = { lv: 1, dup: 0 };
+    } else {
+      state.owned[picked.id].dup = (state.owned[picked.id].dup || 0) + 1;
+    }
+    results.push({ id: picked.id, isNew, dup: state.owned[picked.id].dup });
+  }
+
+  state.lastPulls = results.slice(0, 10);
+  saveState();
+  renderAll();
+  renderGachaResults(results);
+  const newCnt = results.filter(x => x.isNew).length;
+  showToast(`✨ ${count}連召喚完了！ 新規 ${newCnt}件！`);
+}
+
+function renderGachaResults(results) {
+  const card = document.getElementById("gacha-result-card");
+  const box = document.getElementById("gacha-results");
+  card.style.display = "block";
+  box.innerHTML = results.map(res => {
+    const it = getItemById(res.id);
+    if (!it) return "";
+    return `
+      <div class="unit-card r${it.rarity}" onclick="openItemModal('${it.id}')">
+        ${getThumbHTML(it)}
+        <div class="unit-meta">
+          <span class="badge badge-r${it.rarity}">★${it.rarity}</span>
+          ${res.isNew ? '<span class="badge badge-new">NEW!</span>' : `<span class="badge badge-dup">凸+${res.dup}</span>`}
+          ${it.lateBloomer ? '<span class="badge badge-late">大器晩成</span>' : ''}
+        </div>
+        <div class="unit-name">${escapeHtml(it.name)}</div>
+        <div class="unit-stat">
+          <span>${it.type === 'god' ? '👑神' : '⚔️兵器'}</span>
+          <span>ATK ${fmtNum(getUnitAtk(it))}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+  card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function autoBuildDeck() {
+  const all = getAllItems();
+  const gods = all.filter(x => x.type === "god" && state.owned[x.id])
+    .sort((a, b) => {
+      // Prioritize awakened Kawayagami (team_mult)
+      const aBoost = (a.awakeSkill === "team_mult" && state.owned[a.id].lv >= 10) ? 1e9 : 0;
+      const bBoost = (b.awakeSkill === "team_mult" && state.owned[b.id].lv >= 10) ? 1e9 : 0;
+      return (getUnitAtk(b) + bBoost) - (getUnitAtk(a) + aBoost);
+    });
+  const weapons = all.filter(x => x.type === "weapon" && state.owned[x.id])
+    .sort((a, b) => {
+      const aBoost = (a.awakeSkill === "pair_boost" && state.owned[a.id].lv >= 10) ? 1e8 : 0;
+      const bBoost = (b.awakeSkill === "pair_boost" && state.owned[b.id].lv >= 10) ? 1e8 : 0;
+      return (getUnitAtk(b) + bBoost) - (getUnitAtk(a) + aBoost);
+    });
+
+  for (let i = 0; i < 5; i++) {
+    state.deck[i] = {
+      god: gods[i] ? gods[i].id : null,
+      weapon: weapons[i] ? weapons[i].id : null
+    };
+  }
+  saveState();
+  renderAll();
+  showToast("⚡ 最強デッキを自動編成しました！");
+}
+
+function upgradeItem(id, times) {
+  const item = getItemById(id);
+  const ow = state.owned[id];
+  if (!item || !ow) return;
+  let count = 0;
+  const maxTimes = times === "max" ? 500 : times;
+  let wasAwakened = ow.lv >= 10;
+
+  while (count < maxTimes) {
+    const cost = getUpgradeCost(item, ow.lv);
+    if (state.energy < cost) break;
+    state.energy -= cost;
+    ow.lv += 1;
+    count++;
+  }
+  if (count === 0) {
+    showToast("⚡ 歩数エネルギーが足りません！");
+    return;
+  }
+  saveState();
+  renderAll();
+  openItemModal(id);
+  if (item.lateBloomer && !wasAwakened && ow.lv >= 10) {
+    showToast(`🔥 ${item.name} が Lv.10【覚醒】しました！！`);
+  } else {
+    showToast(`⬆️ ${item.name} が Lv.${ow.lv} になった！`);
+  }
+}
+
+function defendWave() {
+  const info = getWaveInfo(state.wave);
+  const p = getTotalPower().total;
+  if (p < info.req) {
+    showToast(`戦力が足りません！ あと ${fmtNum(info.req - p)} 必要です`);
+    return;
+  }
+  // Pick a random active pair from deck for comedic Tonchiki reaction
+  const activePairs = state.deck.filter(s => s.god || s.weapon);
+  const sample = activePairs.length ? activePairs[Math.floor(Math.random() * activePairs.length)] : null;
+  const gName = sample && sample.god ? getItemById(sample.god)?.name : "謎の神霊";
+  const wName = sample && sample.weapon ? getItemById(sample.weapon)?.name : "得体の知れない兵器";
+  const hasPanja = state.deck.some(s => s.weapon === "w_panjandrum");
+
+  const lines = [
+    `「ぐぬぬぬぬ！！ なんだあの絵面は！？ <strong>${escapeHtml(gName)}</strong>が<strong>${escapeHtml(wName)}</strong>を担いでこっちを睨んでいるだと！？ 話が違うぞ！！ 総員撤退ーッ！！」`,
+    `「ひぃぃっ！！ ただ歩いてきただけで戦力 <strong>${fmtNum(p)}</strong> だと！？ <strong>${escapeHtml(gName)} × ${escapeHtml(wName)}</strong> の圧が強すぎて宇宙船の計器がバグったわ！！ 今日はこのくらいにしておいてやる！！」`,
+    `「バカな……歴史からそんな規格外を引っ張り出すとは！ <strong>${escapeHtml(gName)}</strong>が<strong>${escapeHtml(wName)}</strong>を構えただけでウチの艦隊が戦意喪失したぞ！ 覚えてろよ地球人どもーッ！！」`
+  ];
+  let speech = lines[state.wave % lines.length];
+  if (hasPanja) {
+    speech = `「やめろおおお！！ <strong>${escapeHtml(gName)}</strong>が<strong>パンジャンドラム</strong>に火をつけたぞ！！ どこに飛んでくるか計算できなくて逆に一番怖いんだわ！！ 逃げるぞーッ！！」`;
+  }
+
+  state.stones += info.stones;
+  state.energy += info.energy;
+  const clearedWave = state.wave;
+  state.wave += 1;
+  saveState();
+  renderAll();
+
+  openModalHTML(`
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div style="text-align:center;padding:8px 0;">
+      <div class="badge badge-r4" style="font-size:12px;padding:4px 10px;">🎉 WAVE ${clearedWave} 抑止力撃退成功！</div>
+      <h2 style="margin:10px 0 6px;font-size:18px;color:var(--gold);">${escapeHtml(info.name)} 撤退！</h2>
+      <div class="lore-box" style="text-align:left;border-color:rgba(255,92,119,0.4);background:rgba(255,92,119,0.08);">
+        <div style="font-size:11px;color:#ff8aa0;font-weight:800;margin-bottom:4px;">👽 トンチキ王の捨て台詞：</div>
+        ${speech}
+      </div>
+      <div style="display:flex;justify-content:center;gap:14px;margin:14px 0;font-size:15px;font-weight:800;">
+        <span style="color:var(--gold);">💎 +${info.stones}</span>
+        <span style="color:var(--cyan);">⚡ +${info.energy.toLocaleString()}</span>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;">
+        <button class="btn-primary" onclick="copyReport(); closeModal();">📋 じぇみーへ報告コピー</button>
+        <button class="btn-gold" onclick="closeModal()">次のWaveへ！</button>
+      </div>
+    </div>
+  `);
+}
+
+// ============================================================
+// 6. MODALS: ITEM DETAIL, IMAGE UPLOAD, DECK PICKER
+// ============================================================
+function openItemModal(id) {
+  const item = getItemById(id);
+  if (!item) return;
+  const ow = state.owned[id];
+  const atk = getUnitAtk(item);
+  const hasCustom = !!customImages[id];
+  const nextCost = ow ? getUpgradeCost(item, ow.lv) : 0;
+  const isAwakened = item.lateBloomer && ow && ow.lv >= 10;
+
+  let upgradeSection = "";
+  if (ow) {
+    upgradeSection = `
+      <div style="background:var(--bg-card2);border:1px solid var(--border);border-radius:10px;padding:10px;margin:10px 0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:800;">
+          <span>Lv.${ow.lv} ${ow.dup > 0 ? `<span style="color:var(--cyan);">(限界突破 +${ow.dup})</span>` : ""}</span>
+          <span style="color:var(--gold);">ATK ${fmtNum(atk)}</span>
+        </div>
+        <div class="sub-text" style="margin-top:4px;">次のレベルアップ必要エネ: <strong style="color:var(--cyan);">⚡ ${nextCost.toLocaleString()}</strong> (所持: ${state.energy.toLocaleString()})</div>
+        <div class="upgrade-row">
+          <button class="btn-primary" onclick="upgradeItem('${id}', 1)">Lv +1</button>
+          <button class="btn-primary" onclick="upgradeItem('${id}', 5)">Lv +5</button>
+          <button class="btn-gold" onclick="upgradeItem('${id}', 'max')">Lv MAX</button>
+        </div>
+      </div>
+    `;
+  } else {
+    upgradeSection = `<div class="sub-text" style="margin:8px 0;color:#fca5a5;">※ 未所持です（召喚ガチャで手に入ります）</div>`;
+  }
+
+  let lateBox = "";
+  if (item.lateBloomer) {
+    lateBox = `
+      <div class="skill-box" style="${isAwakened ? 'border-color:#4ade80;background:rgba(74,222,128,0.12);' : ''}">
+        <div style="font-weight:800;color:${isAwakened ? '#4ade80' : 'var(--gold)'};">
+          🔥 大器晩成スキル『${escapeHtml(item.awakeTitle)}』 ${isAwakened ? "【覚醒済！】" : "(Lv.10で覚醒)"}
+        </div>
+        <div style="margin-top:3px;">${escapeHtml(item.awakeDesc)}</div>
+      </div>
+    `;
+  }
+
+  const mainVisual = hasCustom
+    ? `<img src="${customImages[id]}" alt="${escapeHtml(item.name)}">`
+    : renderSingleItemMapSVG(item, false);
+
+  openModalHTML(`
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div class="unit-meta" style="margin-bottom:4px;">
+      <span class="badge badge-r${item.rarity}">★${item.rarity}</span>
+      <span class="badge ${item.type === 'god' ? 'badge-type-god' : 'badge-type-weapon'}">${item.type === 'god' ? '👑 神話の神' : '⚔️ 人類史兵器'}</span>
+      <span class="badge" style="background:#1e293b;color:#cbd5e1;">${escapeHtml(item.group)}</span>
+      ${item.lateBloomer ? '<span class="badge badge-late">大器晩成</span>' : ''}
+    </div>
+    <h2 style="margin:2px 0 4px;font-size:20px;">${escapeHtml(item.name)}</h2>
+    <div class="sub-text">📍 出身・由来地：<strong>${escapeHtml(item.region)}</strong></div>
+
+    <div class="detail-img-wrap">${mainVisual}</div>
+
+    <div style="display:flex;gap:8px;margin-bottom:8px;">
+      <button class="btn-secondary" style="flex:1;font-size:12px;" onclick="triggerImageUpload('${id}')">🖼️ 画像を着せ替える</button>
+      ${hasCustom ? `<button class="btn-danger" style="font-size:12px;" onclick="removeCustomImage('${id}')">地図に戻す</button>` : ""}
+    </div>
+
+    ${upgradeSection}
+    ${lateBox}
+
+    <div class="lore-box">
+      <div style="font-size:11px;color:var(--gold);font-weight:800;margin-bottom:4px;">📚 歴史・神話データ</div>
+      ${escapeHtml(item.lore)}
+    </div>
+
+    ${hasCustom ? `
+      <div style="margin-top:10px;">
+        <div class="sub-text" style="margin-bottom:4px;">🗺️ 出身地マップ確認（${escapeHtml(item.region)}）</div>
+        <div class="world-map-wrap">${renderSingleItemMapSVG(item, false)}</div>
+      </div>
+    ` : ""}
+  `);
+}
+
+function triggerImageUpload(id) {
+  currentImageTargetId = id;
+  const inp = document.getElementById("img-file-input");
+  inp.value = "";
+  inp.click();
+}
+
+document.getElementById("img-file-input").addEventListener("change", function(e) {
+  const file = e.target.files && e.target.files[0];
+  if (!file || !currentImageTargetId) return;
+  const targetId = currentImageTargetId;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const img = new Image();
+    img.onload = async function() {
+      // Resize to max 640px wide so IndexedDB stays super fast & light
+      const maxW = 640;
+      const scale = Math.min(1, maxW / img.width);
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const compressed = canvas.toDataURL("image/jpeg", 0.84);
+      await saveCustomImage(targetId, compressed);
+      renderAll();
+      openItemModal(targetId);
+      showToast("🖼️ 着せ替え画像を保存しました！");
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+async function removeCustomImage(id) {
+  await deleteCustomImage(id);
+  renderAll();
+  openItemModal(id);
+  showToast("🗺️ 出身地マップ表示に戻しました");
+}
+
+function openDeckPicker(slotIdx, kind) {
+  const usedIds = new Set(state.deck.map((s, idx) => idx === slotIdx ? null : s[kind]).filter(Boolean));
+  const list = getAllItems()
+    .filter(it => it.type === kind && state.owned[it.id])
+    .sort((a, b) => getUnitAtk(b) - getUnitAtk(a));
+
+  let html = `
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h3 style="margin:0 0 8px;color:var(--gold);">枠${slotIdx + 1}：${kind === 'god' ? '👑 神様を選択' : '⚔️ 兵器を選択'}</h3>
+    <button class="btn-danger" style="width:100%;margin-bottom:10px;" onclick="assignDeckSlot(${slotIdx}, '${kind}', null)">この枠を外す</button>
+  `;
+
+  if (!list.length) {
+    html += `<div class="sub-text" style="text-align:center;padding:20px;">まだ所持していません。召喚ガチャを引こう！</div>`;
+  } else {
+    html += `<div class="grid-list">` + list.map(it => {
+      const ow = state.owned[it.id];
+      const inOther = usedIds.has(it.id);
+      const isCur = state.deck[slotIdx][kind] === it.id;
+      return `
+        <div class="unit-card r${it.rarity}" style="${isCur ? 'outline:2px solid #4ade80;' : ''}" onclick="assignDeckSlot(${slotIdx}, '${kind}', '${it.id}')">
+          ${getThumbHTML(it)}
+          <div class="unit-meta">
+            <span class="badge badge-r${it.rarity}">★${it.rarity}</span>
+            <span class="badge" style="background:#1e293b;color:#fff;">Lv.${ow.lv}</span>
+            ${inOther ? '<span class="badge" style="background:#f59e0b;color:#111;">他枠使用中</span>' : ''}
+          </div>
+          <div class="unit-name">${escapeHtml(it.name)}</div>
+          <div class="unit-stat"><span>${escapeHtml(it.group)}</span><span>ATK ${fmtNum(getUnitAtk(it))}</span></div>
+        </div>
+      `;
+    }).join("") + `</div>`;
+  }
+  openModalHTML(html);
+}
+
+function assignDeckSlot(slotIdx, kind, id) {
+  if (id) {
+    // If already used in another slot, swap it out cleanly
+    state.deck.forEach((s, idx) => {
+      if (idx !== slotIdx && s[kind] === id) s[kind] = null;
+    });
+  }
+  state.deck[slotIdx][kind] = id;
+  saveState();
+  closeModal();
+  renderAll();
+}
+
+function openModalHTML(html) {
+  document.getElementById("modal-body").innerHTML = html;
+  document.getElementById("modal-backdrop").classList.add("open");
+}
+function closeModal() {
+  document.getElementById("modal-backdrop").classList.remove("open");
+}
+
+// ============================================================
+// 7. REPORT COPY, EXPANSIONS & SAVE/RESTORE
+// ============================================================
+function buildReportText() {
+  const p = getTotalPower();
+  const wInfo = getWaveInfo(state.wave);
+  const all = getAllItems();
+  const ownedCount = all.filter(x => state.owned[x.id]).length;
+  const pct = Math.round((ownedCount / all.length) * 100);
+
+  const deckLines = state.deck.map((s, i) => {
+    const g = s.god ? getItemById(s.god) : null;
+    const w = s.weapon ? getItemById(s.weapon) : null;
+    if (!g && !w) return `  枠${i+1}: （空き）`;
+    const gTxt = g ? `${g.name}(Lv.${state.owned[g.id]?.lv || 1}${g.lateBloomer && (state.owned[g.id]?.lv||1)>=10 ? '🔥覚醒' : ''})` : "なし";
+    const wTxt = w ? `${w.name}(Lv.${state.owned[w.id]?.lv || 1}${w.lateBloomer && (state.owned[w.id]?.lv||1)>=10 ? '🔥覚醒' : ''})` : "なし";
+    return `  枠${i+1}: ${gTxt} × ${wTxt}`;
+  }).join("\n");
+
+  const recentLog = state.stepLogs[0]
+    ? `${state.stepLogs[0].steps.toLocaleString()}歩（${state.stepLogs[0].date}${state.stepLogs[0].memo ? '・' + state.stepLogs[0].memo : ''}）`
+    : "なし";
+
+  const recentPullTxt = state.lastPulls && state.lastPulls.length
+    ? state.lastPulls.map(r => {
+        const it = getItemById(r.id);
+        return it ? `${it.name}${r.isNew ? '[NEW]' : ''}` : "";
+      }).filter(Boolean).join("、")
+    : "まだ未召喚";
+
+  return [
+    "【地球防衛・神話兵器録 戦果報告】",
+    `・累計歩数：${state.totalSteps.toLocaleString()}歩（直近入力：${recentLog}）`,
+    `・現在Wave：WAVE ${state.wave}『${wInfo.name}』（脅威度 ${fmtNum(wInfo.req)}）`,
+    `・地球軍 総戦力：${fmtNum(p.total)}（図鑑パッシブ ×${p.passiveMult.toFixed(2)}）`,
+    `・世界図鑑：${ownedCount} / ${all.length}種（制覇率 ${pct}%）`,
+    "・現在の防衛デッキ：",
+    deckLines,
+    `・直近ガチャ結果：${recentPullTxt}`
+  ].join("\n");
+}
+
+function copyReport() {
+  const txt = buildReportText();
+  const prev = document.getElementById("report-preview");
+  if (prev) prev.value = txt;
+  copyToClipboard(txt, "📋 じぇみーへの戦果報告をコピーしました！");
+}
+
+function loadSampleExpansion() {
+  document.getElementById("expansion-input").value = JSON.stringify(SAMPLE_EXPANSION, null, 2);
+  showToast("🧪 お試しミニパックを読み込みました！「パックを増築する」を押してね");
+}
+
+function installExpansion() {
+  const raw = document.getElementById("expansion-input").value.trim();
+  if (!raw) {
+    showToast("JSONデータを貼り付けてね！");
+    return;
+  }
+  try {
+    const parsed = JSON.parse(raw);
+    const arr = Array.isArray(parsed) ? parsed : [parsed];
+    let added = 0;
+    arr.forEach(it => {
+      if (!it.id || !it.name || (it.type !== "god" && it.type !== "weapon")) return;
+      const clean = {
+        id: String(it.id),
+        type: it.type,
+        name: String(it.name),
+        rarity: Math.max(1, Math.min(4, Number(it.rarity) || 2)),
+        baseAtk: Number(it.baseAtk) || 70,
+        group: String(it.group || "増築パック"),
+        region: String(it.region || "地球のどこか"),
+        lat: Number(it.lat) || 0,
+        lon: Number(it.lon) || 0,
+        lore: String(it.lore || "沢マン式増築パックにより歴史の彼方から顕現。"),
+        lateBloomer: !!it.lateBloomer,
+        awakeSkill: it.awakeSkill || undefined,
+        awakeTitle: it.awakeTitle || undefined,
+        awakeDesc: it.awakeDesc || undefined
+      };
+      const idx = state.expansions.findIndex(x => x.id === clean.id);
+      if (idx >= 0) state.expansions[idx] = clean;
+      else state.expansions.push(clean);
+      added++;
+    });
+    if (added === 0) {
+      showToast("⚠️ 有効な神様・兵器データが見つかりませんでした");
+      return;
+    }
+    saveState();
+    renderAll();
+    document.getElementById("expansion-input").value = "";
+    showToast(`🏗️ 沢マン増築完了！ ${added}件をガチャ＆図鑑に追加しました！`);
+  } catch (e) {
+    showToast("⚠️ JSONの形式エラーです。カッコの欠け等を確認してね");
+  }
+}
+
+function exportSaveString() {
+  try {
+    const json = JSON.stringify(state);
+    const b64 = btoa(unescape(encodeURIComponent(json)));
+    document.getElementById("save-code-area").value = b64;
+    copyToClipboard(b64, "📤 復活の呪文を書き出してコピーしました！");
+  } catch (e) {
+    showToast("書き出しに失敗しました");
+  }
+}
+
+function downloadSaveFile() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const d = new Date();
+  a.href = url;
+  a.download = `tonchiki_save_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("⬇️ セーブJSONファイルを保存しました！");
+}
+
+function importSaveString() {
+  const raw = document.getElementById("save-code-area").value.trim();
+  if (!raw) {
+    showToast("復活の呪文を貼り付けてね！");
+    return;
+  }
+  try {
+    let parsed;
+    if (raw.startsWith("{")) {
+      parsed = JSON.parse(raw);
+    } else {
+      const json = decodeURIComponent(escape(atob(raw)));
+      parsed = JSON.parse(json);
+    }
+    if (typeof parsed.totalSteps !== "number" || typeof parsed.owned !== "object") {
+      throw new Error("invalid");
+    }
+    state = Object.assign(createDefaultState(), parsed);
+    saveState();
+    renderAll();
+    showToast("📥 復活の呪文からデータを復元しました！");
+  } catch (e) {
+    showToast("⚠️ 呪文が正しくありません。全文コピーされているか確認してね");
+  }
+}
+
+function resetAllData() {
+  if (!confirm("本当にすべての進行データを初期化しますか？（復活の呪文を先にコピーしておくのがおすすめです）")) return;
+  state = createDefaultState();
+  saveState();
+  renderAll();
+  showToast("🗑️ データを初期化しました");
+}
+
+function copyToClipboard(text, msg) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => showToast(msg)).catch(() => fallbackCopy(text, msg));
+  } else {
+    fallbackCopy(text, msg);
+  }
+}
+function fallbackCopy(text, msg) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); showToast(msg); }
+  catch (e) { showToast("コピー欄から手動コピーしてね！"); }
+  document.body.removeChild(ta);
+}
+
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+}
+
+// ============================================================
+// 8. RENDER UI
+// ============================================================
+function switchTab(name) {
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("tab-" + name).classList.add("active");
+  document.querySelectorAll(".nav-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.tab === name);
+  });
+  window.scrollTo({ top: 0, behavior: "instant" });
+  renderAll();
+}
+
+function setDexFilter(f, btn) {
+  currentDexFilter = f;
+  document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  renderDex();
+}
+
+function renderAll() {
+  const powerInfo = getTotalPower();
+  document.getElementById("ui-stones").textContent = state.stones.toLocaleString();
+  document.getElementById("ui-energy").textContent = fmtNum(state.energy);
+  document.getElementById("ui-power").textContent = fmtNum(powerInfo.total);
+  document.getElementById("ui-total-steps").textContent = state.totalSteps.toLocaleString();
+  document.getElementById("step-carry-note").textContent = `次の💎+1まであと: ${30 - state.stepCarry}歩（30歩ごとに💎+1）`;
+
+  // Wave box
+  const wInfo = getWaveInfo(state.wave);
+  document.getElementById("wave-badge").textContent = `WAVE ${wInfo.wave}`;
+  document.getElementById("wave-reward").textContent = `撃退報酬: 💎+${wInfo.stones} / ⚡+${wInfo.energy.toLocaleString()}`;
+  document.getElementById("wave-name").textContent = wInfo.name;
+  document.getElementById("wave-desc").textContent = wInfo.desc;
+  document.getElementById("wave-my-power").textContent = fmtNum(powerInfo.total);
+  document.getElementById("wave-req-power").textContent = fmtNum(wInfo.req);
+  const ratio = Math.min(100, Math.round((powerInfo.total / wInfo.req) * 100));
+  const bar = document.getElementById("wave-bar");
+  bar.style.width = ratio + "%";
+  const ready = powerInfo.total >= wInfo.req;
+  bar.classList.toggle("ready", ready);
+  const defBtn = document.getElementById("btn-defend");
+  defBtn.disabled = !ready;
+  defBtn.classList.toggle("ready-pulse", ready);
+  defBtn.textContent = ready
+    ? "🚀 抑止力を見せつける！（迎撃可能！）"
+    : `あと戦力 ${fmtNum(wInfo.req - powerInfo.total)} で撃退可能（${ratio}%）`;
+
+  // Step logs
+  const logBox = document.getElementById("step-log");
+  logBox.innerHTML = state.stepLogs.length
+    ? state.stepLogs.slice(0, 8).map(l => `
+        <div class="step-log-item">
+          <span><strong>${l.steps.toLocaleString()}歩</strong> ${l.memo ? `<span style="color:var(--muted);">(${escapeHtml(l.memo)})</span>` : ""}</span>
+          <span style="color:var(--muted);">${l.date} / 💎+${l.stones}</span>
+        </div>`).join("")
+    : `<div class="sub-text" style="text-align:center;padding:8px;">まだ歩数ログがありません。気軽に300歩からどうぞ！</div>`;
+
+  // Home deck summary
+  const summaryLines = state.deck.map((s, i) => {
+    const g = s.god ? getItemById(s.god) : null;
+    const w = s.weapon ? getItemById(s.weapon) : null;
+    if (!g && !w) return null;
+    return `<div>枠${i+1}：<strong>${g ? escapeHtml(g.name) : "—"}</strong> × <strong style="color:var(--cyan);">${w ? escapeHtml(w.name) : "—"}</strong></div>`;
+  }).filter(Boolean);
+  document.getElementById("home-deck-summary").innerHTML = summaryLines.length
+    ? summaryLines.join("")
+    : "まだ編成されていません。召喚ガチャを引いて「⚡ 最強自動編成」を押してみよう！";
+
+  renderDeck();
+  renderPassives();
+  renderMapAndProgress();
+  renderDex();
+  document.getElementById("expansion-status").textContent = `現在の増築済みアイテム数: ${(state.expansions || []).length}件`;
+}
+
+function renderDeck() {
+  const container = document.getElementById("deck-slots");
+  container.innerHTML = state.deck.map((slot, idx) => {
+    const g = slot.god ? getItemById(slot.god) : null;
+    const w = slot.weapon ? getItemById(slot.weapon) : null;
+    const sp = getSlotPower(slot);
+
+    const renderSide = (item, kind) => {
+      if (!item || !state.owned[item.id]) {
+        return `<div class="slot-picker" onclick="openDeckPicker(${idx}, '${kind}')"><div class="slot-empty">+ ${kind === 'god' ? '👑 神様を選ぶ' : '⚔️ 兵器を選ぶ'}</div></div>`;
+      }
+      const ow = state.owned[item.id];
+      return `
+        <div class="slot-picker filled r${item.rarity}" onclick="openDeckPicker(${idx}, '${kind}')">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span class="badge badge-r${item.rarity}">★${item.rarity}</span>
+            <span style="font-size:10px;color:var(--muted);">Lv.${ow.lv}${ow.dup ? ` +${ow.dup}` : ""}</span>
+          </div>
+          <div style="font-size:13px;font-weight:800;margin-top:2px;">${escapeHtml(item.name)}</div>
+          <div style="font-size:11px;color:var(--cyan);font-weight:700;">ATK ${fmtNum(getUnitAtk(item))}</div>
+        </div>
+      `;
+    };
+
+    return `
+      <div class="deck-slot">
+        <div class="deck-slot-head">
+          <span>第${idx + 1}防衛ペア</span>
+          <span style="color:var(--green);">戦力 ${fmtNum(sp.power)}</span>
+        </div>
+        <div class="deck-pair">
+          ${renderSide(g, "god")}
+          <div class="deck-x">×</div>
+          ${renderSide(w, "weapon")}
+        </div>
+        ${sp.tags.length ? `<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">${sp.tags.map(t => `<span class="badge" style="background:rgba(74,222,128,0.14);color:#86efac;">${t}</span>`).join("")}</div>` : ""}
+      </div>
+    `;
+  }).join("");
+}
+
+function renderPassives() {
+  const p = getArtifactPassives();
+  const tp = getTotalPower();
+  document.getElementById("passive-total-mult").textContent =
+    `×${p.mult.toFixed(2)}` + (tp.kawayagamiBoost ? " × 1.50(厠神)" : "");
+  document.getElementById("passive-list").innerHTML = p.breakdown.map(b => `
+    <div class="passive-item">
+      <div style="font-weight:800;color:var(--text);">${escapeHtml(b.name)}</div>
+      <div style="display:flex;justify-content:space-between;margin-top:2px;">
+        <span style="color:var(--muted);">${b.detail}</span>
+        <span style="color:var(--gold);font-weight:800;">+${b.pct}%</span>
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderMapAndProgress() {
+  const all = getAllItems();
+  const ownedCnt = all.filter(x => state.owned[x.id]).length;
+  const pct = Math.round((ownedCnt / all.length) * 100);
+  document.getElementById("map-progress").textContent = `発見: ${ownedCnt} / ${all.length} (${pct}%)`;
+  document.getElementById("global-map-box").innerHTML = renderGlobalMapSVG();
+}
+
+function renderDex() {
+  let items = getAllItems();
+  if (currentDexFilter === "god") items = items.filter(x => x.type === "god");
+  else if (currentDexFilter === "weapon") items = items.filter(x => x.type === "weapon");
+  else if (currentDexFilter === "owned") items = items.filter(x => state.owned[x.id]);
+  else if (currentDexFilter === "late") items = items.filter(x => x.lateBloomer);
+
+  items.sort((a, b) => {
+    const ao = state.owned[a.id] ? 1 : 0;
+    const bo = state.owned[b.id] ? 1 : 0;
+    if (ao !== bo) return bo - ao;
+    return b.rarity - a.rarity;
+  });
+
+  const grid = document.getElementById("dex-grid");
+  if (!items.length) {
+    grid.innerHTML = `<div class="sub-text" style="grid-column:1/-1;text-align:center;padding:16px;">該当する項目がありません</div>`;
+    return;
+  }
+
+  grid.innerHTML = items.map(it => {
+    const ow = state.owned[it.id];
+    return `
+      <div class="unit-card r${it.rarity} ${ow ? '' : 'unowned'}" onclick="openItemModal('${it.id}')">
+        ${getThumbHTML(it)}
+        <div class="unit-meta">
+          <span class="badge badge-r${it.rarity}">★${it.rarity}</span>
+          ${ow ? `<span class="badge" style="background:#1e293b;color:#fff;">Lv.${ow.lv}${ow.dup ? ` +${ow.dup}` : ""}</span>` : `<span class="badge" style="background:#334155;color:#94a3b8;">未所持</span>`}
+          ${it.lateBloomer ? '<span class="badge badge-late">大器晩成</span>' : ''}
+        </div>
+        <div class="unit-name">${escapeHtml(it.name)}</div>
+        <div class="unit-stat">
+          <span>${escapeHtml(it.group)}</span>
+          <span>ATK ${fmtNum(getUnitAtk(it))}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+// ============================================================
+// 9. BOOTSTRAP
+// ============================================================
+(async function init() {
+  loadState();
+  await loadAllCustomImages();
+  renderAll();
+})();
+</script>
+</body>
+</html>
