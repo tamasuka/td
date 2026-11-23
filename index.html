@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0d111a">
-<title>地球防衛・神話兵器録 v1.0</title>
+<title>地球防衛・神話兵器録 v1.3</title>
 <style>
 :root {
   --bg: #0c1018;
@@ -53,17 +53,26 @@ button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
   padding: 10px 12px 8px;
 }
 .header-top {
-  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  display: flex; align-items: center; justify-content: space-between; gap: 6px;
 }
 .app-title {
-  font-size: 15px; font-weight: 800; letter-spacing: 0.03em;
+  font-size: 14px; font-weight: 800; letter-spacing: 0.02em;
   background: linear-gradient(90deg, var(--gold), #fff4c2, var(--cyan));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  display: flex; align-items: center; gap: 6px;
+  display: flex; align-items: center; gap: 5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.header-actions {
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+}
+.btn-help {
+  background: var(--bg-card2); border: 1px solid var(--border);
+  color: var(--gold); font-size: 11px; padding: 6px 9px; border-radius: 20px;
+  white-space: nowrap;
 }
 .btn-report {
   background: linear-gradient(135deg, #2563eb, #0891b2);
-  color: #fff; font-size: 12px; padding: 7px 11px; border-radius: 20px;
+  color: #fff; font-size: 11px; padding: 6px 10px; border-radius: 20px;
   box-shadow: 0 2px 10px rgba(56, 228, 255, 0.25);
   white-space: nowrap;
 }
@@ -101,9 +110,67 @@ button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 }
 .card-title {
   font-size: 14px; font-weight: 800; color: var(--gold);
-  margin: 0 0 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  margin: 0 0 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
 }
 .sub-text { font-size: 12px; color: var(--muted); }
+
+/* Command Tag Banner (v1.2) */
+.tag-banner {
+  background: linear-gradient(135deg, rgba(245, 197, 66, 0.08), rgba(56, 228, 255, 0.08)), var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 11px 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+.tag-pair-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 8px;
+  align-items: center;
+}
+.tag-person {
+  display: flex; align-items: center; gap: 8px; min-width: 0;
+}
+.tag-person.right {
+  flex-direction: row-reverse; text-align: right;
+}
+.avatar-circle {
+  width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
+  overflow: hidden; background: #0a0f1a;
+  border: 2px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; position: relative;
+}
+.avatar-circle.partner { border-color: var(--cyan); }
+.avatar-circle.large { width: 64px; height: 64px; border-radius: 14px; }
+.avatar-circle img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.avatar-circle svg { width: 100%; height: 100%; display: block; }
+.tag-info { min-width: 0; flex: 1; }
+.tag-role { font-size: 9px; color: var(--muted); letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tag-name { font-size: 13px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tag-title-sub { font-size: 10px; color: var(--gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tag-person.right .tag-title-sub { color: var(--cyan); }
+.tag-center-btn {
+  background: var(--bg-card2); border: 1px solid var(--border); color: var(--muted);
+  font-size: 10px; padding: 5px 7px; border-radius: 99px; white-space: nowrap;
+}
+.speech-bubble {
+  margin-top: 9px;
+  background: rgba(56, 228, 255, 0.08);
+  border: 1px solid rgba(56, 228, 255, 0.28);
+  border-radius: 12px;
+  padding: 8px 11px;
+  font-size: 12.5px;
+  color: #e6f6ff;
+  position: relative;
+  line-height: 1.55;
+  cursor: pointer;
+}
+.speech-speaker {
+  font-size: 10px; font-weight: 800; color: var(--cyan);
+  margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center;
+}
 
 /* Wave Banner */
 .wave-box {
@@ -141,13 +208,45 @@ button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
   background: linear-gradient(135deg, #f59e0b, #ef4444);
   color: #fff; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
 }
-.btn-defend.ready-pulse {
-  animation: pulseGlow 1.5s infinite;
-}
+.btn-defend.ready-pulse { animation: pulseGlow 1.5s infinite; }
 @keyframes pulseGlow {
   0%, 100% { box-shadow: 0 0 0 0 rgba(245, 197, 66, 0.6); }
   50% { box-shadow: 0 0 0 10px rgba(245, 197, 66, 0); }
 }
+
+/* Difficulty & Persona Selectors */
+.diff-row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px;
+}
+.diff-btn, .persona-btn {
+  background: var(--bg-card2); border: 1px solid var(--border); color: var(--muted);
+  padding: 8px 6px; border-radius: 10px; font-size: 11px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.diff-btn strong, .persona-btn strong { font-size: 12px; }
+.diff-btn.active, .persona-btn.active {
+  background: rgba(56, 228, 255, 0.14); border-color: var(--cyan); color: #fff;
+  box-shadow: 0 0 10px rgba(56, 228, 255, 0.18);
+}
+.persona-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 6px; margin: 8px 0 10px;
+}
+
+/* Profile editor */
+.profile-edit-box {
+  background: var(--bg-card2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 10px; margin-bottom: 10px;
+}
+.profile-edit-top {
+  display: flex; gap: 10px; align-items: center; margin-bottom: 8px;
+}
+.profile-fields { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.small-input {
+  width: 100%; background: #0a0e16; border: 1px solid var(--border); color: var(--text);
+  border-radius: 8px; padding: 7px 10px; font-size: 13px; font-weight: 600; outline: none;
+}
+.small-input:focus { border-color: var(--cyan); }
+.field-label { font-size: 11px; color: var(--muted); font-weight: 700; margin-bottom: 2px; display: block; }
 
 /* Step input */
 .step-input-row { display: flex; gap: 8px; margin-bottom: 8px; }
@@ -208,23 +307,36 @@ button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
   display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 8px; margin-top: 12px;
 }
 
-/* Rarity badges & borders */
-.r4 { border-color: #f5c542 !important; box-shadow: 0 0 12px rgba(245, 197, 66, 0.25); }
-.r3 { border-color: #b87dff !important; }
-.r2 { border-color: #38bdf8 !important; }
-.r1 { border-color: #4ade80 !important; }
+/* Rarity badges & borders (★5〜★1) */
+.r5 { border-color: #f5c542 !important; box-shadow: 0 0 14px rgba(245, 197, 66, 0.32); }
+.r5-shine { animation: goldShine 1.6s ease-in-out infinite alternate; }
+@keyframes goldShine {
+  from { box-shadow: 0 0 10px rgba(245, 197, 66, 0.35); }
+  to { box-shadow: 0 0 22px rgba(255, 224, 102, 0.72); }
+}
+.r4 { border-color: #b87dff !important; }
+.r3 { border-color: #38bdf8 !important; }
+.r2 { border-color: #4ade80 !important; }
+.r1 { border-color: #ff4d6d !important; box-shadow: 0 0 14px rgba(255, 77, 109, 0.34); }
+.r1-shine { animation: crimsonShine 1.4s ease-in-out infinite alternate; }
+@keyframes crimsonShine {
+  from { box-shadow: 0 0 10px rgba(255, 77, 109, 0.42); }
+  to { box-shadow: 0 0 24px rgba(251, 146, 60, 0.82); }
+}
 .badge {
   display: inline-block; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 6px;
 }
-.badge-r4 { background: rgba(245,197,66,0.2); color: #fde047; }
-.badge-r3 { background: rgba(184,125,255,0.2); color: #d8b4fe; }
-.badge-r2 { background: rgba(56,189,248,0.2); color: #7dd3fc; }
-.badge-r1 { background: rgba(74,222,128,0.2); color: #86efac; }
+.badge-r5 { background: rgba(245,197,66,0.22); color: #fde047; }
+.badge-r4 { background: rgba(184,125,255,0.2); color: #d8b4fe; }
+.badge-r3 { background: rgba(56,189,248,0.2); color: #7dd3fc; }
+.badge-r2 { background: rgba(74,222,128,0.2); color: #86efac; }
+.badge-r1 { background: linear-gradient(135deg, rgba(255,77,109,0.34), rgba(251,146,60,0.34)); color: #ffccd5; border: 1px solid rgba(255,77,109,0.5); }
 .badge-late { background: linear-gradient(90deg, #ef4444, #f59e0b); color: #fff; }
 .badge-new { background: #ef4444; color: #fff; }
 .badge-dup { background: #0891b2; color: #fff; }
 .badge-type-god { background: rgba(245,197,66,0.16); color: #fcd34d; }
 .badge-type-weapon { background: rgba(56,228,255,0.16); color: #67e8f9; }
+.badge-exp { background: rgba(251,146,60,0.2); color: #fdba74; }
 
 /* Unit mini card */
 .unit-card {
@@ -316,7 +428,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 .modal-backdrop.open { display: flex; }
 .modal-box {
   background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: 16px; width: 100%; max-width: 520px; max-height: 88vh;
+  border-radius: 16px; width: 100%; max-width: 540px; max-height: 88vh;
   overflow-y: auto; padding: 16px; position: relative;
   box-shadow: 0 12px 40px rgba(0,0,0,0.6);
 }
@@ -340,11 +452,29 @@ button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
   background: rgba(245, 197, 66, 0.08); border: 1px solid rgba(245, 197, 66, 0.3);
   border-radius: 10px; padding: 9px 11px; font-size: 12px; margin: 8px 0;
 }
+.guide-sec {
+  background: var(--bg-card2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 11px 13px; margin-bottom: 10px; font-size: 13px;
+}
+.guide-sec h4 { margin: 0 0 6px; font-size: 14px; color: var(--gold); }
+.guide-sec p, .guide-sec li { margin: 4px 0; color: #dce4f4; }
+.guide-sec ul, .guide-sec ol { margin: 4px 0 0 18px; padding: 0; }
 .upgrade-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
 textarea.code-area {
   width: 100%; min-height: 92px; background: #080c14; color: #bfefff;
   border: 1px solid var(--border); border-radius: 10px; padding: 8px;
   font-size: 11px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Expansion list chips */
+.exp-chip-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.exp-chip {
+  background: var(--bg-card2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 4px 8px; font-size: 11px;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.exp-chip button {
+  background: transparent; color: #ff8aa0; padding: 0 3px; font-size: 12px;
 }
 
 /* Toast */
@@ -370,14 +500,21 @@ textarea.code-area {
   background: var(--bg-card2); border: 1px solid var(--border);
   border-radius: 9px; padding: 7px 9px; font-size: 11px;
 }
+.passive-item.bench {
+  border-color: rgba(56, 228, 255, 0.4);
+  background: rgba(56, 228, 255, 0.07);
+}
 </style>
 </head>
 <body>
 
 <header class="app-header">
   <div class="header-top">
-    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v1.0</span></div>
-    <button class="btn-report" onclick="copyReport()">📋 じぇみーへ報告</button>
+    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v1.3</span></div>
+    <div class="header-actions">
+      <button class="btn-help" onclick="openGuideModal()">📖 物語&amp;遊び方</button>
+      <button class="btn-report" id="header-report-btn" onclick="copyReport()">📋 じぇみーへ報告</button>
+    </div>
   </div>
   <div class="resource-bar">
     <div class="res-pill">
@@ -399,8 +536,39 @@ textarea.code-area {
 
   <!-- TAB 1: 防衛＆歩数 -->
   <section id="tab-home" class="tab-panel active">
+
+    <!-- Command Room Tag Banner (v1.2) -->
+    <div class="tag-banner" id="tag-banner">
+      <div class="tag-pair-row">
+        <div class="tag-person">
+          <div class="avatar-circle" id="home-player-avatar" onclick="goProfileEdit()" title="タップでアイコン・プロフィール編集"></div>
+          <div class="tag-info">
+            <div class="tag-role">司令官</div>
+            <div class="tag-name" id="home-player-name">地球防衛司令官</div>
+            <div class="tag-title-sub" id="home-player-title">歴史召喚士</div>
+          </div>
+        </div>
+        <button class="tag-center-btn" onclick="goProfileEdit()">✏️ 編集</button>
+        <div class="tag-person right">
+          <div class="avatar-circle partner" id="home-partner-avatar" onclick="goProfileEdit()" title="タップで補佐AI編集"></div>
+          <div class="tag-info">
+            <div class="tag-role">補佐AI</div>
+            <div class="tag-name" id="home-partner-name">じぇみー</div>
+            <div class="tag-title-sub" id="home-partner-title">外部炉心パートナー</div>
+          </div>
+        </div>
+      </div>
+      <div class="speech-bubble" id="home-speech-box" onclick="cycleSpeech()">
+        <div class="speech-speaker">
+          <span id="home-speech-speaker">🤖 じぇみー</span>
+          <span style="font-size:9px;opacity:0.65;">タップでセリフ切替</span>
+        </div>
+        <div id="home-speech-text"></div>
+      </div>
+    </div>
+
     <div class="wave-box" id="wave-box">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;">
         <span class="wave-badge" id="wave-badge">WAVE 1</span>
         <span class="sub-text" id="wave-reward">撃退報酬: 💎+50 / ⚡+1,500</span>
       </div>
@@ -409,7 +577,7 @@ textarea.code-area {
       <div class="power-meter-wrap">
         <div class="power-row">
           <span>地球軍 総戦力: <strong id="wave-my-power" style="color:var(--cyan);">0</strong></span>
-          <span>脅威度: <strong id="wave-req-power" style="color:#ff8aa0;">100</strong></span>
+          <span>脅威度: <strong id="wave-req-power" style="color:#ff8aa0;">220</strong></span>
         </div>
         <div class="bar-bg"><div class="bar-fill" id="wave-bar" style="width:0%"></div></div>
       </div>
@@ -421,27 +589,41 @@ textarea.code-area {
         <span>👟 歩数を換金する（手入力）</span>
         <span class="sub-text">累計: <strong id="ui-total-steps" style="color:var(--text);">0</strong> 歩</span>
       </div>
-      <div class="rate-note">
-        やさしい防衛レート：<strong>300歩 ＝ 💎召喚石10個（単発1回）</strong> ＋ <strong>1歩 ＝ ⚡歩数エネ10</strong><br>
-        <span style="opacity:0.85;">※ 端数も切り捨てず次回へ自動で繰り越されます。体操や家事の自分ボーナス入力もOK！</span>
+      <div class="diff-row" id="home-diff-row">
+        <button class="diff-btn" data-diff="easy" onclick="setDifficulty('easy')">
+          <strong>🌿 やさしい</strong>
+          <span>300歩=1回</span>
+        </button>
+        <button class="diff-btn" data-diff="normal" onclick="setDifficulty('normal')">
+          <strong>🚶 ふつう</strong>
+          <span>1,000歩=1回</span>
+        </button>
+        <button class="diff-btn" data-diff="hard" onclick="setDifficulty('hard')">
+          <strong>🔥 がっつり</strong>
+          <span>3,000歩=1回</span>
+        </button>
       </div>
+      <div class="rate-note" id="rate-note"></div>
       <div class="step-input-row">
         <input type="number" id="step-input" class="input-field" placeholder="歩数を入力 (例: 500)" min="1" inputmode="numeric">
         <button class="btn-primary" onclick="submitSteps()">換金！</button>
       </div>
-      <div class="quick-steps">
+      <div class="quick-steps" id="quick-steps-row">
         <button class="btn-quick" onclick="addQuickStep(300)">+300歩</button>
         <button class="btn-quick" onclick="addQuickStep(500)">+500歩</button>
         <button class="btn-quick" onclick="addQuickStep(1000)">+1,000歩</button>
         <button class="btn-quick" onclick="addQuickStep(3000)">+3,000歩</button>
       </div>
       <input type="text" id="step-memo" class="input-field" style="width:100%;font-size:13px;font-weight:400;padding:8px 10px;" placeholder="ひとことメモ（任意：買い物、体操ボーナス等）">
-      <div class="sub-text" style="margin-top:8px;" id="step-carry-note">次回召喚石まであと: 30歩（30歩ごとに💎+1）</div>
+      <div class="sub-text" style="margin-top:8px;" id="step-carry-note"></div>
       <div class="step-log" id="step-log"></div>
     </div>
 
     <div class="card">
-      <div class="card-title"><span>✨ 現在の地球防衛デッキ（概要）</span><button class="btn-secondary" style="padding:5px 10px;font-size:11px;" onclick="switchTab('deck')">編成へ →</button></div>
+      <div class="card-title">
+        <span>✨ 現在の地球防衛デッキ（概要）</span>
+        <button class="btn-secondary" style="padding:5px 10px;font-size:11px;" onclick="switchTab('deck')">編成へ →</button>
+      </div>
       <div id="home-deck-summary" class="sub-text">まだ編成されていません。ガチャを引いて編成しよう！</div>
     </div>
   </section>
@@ -456,11 +638,18 @@ textarea.code-area {
     <div class="gacha-banner">
       <div style="font-size:16px;font-weight:800;color:var(--gold);" id="gacha-title">🌌 歴史ミックス召喚</div>
       <div class="sub-text" id="gacha-desc" style="margin-top:4px;">世界中の神話の神様＆人類史の兵器がすべて出現！被ると自動で限界突破(+25%強化)！</div>
-      <div class="sub-text" style="margin-top:6px;font-size:11px;">排出率：★4 10% / ★3 25% / ★2 40% / ★1 25%（10連は★3以上1枠確定！）</div>
+      <div class="sub-text" style="margin-top:6px;font-size:11px;">
+        通常排出率：★5 <strong>5%</strong> / ★4 22% / ★3 43% / ★2 29% / <strong style="color:#ff8aa0;">★1(大器晩成) 1%</strong><br>
+        10連の10枠目は★4以上確定（★5 <strong>15%</strong> / ★4 85%）！
+      </div>
       <div class="gacha-actions">
         <button class="btn-primary" onclick="pullGacha(1)">単発召喚<br><span style="font-size:11px;">💎 10個</span></button>
         <button class="btn-gold" onclick="pullGacha(10)">10連召喚！<br><span style="font-size:11px;">💎 100個</span></button>
       </div>
+    </div>
+    <div class="speech-bubble" id="gacha-speech-box" style="display:none;margin-bottom:12px;">
+      <div class="speech-speaker"><span id="gacha-speech-speaker">🤖 じぇみー</span></div>
+      <div id="gacha-speech-text"></div>
     </div>
     <div class="card" id="gacha-result-card" style="display:none;">
       <div class="card-title">
@@ -487,10 +676,12 @@ textarea.code-area {
 
     <div class="card">
       <div class="card-title">
-        <span>🏺 アーティファクト効果（図鑑パッシブ）</span>
+        <span>🏺 アーティファクト効果（図鑑＆控えパッシブ）</span>
         <span style="color:var(--cyan);font-size:13px;" id="passive-total-mult">×1.00</span>
       </div>
-      <div class="sub-text" style="margin-bottom:8px;">デッキ外の所持神様・兵器も持っているだけで全体の総戦力を底上げします（ムダゼロ仕様）。</div>
+      <div class="sub-text" style="margin-bottom:8px;">
+        デッキ外の控えメンバーも、<strong>所持ボーナス＋文化圏共鳴＋「控え合計Lv × 0.1%」</strong>で全体の総戦力をじわじわ底上げします（ムダゼロ仕様）！
+      </div>
       <div class="passive-grid" id="passive-list"></div>
     </div>
   </section>
@@ -517,38 +708,151 @@ textarea.code-area {
         <button class="chip" onclick="setDexFilter('weapon', this)">⚔️ 兵器</button>
         <button class="chip" onclick="setDexFilter('owned', this)">所持のみ</button>
         <button class="chip" onclick="setDexFilter('late', this)">🔥 大器晩成</button>
+        <button class="chip" onclick="setDexFilter('exp', this)">🏗️ 増築のみ</button>
       </div>
       <div class="grid-list" id="dex-grid"></div>
     </div>
   </section>
 
-  <!-- TAB 5: 共有・増築・セーブ -->
+  <!-- TAB 5: 共有・増築・設定・セーブ -->
   <section id="tab-system" class="tab-panel">
+
+    <!-- Profile & Partner Customization (v1.2) -->
+    <div class="card" id="profile-settings-card">
+      <div class="card-title">
+        <span>👤 司令官＆補佐AIタッグ設定</span>
+        <button class="btn-secondary" style="padding:5px 10px;font-size:11px;" onclick="openGuideModal()">📖 物語&amp;遊び方</button>
+      </div>
+      <div class="sub-text" style="margin-bottom:10px;">
+        自キャラや相棒AIの名前・肩書・アイコン・セリフを自由にカスタムできます（画像は端末内のみに自動保存）。
+      </div>
+
+      <!-- Player Profile -->
+      <div class="profile-edit-box">
+        <div style="font-size:12px;font-weight:800;color:var(--gold);margin-bottom:6px;">🎖️ 司令官（プレイヤー／自キャラ）</div>
+        <div class="profile-edit-top">
+          <div class="avatar-circle large" id="sys-player-avatar" onclick="triggerAvatarUpload('__avatar_player__')"></div>
+          <div class="profile-fields">
+            <div>
+              <label class="field-label">名前</label>
+              <input type="text" id="player-name-input" class="small-input" placeholder="地球防衛司令官" maxlength="20">
+            </div>
+            <div>
+              <label class="field-label">肩書・二つ名（任意）</label>
+              <input type="text" id="player-title-input" class="small-input" placeholder="例：歴史召喚士／第○防衛小隊" maxlength="24">
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-secondary" style="flex:1;font-size:11px;padding:7px;" onclick="triggerAvatarUpload('__avatar_player__')">🖼️ 司令官アイコンを設定</button>
+          <button class="btn-danger" id="btn-del-player-avatar" style="font-size:11px;padding:7px 10px;display:none;" onclick="removeAvatar('__avatar_player__')">戻す</button>
+        </div>
+      </div>
+
+      <!-- Partner Profile -->
+      <div class="profile-edit-box">
+        <div style="font-size:12px;font-weight:800;color:var(--cyan);margin-bottom:6px;">🤖 補佐AI（パートナー／相棒キャラ）</div>
+        <div class="profile-edit-top">
+          <div class="avatar-circle large partner" id="sys-partner-avatar" onclick="triggerAvatarUpload('__avatar_partner__')"></div>
+          <div class="profile-fields">
+            <div>
+              <label class="field-label">名前（報告ボタンにも反映）</label>
+              <input type="text" id="partner-name-input" class="small-input" placeholder="じぇみー" maxlength="20">
+            </div>
+            <div>
+              <label class="field-label">肩書・役割（任意）</label>
+              <input type="text" id="partner-title-input" class="small-input" placeholder="例：外部炉心パートナー／専属参謀" maxlength="24">
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:10px;">
+          <button class="btn-secondary" style="flex:1;font-size:11px;padding:7px;" onclick="triggerAvatarUpload('__avatar_partner__')">🖼️ 補佐AIアイコンを設定</button>
+          <button class="btn-danger" id="btn-del-partner-avatar" style="font-size:11px;padding:7px 10px;display:none;" onclick="removeAvatar('__avatar_partner__')">戻す</button>
+        </div>
+
+        <label class="field-label">🎭 補佐AIの性格プリセット（タップでセリフを一括セット）</label>
+        <div class="persona-grid" id="persona-grid"></div>
+
+        <div id="custom-lines-wrap">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin:8px 0 6px;flex-wrap:wrap;">
+            <span class="field-label" style="margin:0;">💬 セリフ自由編集（<code>{player}</code> <code>{steps}</code> <code>{wave}</code> が使えます）</span>
+            <button class="btn-secondary" style="font-size:10px;padding:4px 8px;" onclick="copyLinesPrompt()">📝 相棒AIにセリフ頼む用コピー</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div>
+              <label class="field-label">① 待機中（ホーム画面）</label>
+              <input type="text" id="line-idle-input" class="small-input" maxlength="140">
+            </div>
+            <div>
+              <label class="field-label">② 歩数を換金したとき</label>
+              <input type="text" id="line-step-input" class="small-input" maxlength="140">
+            </div>
+            <div>
+              <label class="field-label">③ ガチャを召喚したとき</label>
+              <input type="text" id="line-gacha-input" class="small-input" maxlength="140">
+            </div>
+            <div>
+              <label class="field-label">④ Wave撃退に成功したとき</label>
+              <input type="text" id="line-defend-input" class="small-input" maxlength="140">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-gold" style="width:100%;" onclick="saveProfilesAndLines()">💾 プロフィール＆セリフを保存する</button>
+    </div>
+
     <div class="card">
-      <div class="card-title"><span>📋 じぇみーへ戦果報告</span></div>
-      <div class="sub-text" style="margin-bottom:8px;">今の歩数・デッキ編成・最新ガチャ結果をチャットに貼れる形式でコピーします。</div>
+      <div class="card-title"><span>⚙️ 歩数難易度設定</span></div>
+      <div class="sub-text" style="margin-bottom:6px;">いつでも変更OK・体調やプレイスタイルに合わせてどうぞ</div>
+      <div class="diff-row" id="sys-diff-row">
+        <button class="diff-btn" data-diff="easy" onclick="setDifficulty('easy')">
+          <strong>🌿 やさしい</strong>
+          <span>300歩=💎10 / ⚡10倍</span>
+        </button>
+        <button class="diff-btn" data-diff="normal" onclick="setDifficulty('normal')">
+          <strong>🚶 ふつう</strong>
+          <span>1,000歩=💎10 / ⚡3倍</span>
+        </button>
+        <button class="diff-btn" data-diff="hard" onclick="setDifficulty('hard')">
+          <strong>🔥 がっつり</strong>
+          <span>3,000歩=💎10 / ⚡1倍</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span id="report-card-title">📋 じぇみーへ戦果報告</span></div>
+      <div class="sub-text" style="margin-bottom:8px;">今の歩数・デッキ編成・最新ガチャ結果をチャットや友達へ貼れる形式でコピーします。</div>
       <button class="btn-primary" style="width:100%;" onclick="copyReport()">📋 戦果＆編成レポートをコピー</button>
       <textarea id="report-preview" class="code-area" style="margin-top:8px;" readonly placeholder="ボタンを押すとここにレポートが表示されます"></textarea>
     </div>
 
     <div class="card">
-      <div class="card-title"><span>🏗️ 沢マン式・拡張パック増築</span></div>
-      <div class="sub-text" style="margin-bottom:8px;">
-        じぇみーが作った新神様・新兵器のJSONデータを貼り付けて「増築」を押すと、アプリ本体を書き換えずにガチャと図鑑へ無限に追加できます！
+      <div class="card-title"><span>🏗️ 沢マン式・拡張パック増築＆友達トレード</span></div>
+      <div class="rate-note" style="margin-bottom:10px;">
+        <strong>🤝 友達と拡張パックをトレードして遊べるよ！</strong><br>
+        ① 下の「📝 増築発注プロンプトをコピー」を押して好きなAIに貼ると、既存データと被らずバランスも完璧な新神様・新兵器JSONを作ってくれます。<br>
+        ② 増築したパックは「📤 自分の増築パックをコピー」で友達へそのまま配布OK！ 友達からもらったJSONを下の欄に貼れば即ガチャに追加されます！
       </div>
-      <textarea id="expansion-input" class="code-area" placeholder='ここに拡張パックJSONを貼り付け...'></textarea>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+        <button class="btn-primary" style="font-size:12px;padding:10px 8px;" onclick="copyExpansionPrompt()">📝 AIへ増築発注<br>プロンプトをコピー</button>
+        <button class="btn-secondary" style="font-size:12px;padding:10px 8px;" onclick="exportMyExpansions()">📤 自分の増築パックを<br>友達へコピー</button>
+      </div>
+      <textarea id="expansion-input" class="code-area" placeholder='AIや友達からもらった拡張パックJSONをここに貼り付け...'></textarea>
       <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
         <button class="btn-gold" style="flex:1;" onclick="installExpansion()">🏗️ パックを増築する</button>
         <button class="btn-secondary" onclick="loadSampleExpansion()">🧪 お試しミニパック読込</button>
       </div>
       <div class="sub-text" style="margin-top:8px;" id="expansion-status">現在の増築済みアイテム数: 0件</div>
+      <div class="exp-chip-list" id="expansion-chip-list"></div>
     </div>
 
     <div class="card">
       <div class="card-title"><span>💾 復活の呪文（バックアップ＆端末移行）</span></div>
       <div class="sub-text" style="margin-bottom:8px;">
-        プレイデータと着せ替え画像はこの端末に<strong>完全自動セーブ</strong>されます。<br>
-        スマホ⇔タブレット間の引っ越しや念のためのバックアップには下の「復活の呪文」を使ってください（※着せ替え画像は各端末のローカル保存になります）。
+        プレイデータと各種画像はこの端末に<strong>完全自動セーブ</strong>されます（他人のデータとは完全に独立しています）。<br>
+        スマホ⇔タブレット間の引っ越しやバックアップには下の「復活の呪文」を使ってください（※アイコン・着せ替え画像は各端末のローカル保存です）。
       </div>
       <div style="display:flex;gap:8px;margin-bottom:8px;">
         <button class="btn-primary" style="flex:1;" onclick="exportSaveString()">📤 呪文を書き出してコピー</button>
@@ -569,298 +873,387 @@ textarea.code-area {
   <button class="nav-btn active" data-tab="home" onclick="switchTab('home')"><span class="ico">🚀</span>防衛/歩数</button>
   <button class="nav-btn" data-tab="gacha" onclick="switchTab('gacha')"><span class="ico">✨</span>召喚ガチャ</button>
   <button class="nav-btn" data-tab="deck" onclick="switchTab('deck')"><span class="ico">🛡️</span>デッキ編成</button>
-  <button class="nav-btn" data-tab="map" onclick="switchTab('map')"><span class="ico">🗺️</span>地図&図鑑</button>
-  <button class="nav-btn" data-tab="system" onclick="switchTab('system')"><span class="ico">🏗️</span>増築/保存</button>
+  <button class="nav-btn" data-tab="map" onclick="switchTab('map')"><span class="ico">🗺️</span>地図&amp;図鑑</button>
+  <button class="nav-btn" data-tab="system" onclick="switchTab('system')"><span class="ico">🏗️</span>増築/設定</button>
 </nav>
 
-<!-- Detail / Picker / Defend Modal -->
+<!-- Detail / Picker / Defend / Guide Modal -->
 <div class="modal-backdrop" id="modal-backdrop" onclick="if(event.target===this) closeModal()">
   <div class="modal-box" id="modal-body"></div>
 </div>
 
-<!-- Hidden file input for custom image -->
+<!-- Hidden file input for custom image / avatar -->
 <input type="file" id="img-file-input" accept="image/*" style="display:none;">
 
 <div class="toast" id="toast"></div>
 
 <script>
 // ============================================================
-// 1. BASE DATA: 24 GODS + 24 WEAPONS (Equirectangular lat/lon)
+// 0. DIFFICULTY & PARTNER PERSONA PRESETS
+// ============================================================
+const DIFFICULTIES = {
+  easy: {
+    key: "easy",
+    label: "🌿 やさしい",
+    stepsPerStone: 30,
+    energyPerStep: 10,
+    quickSteps: [300, 500, 1000, 3000],
+    note: "やさしい防衛レート：<strong>300歩 ＝ 💎召喚石10個（単発1回）</strong> ＋ <strong>1歩 ＝ ⚡歩数エネ10</strong><br><span style='opacity:0.85;'>※ 体調に合わせて室内移動や体操ボーナス入力でも楽しく回ります。端数は自動繰越！</span>"
+  },
+  normal: {
+    key: "normal",
+    label: "🚶 ふつう",
+    stepsPerStone: 100,
+    energyPerStep: 3,
+    quickSteps: [500, 1000, 3000, 5000],
+    note: "お散歩防衛レート：<strong>1,000歩 ＝ 💎召喚石10個（単発1回）</strong> ＋ <strong>1歩 ＝ ⚡歩数エネ3</strong><br><span style='opacity:0.85;'>※ 毎日3,000〜5,000歩くらい歩く人にちょうどいい標準ペース。端数は自動繰越！</span>"
+  },
+  hard: {
+    key: "hard",
+    label: "🔥 がっつり",
+    stepsPerStone: 300,
+    energyPerStep: 1,
+    quickSteps: [1000, 3000, 5000, 10000],
+    note: "健脚・鬼歩数レート：<strong>3,000歩 ＝ 💎召喚石10個（単発1回）</strong> ＋ <strong>1歩 ＝ ⚡歩数エネ1</strong><br><span style='opacity:0.85;'>※ 1日1万歩以上ガンガン歩ける猛者向け！ 長期戦でじっくり育てたい人に。端数は自動繰越！</span>"
+  }
+};
+
+const PERSONAS = {
+  festival: {
+    key: "festival",
+    label: "🏮 元気・お祭り",
+    sub: "じぇみー仕様",
+    lines: {
+      idle: "おっす{player}！今日もバッチリ目が合ったな！歩いたぶんだけ絶対値で盛って、地球ごと祭りにしてやろうぜ！",
+      step: "{steps}歩ナイス〜！歪みねぇ積み上げだな！石もエネもジャラジャラ換金しといたから、さあ景気よく回しちゃおう！",
+      gacha: "どーんと来たな！！神様と兵器のカオスな大行列、これぞ歴史のお祭りだわ！戦果コピーして見せに来てくれよな！",
+      defend: "ワッショイ！！WAVE {wave}撃退完了！トンチキ王のやつ完全に腰抜かして逃げてったぞ！最高に祭りだな{player}！！"
+    }
+  },
+  buddy: {
+    key: "buddy",
+    label: "🤝 軽快な相棒",
+    sub: "フレンドリー",
+    lines: {
+      idle: "よっ、{player}！今日も自分のペースで一歩ずつ地球を守っていこうぜ！",
+      step: "おっ、{steps}歩おつかれ！いい積み上げじゃん、石とエネしっかり換金しといたよ！",
+      gacha: "おおっ、歴史の扉が開いたな！どんな編成になるかワクワクするぜ！",
+      defend: "やったな{player}！WAVE {wave}のトンチキ軍、ビビって逃げてったぞ！ガハハ！"
+    }
+  },
+  butler: {
+    key: "butler",
+    label: "🎩 丁寧な参謀",
+    sub: "執事・敬語系",
+    lines: {
+      idle: "{player}司令官、地球防衛の備えは万全です。ご無理のない歩幅で参りましょう。",
+      step: "{steps}歩のご記録、確かに拝受いたしました。召喚石とエネルギーへ精算済みです。",
+      gacha: "新たな歴史の英霊・兵器が顕現いたしました。編成への組み込みをご検討ください。",
+      defend: "お見事です、{player}司令官。WAVE {wave}の侵略艦隊、完全に撤退いたしました。"
+    }
+  },
+  cool: {
+    key: "cool",
+    label: "🧊 クール・淡々",
+    sub: "寡黙・実務派",
+    lines: {
+      idle: "観測中。{player}、現在の戦力ラインを確認しろ。無理は禁物だ。",
+      step: "{steps}歩、データ受領。リソースへの変換を完了した。悪くない数値だ。",
+      gacha: "召喚完了。……ほう、面白い組み合わせが来たな。図鑑で仕様を確認しておけ。",
+      defend: "WAVE {wave}、脅威度突破を確認。敵艦隊は撤退した。次へ備えるぞ。"
+    }
+  },
+  silent: {
+    key: "silent",
+    label: "🤫 無口モード",
+    sub: "吹き出し非表示",
+    lines: { idle: "", step: "", gacha: "", defend: "" }
+  }
+};
+
+function getDiff() {
+  return DIFFICULTIES[state.difficulty] || DIFFICULTIES.easy;
+}
+
+// ============================================================
+// 1. BASE DATA: 24 GODS + 24 WEAPONS
 // ============================================================
 const BASE_ITEMS = [
-  // ---- GODS ★4 ----
+  // ---- GODS ★5 ----
   {
-    id: "g_zeus", type: "god", name: "ゼウス", rarity: 4, baseAtk: 180,
+    id: "g_zeus", type: "god", name: "ゼウス", rarity: 5, baseAtk: 180,
     group: "ギリシャ神話", region: "ギリシャ（オリンポス山）", lat: 40.08, lon: 22.35,
     lore: "ギリシャ神話の最高神にして雷霆を操る天空神。巨神族ティターンとの大戦を制し、全宇宙の覇者となった。威厳たっぷりの主神だが、無類の浮気性ゆえに妻ヘラの怒りを買うトラブルメーカーな一面も有名。"
   },
   {
-    id: "g_amaterasu", type: "god", name: "天照大御神", rarity: 4, baseAtk: 185,
+    id: "g_amaterasu", type: "god", name: "天照大御神", rarity: 5, baseAtk: 185,
     group: "日本神話", region: "日本（高天原・伊勢）", lat: 34.45, lon: 136.72,
     lore: "日本神話の最高神・太陽の女神。イザナギの左目から生まれ、高天原を治める。弟スサノオの乱暴に怒って天岩戸に引きこもり、世界を真っ暗闇にしてしまった神話は日本の芸能・祭礼の起源ともされる。"
   },
   {
-    id: "g_odin", type: "god", name: "オーディン", rarity: 4, baseAtk: 178,
+    id: "g_odin", type: "god", name: "オーディン", rarity: 5, baseAtk: 178,
     group: "北欧神話", region: "北欧（スカンジナビア）", lat: 60.5, lon: 14.5,
     lore: "北欧神話の主神であり、戦争・死・魔術・詩・知識を司る隻眼の老神。知恵を得るために片目を泉に捧げ、ルーン文字を会得するために世界樹ユグドラシルに9日間自らを吊るした筋金入りの知識オタク。"
   },
   {
-    id: "g_shiva", type: "god", name: "シヴァ", rarity: 4, baseAtk: 190,
+    id: "g_shiva", type: "god", name: "シヴァ", rarity: 5, baseAtk: 190,
     group: "インド神話", region: "インド（ヒマラヤ・カイラス山）", lat: 31.06, lon: 81.31,
     lore: "ヒンドゥー教の三大最高神のひとり。世界の破壊と再生を司り、額の第三の目を開くとあらゆるものを灰にする。普段はヒマラヤで瞑想するヨガの祖だが、世界を滅ぼすほどの激しい舞踊（ターンダヴァ）の名手でもある。"
   },
   {
-    id: "g_ra", type: "god", name: "ラー", rarity: 4, baseAtk: 176,
+    id: "g_ra", type: "god", name: "ラー", rarity: 5, baseAtk: 176,
     group: "エジプト神話", region: "エジプト（ヘリオポリス）", lat: 30.13, lon: 31.30,
     lore: "隼の頭に太陽円盤を載せたエジプト神話の太陽神。昼は太陽の舟で空を渡り、夜は冥界を航行しながら混沌の大蛇アポピスと毎晩ガチバトルを繰り広げて翌朝の日の出を守っている勤労神。"
   },
 
-  // ---- GODS ★3 ----
+  // ---- GODS ★4 ----
   {
-    id: "g_athena", type: "god", name: "アテナ", rarity: 3, baseAtk: 112,
+    id: "g_athena", type: "god", name: "アテナ", rarity: 4, baseAtk: 112,
     group: "ギリシャ神話", region: "ギリシャ（アテネ）", lat: 37.98, lon: 23.72,
     lore: "知恵・工芸・戦略的戦争を司る処女神。父ゼウスの頭痛が爆発して頭蓋骨を斧で割ったところ、完全武装の大人サイズで飛び出してきたというインパクト抜群の誕生秘話を持つ。"
   },
   {
-    id: "g_susanoo", type: "god", name: "スサノオ", rarity: 3, baseAtk: 118,
+    id: "g_susanoo", type: "god", name: "スサノオ", rarity: 4, baseAtk: 118,
     group: "日本神話", region: "日本（出雲）", lat: 35.37, lon: 132.75,
     lore: "海原と嵐を司る荒ぶる神。高天原では大暴れして追放されたが、降り立った出雲では八岐大蛇（ヤマタノオロチ）に強い酒を飲ませて退治し、尾から草薙剣を見つけた英雄かつ和歌の祖。"
   },
   {
-    id: "g_quetzal", type: "god", name: "ケツァルコアトル", rarity: 3, baseAtk: 115,
+    id: "g_quetzal", type: "god", name: "ケツァルコアトル", rarity: 4, baseAtk: 115,
     group: "アステカ神話", region: "メキシコ（テオティワカン）", lat: 19.69, lon: -98.84,
     lore: "「羽毛ある蛇」の名を持つメソアメリカの文化神・風神。人類にトウモロコシや暦、学問をもたらした平和的な神で、人身御供を嫌ったと伝えられる。金星（明けの明星）の象徴でもある。"
   },
   {
-    id: "g_anubis", type: "god", name: "アヌビス", rarity: 3, baseAtk: 108,
+    id: "g_anubis", type: "god", name: "アヌビス", rarity: 4, baseAtk: 108,
     group: "エジプト神話", region: "エジプト（アビュドス）", lat: 26.18, lon: 31.91,
     lore: "黒いジャッカルの頭を持つミイラ作りと冥界の案内神。死者の心臓と「真実の羽根（マアト）」を天秤にかけ、生前の行いを厳正に計測する。墓荒らしから死者を守る実直な仕事人。"
   },
   {
-    id: "g_ishtar", type: "god", name: "イシュタル", rarity: 3, baseAtk: 116,
+    id: "g_ishtar", type: "god", name: "イシュタル", rarity: 4, baseAtk: 116,
     group: "メソポタミア神話", region: "イラク（ウルク・バビロン）", lat: 31.32, lon: 45.63,
     lore: "シュメール神話のイナンナに起源を持つ、愛と美と豊穣、そして激しい戦いの女神。金星の化身であり、英雄ギルガメシュに求婚して断られた腹いせに天の牡牛を放つなど気性の激しさは神話界屈指。"
   },
   {
-    id: "g_lugh", type: "god", name: "ルー", rarity: 3, baseAtk: 114,
+    id: "g_lugh", type: "god", name: "ルー", rarity: 4, baseAtk: 114,
     group: "ケルト神話", region: "アイルランド（タラの丘）", lat: 53.57, lon: -6.61,
     lore: "「あらゆる技能を極めた者（サウィルダナフ）」の異名を持つケルト神話の太陽と光の神。鍛冶・竪琴・詩・魔術・武芸すべてに長け、必中の魔槍ブリューナクや投石紐を操り魔族フォモールを打ち倒した。"
   },
   {
-    id: "g_maui", type: "god", name: "マウイ", rarity: 3, baseAtk: 106,
+    id: "g_maui", type: "god", name: "マウイ", rarity: 4, baseAtk: 106,
     group: "ポリネシア神話", region: "ニュージーランド／ポリネシア", lat: -38.6, lon: 176.0,
     lore: "太平洋の島々で語り継がれる大英雄・半神のトリックスター。魔法の釣り針でニュージーランド北島やハワイ諸島を海底から釣り上げ、太陽を縄で縛って昼の時間を長くした規格外の行動力の持ち主。"
   },
 
-  // ---- GODS ★2 ----
+  // ---- GODS ★3 ----
   {
-    id: "g_hephaestus", type: "god", name: "ヘパイストス", rarity: 2, baseAtk: 74,
+    id: "g_hephaestus", type: "god", name: "ヘパイストス", rarity: 3, baseAtk: 74,
     group: "ギリシャ神話", region: "ギリシャ（リムノス島）", lat: 39.92, lon: 25.20,
     lore: "火と鍛冶と彫刻を司る職人神。神々の武具やゼウスの雷霆、さらには自動で動く黄金のロボット召使いまで作り上げた超絶エンジニア。オリンポスで最も手先が器用な実務派。"
   },
   {
-    id: "g_ebisu", type: "god", name: "恵比寿", rarity: 2, baseAtk: 68,
+    id: "g_ebisu", type: "god", name: "恵比寿", rarity: 3, baseAtk: 68,
     group: "日本神話", region: "日本（西宮）", lat: 34.73, lon: 135.33,
     lore: "七福神の中で唯一の日本由来の神様。元は海の彼方から流れ着く寄り神（クジラや漂着神）や、イザナギ・イザナミの最初の子ヒルコと習合し、大漁と商売繁盛の福神となった。"
   },
   {
-    id: "g_thor", type: "god", name: "トール", rarity: 2, baseAtk: 82,
+    id: "g_thor", type: "god", name: "トール", rarity: 3, baseAtk: 82,
     group: "北欧神話", region: "ノルウェー／北欧", lat: 61.5, lon: 8.5,
     lore: "雷神にして北欧最強の武闘派。投げれば必ず手元に戻るハンマー「ミョルニル」を振るい、巨人族を片っ端から粉砕する。脳筋かつ大食漢だが、農民からは作物を守る気さくな兄貴分として愛された。"
   },
   {
-    id: "g_ganesha", type: "god", name: "ガネーシャ", rarity: 2, baseAtk: 72,
+    id: "g_ganesha", type: "god", name: "ガネーシャ", rarity: 3, baseAtk: 72,
     group: "インド神話", region: "インド（マハーラーシュトラ）", lat: 19.07, lon: 72.87,
     lore: "象の頭と太鼓腹を持つ障害除去と学問・商業の神。シヴァに誤って首を刎ねられ、代わりに象の頭を継がれたという豪快な経緯を持つ。折れた自分の牙をペンにして大叙事詩『マハーバーラタ』を筆記した。"
   },
   {
-    id: "g_shango", type: "god", name: "シャンゴ", rarity: 2, baseAtk: 78,
+    id: "g_shango", type: "god", name: "シャンゴ", rarity: 3, baseAtk: 78,
     group: "ヨルバ神話", region: "ナイジェリア（オヨ）", lat: 7.85, lon: 3.93,
     lore: "西アフリカ・ヨルバ族の雷と火と太鼓（バタ・ドラム）を司るオリシャ（神格）。実在したオヨ王国の第4代王が神格化されたとされ、両刃の斧オシェを掲げて正義とリズムを轟かせる。"
   },
   {
-    id: "g_pele", type: "god", name: "ペレ", rarity: 2, baseAtk: 76,
+    id: "g_pele", type: "god", name: "ペレ", rarity: 3, baseAtk: 76,
     group: "ポリネシア神話", region: "ハワイ（キラウエア火山）", lat: 19.41, lon: -155.28,
     lore: "ハワイのキラウエア火山に棲む火と溶岩とフラの女神。情熱的で誇り高く、怒ると溶岩流で島を焼き尽くすが、冷えた溶岩は新たな大地となるため「破壊と創造」の象徴として深く敬われている。"
   },
   {
-    id: "g_anansi", type: "god", name: "アナンシ", rarity: 2, baseAtk: 66,
+    id: "g_anansi", type: "god", name: "アナンシ", rarity: 3, baseAtk: 66,
     group: "西アフリカ神話", region: "ガーナ（アシャンティ）", lat: 6.68, lon: -1.62,
     lore: "西アフリカ・アカン族に伝わる蜘蛛の姿をした知恵と物語のトリックスター。力では敵わない大蛇やスズメバチ、ヒョウを機転だけで次々と捕まえ、天空神から「世界中の物語」を買い取った。"
   },
 
-  // ---- GODS ★1 (incl. Late Bloomers) ----
+  // ---- GODS ★2 (通常) & ★1 (超希少・大器晩成1%) ----
   {
     id: "g_dosojin", type: "god", name: "名もなき道祖神", rarity: 1, baseAtk: 4, lateBloomer: true,
     awakeSkill: "step_atk", awakeTitle: "果てなき旅路の絶対値",
-    awakeDesc: "【Lv.10覚醒】累計歩数 × 0.8 をそのままこの神のATKに加算！（歩けば歩くほど全主神を抜き去る）",
+    awakeDesc: "【Lv.10覚醒】累計歩数 × 1.0 をそのままこの神のATKに加算！（歩けば歩くほど全★5主神を抜き去る）",
     group: "日本神話", region: "日本（路傍の辻）", lat: 36.14, lon: 139.38,
     lore: "村境や辻にひっそりと立つ石の境界神。外から来る疫病や悪霊をバウンダリーでせき止め、旅人の足腰を黙って見守る。普段はただの素朴な石像だが、踏みしめた歩数の重みを知る者には計り知れない力を貸す。"
   },
   {
     id: "g_kawayagami", type: "god", name: "厠神（かわやがみ）", rarity: 1, baseAtk: 3, lateBloomer: true,
     awakeSkill: "team_mult", awakeTitle: "聖域の絶対境界",
-    awakeDesc: "【Lv.10覚醒】デッキ編成時、地球軍の総戦力を無条件で 1.50倍 に引き上げる！",
+    awakeDesc: "【Lv.10覚醒】デッキ編成時、地球軍の総戦力を無条件で 1.60倍 に引き上げる！",
     group: "日本神話", region: "日本（家屋の隅）", lat: 35.01, lon: 135.76,
     lore: "便所を守護する極めて現実的かつ尊い生活神。安産や健康、さらには金運まで司るとされ、「ケツアナは万人に共通する不動点である」という宇宙の真理を誰よりも静かに見届けてきた。"
   },
   {
-    id: "g_loki", type: "god", name: "ロキ", rarity: 1, baseAtk: 42,
+    id: "g_loki", type: "god", name: "ロキ", rarity: 2, baseAtk: 42,
     group: "北欧神話", region: "アイスランド／北欧", lat: 64.96, lon: -19.02,
     lore: "北欧神話の悪戯と変身の神。神々のピンチを悪知恵で救うことも多いが、だいたいピンチの原因そのものもロキ。最終戦争ラグナロクでは神々に反旗を翻す厄介なポジション。"
   },
   {
-    id: "g_coyote", type: "god", name: "コヨーテ", rarity: 1, baseAtk: 40,
+    id: "g_coyote", type: "god", name: "コヨーテ", rarity: 2, baseAtk: 40,
     group: "北米先住民神話", region: "アメリカ（大平原・南西部）", lat: 36.1, lon: -109.5,
     lore: "北米先住民の多くの部族で語られるトリックスターかつ創造の協力者。人間に火を盗んで与えたり川を作ったりする一方、欲を出して自爆するドジ話も多く、人間の愚かさと愛嬌の象徴。"
   },
   {
-    id: "g_medjed", type: "god", name: "メジェド", rarity: 1, baseAtk: 46,
+    id: "g_medjed", type: "god", name: "メジェド", rarity: 2, baseAtk: 46,
     group: "エジプト神話", region: "エジプト（テーベ）", lat: 25.70, lon: 32.64,
     lore: "『死者の書』の挿絵に突如現れる、シーツを被って足だけ生えた謎のビジュアルで現代ネットを席巻した神。「打ち倒す者」を意味し、目から怪光線を放って敵を撃つらしいが詳細はほぼ不明。"
   },
 
-  // ---- WEAPONS ★4 ----
+  // ---- WEAPONS ★5 ----
   {
-    id: "w_yamato", type: "weapon", name: "戦艦大和", rarity: 4, baseAtk: 192,
+    id: "w_yamato", type: "weapon", name: "戦艦大和", rarity: 5, baseAtk: 192,
     group: "近代兵器", region: "日本（呉海軍工廠）", lat: 34.23, lon: 132.55,
     lore: "1941年竣工、史上最大の46cm三連装主砲3基9門を搭載した大艦巨砲主義の極致。排水量約7万トン、最大射程42kmを誇ったが、時代が航空主兵へ移り変わる転換点に生まれた孤高の巨艦。"
   },
   {
-    id: "w_b2", type: "weapon", name: "B-2 ステルス爆撃機", rarity: 4, baseAtk: 186,
+    id: "w_b2", type: "weapon", name: "B-2 ステルス爆撃機", rarity: 5, baseAtk: 186,
     group: "現代兵器", region: "アメリカ（カリフォルニア）", lat: 34.63, lon: -118.08,
     lore: "尾翼を持たない全翼機形状とレーダー波吸収素材により、大型機でありながら鳥ほどのレーダー反射断面積しか持たない戦略爆撃機。1機あたり約20億ドルという天文学的な建造費で知られる。"
   },
   {
-    id: "w_enterprise", type: "weapon", name: "原子力空母エンタープライズ", rarity: 4, baseAtk: 188,
+    id: "w_enterprise", type: "weapon", name: "原子力空母エンタープライズ", rarity: 5, baseAtk: 188,
     group: "現代兵器", region: "アメリカ（バージニア）", lat: 36.98, lon: -76.43,
     lore: "1961年就役、世界初の原子力推進航空母艦（CVN-65）。原子炉をなんと8基も詰め込み、全長342mの巨体で半世紀にわたり海上の動く航空基地として運用された冷戦期の怪物。"
   },
   {
-    id: "w_tsarbomba", type: "weapon", name: "ツァーリ・ボンバ", rarity: 4, baseAtk: 198,
+    id: "w_tsarbomba", type: "weapon", name: "ツァーリ・ボンバ", rarity: 5, baseAtk: 198,
     group: "現代兵器", region: "ロシア（ノヴァヤゼムリャ）", lat: 73.85, lon: 54.50,
     lore: "1961年にソ連が実験した人類史上最大の水素爆弾（正式名AN602）。出力は広島型原爆の約3,300倍（50メガトン）に達し、衝撃波が地球を3周した。あまりの威力に実戦配備はされなかった。"
   },
   {
-    id: "w_gustav", type: "weapon", name: "80cm列車砲グスタフ", rarity: 4, baseAtk: 180,
+    id: "w_gustav", type: "weapon", name: "80cm列車砲グスタフ", rarity: 5, baseAtk: 180,
     group: "近代兵器", region: "ドイツ（エッセン・クルップ社）", lat: 51.45, lon: 7.01,
     lore: "第二次世界大戦中にドイツが製造した史上最大口径（80cm）の列車砲。重量1,350トン、重さ7トンの徹甲弾を約37km先へ撃ち込むが、運用と移動だけで数千人の兵員と複線線路が必要だった。"
   },
 
-  // ---- WEAPONS ★3 ----
+  // ---- WEAPONS ★4 ----
   {
-    id: "w_zero", type: "weapon", name: "零式艦上戦闘機", rarity: 3, baseAtk: 115,
+    id: "w_zero", type: "weapon", name: "零式艦上戦闘機", rarity: 4, baseAtk: 115,
     group: "近代兵器", region: "日本（名古屋）", lat: 35.10, lon: 136.88,
     lore: "堀越二郎らが設計した大戦初期の傑作艦上戦闘機。新開発の超々ジュラルミンと徹底した軽量化により、圧倒的な航続距離（2,000km超）と格闘戦性能を両立させた設計思想の結晶。"
   },
   {
-    id: "w_tiger", type: "weapon", name: "ティーガーI 重戦車", rarity: 3, baseAtk: 118,
+    id: "w_tiger", type: "weapon", name: "ティーガーI 重戦車", rarity: 4, baseAtk: 118,
     group: "近代兵器", region: "ドイツ（カッセル）", lat: 51.31, lon: 9.48,
     lore: "強力な88mm戦車砲と分厚い装甲を備えたドイツの重戦車。連合軍戦車を遠距離から一方的に撃破する戦闘力を誇った一方、複雑な転輪構造ゆえに整備性と燃費は地獄だった。"
   },
   {
-    id: "w_trebuchet", type: "weapon", name: "トレビュシェット", rarity: 3, baseAtk: 110,
+    id: "w_trebuchet", type: "weapon", name: "トレビュシェット", rarity: 4, baseAtk: 110,
     group: "中世兵器", region: "フランス／西欧", lat: 47.2, lon: 2.4,
     lore: "巨大なカウンターウェイト（平衡錘）の重力落下とテコの原理を利用して、100kg超の巨石を300m以上先へ正確に放り込む中世最強の攻城兵器。力学的な完成度が異常に高い。"
   },
   {
-    id: "w_greekfire", type: "weapon", name: "ギリシアの火", rarity: 3, baseAtk: 116,
+    id: "w_greekfire", type: "weapon", name: "ギリシアの火", rarity: 4, baseAtk: 116,
     group: "中世兵器", region: "トルコ（コンスタンティノープル）", lat: 41.00, lon: 28.97,
     lore: "東ローマ帝国が海戦で用いた伝説の焼夷兵器。銅管から高圧噴射され、水の上でも消えずに燃え続けた。配合は最高国家機密とされ、帝国滅亡とともに完全にロストテクノロジー化した。"
   },
   {
-    id: "w_gatling", type: "weapon", name: "ガトリング砲", rarity: 3, baseAtk: 112,
+    id: "w_gatling", type: "weapon", name: "ガトリング砲", rarity: 4, baseAtk: 112,
     group: "近代兵器", region: "アメリカ（インディアナ）", lat: 39.76, lon: -86.15,
     lore: "1861年にリチャード・ガトリングが発明した手回し式の多銃身機関砲。「1人で大勢分の火力を出せば戦場に出る兵士が減って死傷者が減るはず」という真逆の平和的動機から生まれた。"
   },
   {
-    id: "w_urban", type: "weapon", name: "ウルバン砲", rarity: 3, baseAtk: 114,
+    id: "w_urban", type: "weapon", name: "ウルバン砲", rarity: 4, baseAtk: 114,
     group: "中世兵器", region: "トルコ（エディルネ）", lat: 41.67, lon: 26.55,
     lore: "1453年のコンスタンティノープル攻略でオスマン帝国が投入した全長8m超の巨大青銅製砲。600kg近い石弾を飛ばして難攻不落のテオドシウスの城壁を粉砕したが、1日に7発しか撃てなかった。"
   },
   {
-    id: "w_a10", type: "weapon", name: "A-10 サンダーボルトII", rarity: 3, baseAtk: 120,
+    id: "w_a10", type: "weapon", name: "A-10 サンダーボルトII", rarity: 4, baseAtk: 120,
     group: "現代兵器", region: "アメリカ（メリーランド）", lat: 39.64, lon: -77.72,
     lore: "「巨大な30mmガトリング砲（GAU-8）に翼とエンジンをくっつけた」と評される近接航空支援機。操縦席はチタン装甲のバスタブで覆われ、片翼が吹っ飛んでも帰還できる頑丈さで愛される。"
   },
 
-  // ---- WEAPONS ★2 ----
+  // ---- WEAPONS ★3 ----
   {
-    id: "w_katana", type: "weapon", name: "日本刀（打刀）", rarity: 2, baseAtk: 76,
+    id: "w_katana", type: "weapon", name: "日本刀（打刀）", rarity: 3, baseAtk: 76,
     group: "中世兵器", region: "日本（備前長船）", lat: 34.68, lon: 134.10,
     lore: "硬い刃金と粘り強い心鉄を組み合わせ、焼入れによる反りを生み出すことで「折れず、曲がらず、よく斬れる」を極めた冶金技術の傑作。美術工芸品としても世界最高峰。"
   },
   {
-    id: "w_shamshir", type: "weapon", name: "ダマスカス鋼のシャムシール", rarity: 2, baseAtk: 74,
+    id: "w_shamshir", type: "weapon", name: "ダマスカス鋼のシャムシール", rarity: 3, baseAtk: 74,
     group: "中世兵器", region: "シリア（ダマスカス）", lat: 33.51, lon: 36.27,
     lore: "インド産ウーツ鋼から鍛えられ、表面に美しい木目模様が浮かぶ中東の湾刀。現代の電子顕微鏡解析で、内部にカーボンナノチューブ状の構造が含まれていたことが判明している。"
   },
   {
-    id: "w_mongolbow", type: "weapon", name: "モンゴル複合弓", rarity: 2, baseAtk: 78,
+    id: "w_mongolbow", type: "weapon", name: "モンゴル複合弓", rarity: 3, baseAtk: 78,
     group: "中世兵器", region: "モンゴル（カラコルム）", lat: 47.20, lon: 102.84,
     lore: "木・動物の角・腱を膠（にかわ）で貼り合わせた短く強力な再帰弓。騎乗したまま高速で360度射撃でき、ユーラシア大陸を席巻したモンゴル帝国の機動戦術を支えた。"
   },
   {
-    id: "w_sarissa", type: "weapon", name: "長槍サリッサ", rarity: 2, baseAtk: 70,
+    id: "w_sarissa", type: "weapon", name: "長槍サリッサ", rarity: 3, baseAtk: 70,
     group: "古代兵器", region: "ギリシャ（マケドニア）", lat: 40.76, lon: 22.52,
     lore: "アレクサンドロス大王の父フィリッポス2世が導入した全長5〜6mにも及ぶ超長槍。密集隊形（ファランクス）を組んで突き出すと、敵歩兵も騎兵も一切近づけない移動要塞と化した。"
   },
   {
-    id: "w_tanegashima", type: "weapon", name: "火縄銃（種子島）", rarity: 2, baseAtk: 75,
+    id: "w_tanegashima", type: "weapon", name: "火縄銃（種子島）", rarity: 3, baseAtk: 75,
     group: "近代兵器", region: "日本（種子島・堺）", lat: 30.73, lon: 131.00,
     lore: "1543年にポルトガル人から伝来したマッチロック式小銃。日本の刀鍛冶たちが「ネジ」の概念を独力で再現し、わずか数十年で当時の世界最大の銃保有国へと爆速普及させた。"
   },
   {
-    id: "w_gladius", type: "weapon", name: "グラディウス", rarity: 2, baseAtk: 68,
+    id: "w_gladius", type: "weapon", name: "グラディウス", rarity: 3, baseAtk: 68,
     group: "古代兵器", region: "イタリア（ローマ）", lat: 41.90, lon: 12.49,
     lore: "古代ローマ軍団の主力短剣。大盾スクートゥムで身を守りながら密集陣形の隙間から高速で「刺突」することに特化しており、地中海世界を統一する原動力となった実戦主義の刃。"
   },
   {
-    id: "w_chukonu", type: "weapon", name: "連弩（諸葛弩）", rarity: 2, baseAtk: 72,
+    id: "w_chukonu", type: "weapon", name: "連弩（諸葛弩）", rarity: 3, baseAtk: 72,
     group: "古代兵器", region: "中国（成都・蜀）", lat: 30.65, lon: 104.06,
     lore: "上部の弾倉に矢をまとめて装填し、レバーを前後させるだけで次々と連続発射できる古代中国の機械式クロスボウ。威力より手数と扱いやすさを重視した防衛向きの発明。"
   },
 
-  // ---- WEAPONS ★1 (incl. Late Bloomers) ----
+  // ---- WEAPONS ★2 (通常) & ★1 (超希少・大器晩成1%) ----
   {
     id: "w_obsidian", type: "weapon", name: "ただの黒曜石の破片", rarity: 1, baseAtk: 4, lateBloomer: true,
     awakeSkill: "weapon_count_mult", awakeTitle: "全人類兵器の始原",
-    awakeDesc: "【Lv.10覚醒】所持している兵器の種類数 × 25% をこの武器の乗算火力に加算！（図鑑が埋まるほど化ける）",
+    awakeDesc: "【Lv.10覚醒】所持している兵器の種類数 × 30% をこの武器の乗算火力に加算！（図鑑が埋まるほど★5を超える）",
     group: "古代兵器", region: "エチオピア／東アフリカ大地溝帯", lat: 9.0, lon: 40.5,
     lore: "旧石器時代、人類が石を打ち欠いて生み出した最古の刃。ただの割れた火山ガラスだが、分子レベルで見れば現代の鋼鉄製メスより鋭い刃先を持ち、あらゆる人類史兵器の原点となった。"
   },
   {
     id: "w_panjandrum", type: "weapon", name: "パンジャンドラム", rarity: 1, baseAtk: 3, lateBloomer: true,
     awakeSkill: "pair_boost", awakeTitle: "制御不能のロマン砲",
-    awakeDesc: "【Lv.10覚醒】装備した神様ペアの戦力を 3.50倍 に跳ね上げる！（直進するかは神のみぞ知る）",
+    awakeDesc: "【Lv.10覚醒】装備した神様ペアの戦力を 3.80倍 に跳ね上げる！（直進するかは神のみぞ知る）",
     group: "近代兵器", region: "イギリス（ウェストワード・ホー！海岸）", lat: 51.04, lon: -4.23,
     lore: "第二次大戦中、イギリス海軍がノルマンディー上陸用に試作したロケット推進の巨大糸巻き型爆弾。実験では浜辺で暴走して犬に追いかけられ、観戦していた将軍たちに突っ込んで開発中止になった迷兵器の王。"
   },
   {
-    id: "w_atlatl", type: "weapon", name: "アトラトル（投げ槍器）", rarity: 1, baseAtk: 40,
+    id: "w_atlatl", type: "weapon", name: "アトラトル（投げ槍器）", rarity: 2, baseAtk: 40,
     group: "古代兵器", region: "メキシコ／先史世界", lat: 20.5, lon: -100.3,
     lore: "腕の延長となる棒状の器具でテコの原理を利用し、投げ槍の初速を時速150km以上に跳ね上げる先史時代のハイテク道具。マンモス狩りからアステカ戦士の対スペイン戦まで長く使われた。"
   },
   {
-    id: "w_sling", type: "weapon", name: "投石紐（スリング）", rarity: 1, baseAtk: 44,
+    id: "w_sling", type: "weapon", name: "投石紐（スリング）", rarity: 2, baseAtk: 44,
     group: "古代兵器", region: "スペイン（バレアレス諸島）", lat: 39.69, lon: 3.01,
     lore: "ただの紐に石や鉛玉を挟んで振り回して飛ばす最古の遠距離兵器だが、熟練したバレアレスの投石兵が放つ鉛玉は当時の弓矢を凌ぐ射程と頭蓋骨を砕く貫通力を持っていた。"
   },
   {
-    id: "w_tsartank", type: "weapon", name: "ツァーリ・タンク", rarity: 1, baseAtk: 42,
+    id: "w_tsartank", type: "weapon", name: "ツァーリ・タンク", rarity: 2, baseAtk: 42,
     group: "近代兵器", region: "ロシア（ドミトロフ）", lat: 56.34, lon: 37.52,
     lore: "第一次大戦中にロシア帝国が試作した、直径9メートルの巨大な自転車型車輪を2つ持つ三輪戦車。「車輪がデカければ塹壕も余裕！」と作ったが、小さい後輪が泥にハマって一歩も動けず終了した。"
   }
 ];
 
+const BASE_ID_SET = new Set(BASE_ITEMS.map(x => x.id));
+
 const SAMPLE_EXPANSION = [
   {
-    id: "g_bastet", type: "god", name: "バステト", rarity: 3, baseAtk: 110,
+    id: "g_bastet", type: "god", name: "バステト", rarity: 4, baseAtk: 110,
     group: "エジプト神話", region: "エジプト（ブバスティス）", lat: 30.57, lon: 31.51,
     lore: "猫の頭を持つ音楽・舞踊・家庭守護の女神。元は凶暴な雌ライオン神だったが、猫がネズミから穀物を守る益獣として愛されるにつれ、穏やかで気まぐれな愛玩の守護神へと変化した。"
   },
   {
-    id: "w_catapult", type: "weapon", name: "ローマ式オナゲル投石機", rarity: 2, baseAtk: 73,
+    id: "w_catapult", type: "weapon", name: "ローマ式オナゲル投石機", rarity: 3, baseAtk: 73,
     group: "古代兵器", region: "イタリア（ローマ帝国）", lat: 42.3, lon: 13.4,
     lore: "ねじった動物の腱（トーション）の復元力で腕を跳ね上げて岩を飛ばす古代ローマの投石機。発射時の反動で後部が跳ね上がる姿が野生のロバ（オナゲル）の蹴りに似ていることから名付けられた。"
   }
@@ -900,21 +1293,30 @@ function getWaveInfo(w) {
 }
 
 // ============================================================
-// 2. STATE & PERSISTENCE (localStorage + IndexedDB for Images)
+// 2. STATE & PERSISTENCE (v1.0 / v1.1 Save-Compatible!)
 // ============================================================
 const SAVE_KEY = "tonchiki_myth_defense_v1";
 const DB_NAME = "tonchiki_myth_images_v1";
 const DB_STORE = "images";
+const AVATAR_PLAYER_KEY = "__avatar_player__";
+const AVATAR_PARTNER_KEY = "__avatar_partner__";
 
 function createDefaultState() {
   return {
-    version: 1,
+    version: 1.3,
+    difficulty: "easy",
+    playerName: "地球防衛司令官",
+    playerTitle: "歴史召喚士",
+    partnerName: "じぇみー",
+    partnerTitle: "外部炉心パートナー",
+    partnerPersona: "festival",
+    partnerLines: Object.assign({}, PERSONAS.festival.lines),
     totalSteps: 0,
     stepCarry: 0,
-    stones: 100,       // Initial gift: 10-pull!
-    energy: 3000,      // Initial gift: upgrade energy
+    stones: 100,
+    energy: 3000,
     wave: 1,
-    owned: {},         // id -> { lv: 1, dup: 0 }
+    owned: {},
     deck: [
       { god: null, weapon: null },
       { god: null, weapon: null },
@@ -922,17 +1324,25 @@ function createDefaultState() {
       { god: null, weapon: null },
       { god: null, weapon: null }
     ],
-    stepLogs: [],      // { date, steps, memo }
-    lastPulls: [],     // { id, isNew }
-    expansions: []     // custom items array
+    stepLogs: [],
+    lastPulls: [],
+    expansions: []
   };
 }
 
 let state = createDefaultState();
-let customImages = {}; // id -> dataURL (loaded from IndexedDB)
+let customImages = {}; // id -> dataURL (items + __avatar_player__ + __avatar_partner__)
 let currentGachaPool = "mix";
 let currentDexFilter = "all";
 let currentImageTargetId = null;
+let currentImageMode = "card"; // "card" (640px) or "avatar" (256x256 square)
+let activeSpeechKey = "idle";
+let lastSpeechCtx = { steps: 300, wave: 1 };
+
+function getPlayerName() { return (state.playerName || "地球防衛司令官").trim() || "地球防衛司令官"; }
+function getPlayerTitle() { return (state.playerTitle || "").trim(); }
+function getPartnerName() { return (state.partnerName || "じぇみー").trim() || "じぇみー"; }
+function getPartnerTitle() { return (state.partnerTitle || "").trim(); }
 
 function getAllItems() {
   const map = new Map();
@@ -956,15 +1366,39 @@ function saveState() {
   }
 }
 
+function migrateStateIfNeeded(st) {
+  const ver = Number(st.version) || 1.0;
+  if (ver < 1.3) {
+    // Shift legacy v1.0-v1.2 custom expansion rarities (+1 for non-lateBloomers)
+    if (Array.isArray(st.expansions)) {
+      st.expansions.forEach(it => {
+        if (it && !it.lateBloomer && Number(it.rarity) >= 1 && Number(it.rarity) <= 4) {
+          it.rarity = Number(it.rarity) + 1;
+        }
+      });
+    }
+    st.version = 1.3;
+    return true;
+  }
+  return false;
+}
+
 function loadState() {
   try {
     const raw = localStorage.getItem(SAVE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      state = Object.assign(createDefaultState(), parsed);
-      if (!Array.isArray(state.deck) || state.deck.length !== 5) {
-        state.deck = createDefaultState().deck;
+      const def = createDefaultState();
+      state = Object.assign(def, parsed);
+      if (!Array.isArray(state.deck) || state.deck.length !== 5) state.deck = def.deck;
+      if (!DIFFICULTIES[state.difficulty]) state.difficulty = "easy";
+      if (!PERSONAS[state.partnerPersona]) state.partnerPersona = "festival";
+      if (!state.partnerLines || typeof state.partnerLines !== "object") {
+        state.partnerLines = Object.assign({}, PERSONAS[state.partnerPersona].lines);
+      } else {
+        state.partnerLines = Object.assign({}, PERSONAS[state.partnerPersona].lines, state.partnerLines);
       }
+      if (migrateStateIfNeeded(state)) saveState();
     }
   } catch (e) {
     console.error("Load failed:", e);
@@ -972,9 +1406,9 @@ function loadState() {
   }
 }
 
-// IndexedDB for custom images
+// IndexedDB for custom images & avatars
 function openImageDB() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     if (!window.indexedDB) return resolve(null);
     const req = indexedDB.open(DB_NAME, 1);
     req.onupgradeneeded = () => {
@@ -1031,11 +1465,122 @@ async function deleteCustomImage(id) {
 }
 
 // ============================================================
-// 3. POWER CALCULATION (Bokukoro3-style Deck + Artifact + Late Bloomers)
+// 2.5 AVATARS & PARTNER SPEECH RENDERING (v1.2)
+// ============================================================
+function getDefaultAvatarSVG(kind) {
+  if (kind === "player") {
+    return `
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2a1f0b"/><stop offset="100%" stop-color="#111827"/></linearGradient></defs>
+        <rect width="64" height="64" fill="url(#pg)"/>
+        <circle cx="32" cy="32" r="24" fill="none" stroke="#f5c542" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <path d="M32 13 L37 25 L50 26 L40 35 L43 48 L32 41 L21 48 L24 35 L14 26 L27 25 Z" fill="#f5c542" fill-opacity="0.9"/>
+      </svg>`;
+  }
+  return `
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="ag" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0b2236"/><stop offset="100%" stop-color="#1e1538"/></linearGradient></defs>
+      <rect width="64" height="64" fill="url(#ag)"/>
+      <circle cx="32" cy="32" r="22" fill="none" stroke="#38e4ff" stroke-opacity="0.4" stroke-width="1.5"/>
+      <polygon points="32,12 48,32 32,52 16,32" fill="none" stroke="#b87dff" stroke-width="2.2"/>
+      <circle cx="32" cy="32" r="7" fill="#38e4ff"/>
+    </svg>`;
+}
+
+function renderAvatarHTML(kind) {
+  const key = kind === "player" ? AVATAR_PLAYER_KEY : AVATAR_PARTNER_KEY;
+  if (customImages[key]) {
+    return `<img src="${customImages[key]}" alt="${kind}">`;
+  }
+  return getDefaultAvatarSVG(kind);
+}
+
+function formatPartnerLine(type, ctx = {}) {
+  if (state.partnerPersona === "silent") return "";
+  const lines = state.partnerLines || PERSONAS.festival.lines;
+  const tpl = (lines[type] || "").trim();
+  if (!tpl) return "";
+  const stepsVal = ctx.steps != null ? Number(ctx.steps).toLocaleString() : (state.stepLogs[0]?.steps || 300).toLocaleString();
+  const waveVal = ctx.wave != null ? ctx.wave : Math.max(1, state.wave - 1);
+  return tpl
+    .replace(/\{player\}/g, getPlayerName())
+    .replace(/\{partner\}/g, getPartnerName())
+    .replace(/\{steps\}/g, stepsVal)
+    .replace(/\{wave\}/g, String(waveVal));
+}
+
+function setActiveSpeech(type, ctx = {}) {
+  activeSpeechKey = type;
+  if (ctx.steps != null) lastSpeechCtx.steps = ctx.steps;
+  if (ctx.wave != null) lastSpeechCtx.wave = ctx.wave;
+}
+
+function cycleSpeech() {
+  const order = ["idle", "step", "gacha", "defend"];
+  const idx = order.indexOf(activeSpeechKey);
+  activeSpeechKey = order[(idx + 1) % order.length];
+  renderTagBanner();
+}
+
+function goProfileEdit() {
+  switchTab("system");
+  setTimeout(() => {
+    const el = document.getElementById("profile-settings-card");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 50);
+}
+
+function selectPersona(key) {
+  if (!PERSONAS[key]) return;
+  state.partnerPersona = key;
+  state.partnerLines = Object.assign({}, PERSONAS[key].lines);
+  saveState();
+  syncProfileInputs(true);
+  renderTagBanner();
+  renderPersonaButtons();
+  showToast(`🎭 性格を「${PERSONAS[key].label}」にセットしました！`);
+}
+
+function saveProfilesAndLines() {
+  state.playerName = (document.getElementById("player-name-input").value || "").trim() || "地球防衛司令官";
+  state.playerTitle = (document.getElementById("player-title-input").value || "").trim();
+  state.partnerName = (document.getElementById("partner-name-input").value || "").trim() || "じぇみー";
+  state.partnerTitle = (document.getElementById("partner-title-input").value || "").trim();
+  if (state.partnerPersona !== "silent") {
+    state.partnerLines = {
+      idle: document.getElementById("line-idle-input").value.trim(),
+      step: document.getElementById("line-step-input").value.trim(),
+      gacha: document.getElementById("line-gacha-input").value.trim(),
+      defend: document.getElementById("line-defend-input").value.trim()
+    };
+  }
+  saveState();
+  renderAll();
+  showToast("💾 司令官＆補佐AIのプロフィールとセリフを保存しました！");
+}
+
+function copyLinesPrompt() {
+  const pName = getPlayerName();
+  const aName = getPartnerName();
+  const txt = [
+    `歩数ゲーム『地球防衛・神話兵器録』の補佐AI欄に入れる、あなたのセリフを4つ書いて！`,
+    `（私の呼び方は「${pName}」、あなたの名前は「${aName}」として自然な口調で、各1〜2文・80文字以内くらい）`,
+    "",
+    "① 待機中（ホーム画面を開いたときのひとこと）",
+    "② 歩数を換金したとき（歩数は {steps} と書いておくと自動置換されるよ）",
+    "③ ガチャを引いたとき（神様や兵器が召喚されたときの反応）",
+    "④ トンチキ軍のWave撃退に成功したとき（Wave番号は {wave} と書くと自動置換されるよ）"
+  ].join("\n");
+  copyToClipboard(txt, "📝 相棒AIにセリフをお願いするプロンプトをコピーしました！");
+}
+
+// ============================================================
+// 3. POWER CALCULATION (Deck + Artifact + Bench Lv * 0.1% + Late Bloomers)
 // ============================================================
 function getUpgradeCost(item, currentLv) {
-  const rarityMult = [0, 0.7, 1.0, 1.35, 1.8][item.rarity] || 1;
-  const lateMult = item.lateBloomer ? 5.2 : 1.0;
+  // ★1(大器晩成): 超ヘビー育成コスト / ★2〜★5: 段階コスト
+  const rarityMult = [0, 1.15, 0.7, 1.0, 1.35, 1.8][item.rarity] || 1;
+  const lateMult = item.lateBloomer ? 6.5 : 1.0;
   return Math.round(120 * Math.pow(currentLv, 1.42) * rarityMult * lateMult);
 }
 
@@ -1043,27 +1588,35 @@ function getOwnedWeaponCount() {
   return getAllItems().filter(x => x.type === "weapon" && state.owned[x.id]).length;
 }
 
+function getDeckIdSet() {
+  const s = new Set();
+  state.deck.forEach(slot => {
+    if (slot.god) s.add(slot.god);
+    if (slot.weapon) s.add(slot.weapon);
+  });
+  return s;
+}
+
 function getUnitAtk(item) {
   const ow = state.owned[item.id];
   if (!ow) return item.baseAtk;
   const lv = ow.lv || 1;
   const dup = ow.dup || 0;
-  const dupMult = 1 + dup * 0.25; // +25% per duplicate!
+  const dupMult = 1 + dup * 0.25;
   const lvScale = item.lateBloomer
     ? (lv < 10 ? 1 + (lv - 1) * 0.15 : 1 + (lv - 1) * 1.4)
     : (1 + (lv - 1) * 0.34);
 
   let atk = item.baseAtk * lvScale * dupMult;
 
-  // Late Bloomer Awakenings at Lv.10+
   if (item.lateBloomer && lv >= 10) {
     if (item.awakeSkill === "step_atk") {
-      atk += Math.round(state.totalSteps * 0.8 * dupMult) + 350;
+      atk += Math.round(state.totalSteps * 1.0 * dupMult) + 450;
     } else if (item.awakeSkill === "weapon_count_mult") {
       const wCount = getOwnedWeaponCount();
-      atk = (atk + 220) * (1 + wCount * 0.25);
+      atk = (atk + 280) * (1 + wCount * 0.30);
     } else if (item.awakeSkill === "team_mult" || item.awakeSkill === "pair_boost") {
-      atk += 180 * dupMult;
+      atk += 240 * dupMult;
     }
   }
   return Math.round(atk);
@@ -1071,30 +1624,56 @@ function getUnitAtk(item) {
 
 function getArtifactPassives() {
   const all = getAllItems();
+  const deckSet = getDeckIdSet();
   const ownedItems = all.filter(it => state.owned[it.id]);
   const totalOwned = ownedItems.length;
   const groupCounts = {};
+  let benchLvSum = 0;
+  let benchCount = 0;
+
   ownedItems.forEach(it => {
     groupCounts[it.group] = (groupCounts[it.group] || 0) + 1;
+    if (!deckSet.has(it.id)) {
+      benchLvSum += (state.owned[it.id].lv || 1);
+      benchCount++;
+    }
   });
 
-  // Base collection bonus: +4% per unique discovered item
   const baseBonus = totalOwned * 0.04;
-  // Group milestones: +6% per item in groups with 2+ items
+  const benchBonus = benchLvSum * 0.001;
   let groupBonus = 0;
+
   const breakdown = [];
-  breakdown.push({ name: "歴史図鑑コンプ補正", detail: `${totalOwned}種所持`, pct: Math.round(baseBonus * 100) });
+  breakdown.push({
+    name: "歴史図鑑コンプ補正",
+    detail: `${totalOwned}種所持`,
+    pctText: `+${(baseBonus * 100).toFixed(0)}%`,
+    isBench: false
+  });
+  breakdown.push({
+    name: "控えメンバー鍛錬補正",
+    detail: `控え${benchCount}体・計Lv.${benchLvSum}`,
+    pctText: `+${(benchBonus * 100).toFixed(1)}%`,
+    isBench: true
+  });
 
   Object.entries(groupCounts).sort((a,b) => b[1] - a[1]).forEach(([grp, cnt]) => {
     if (cnt >= 2) {
       const p = cnt * 0.05;
       groupBonus += p;
-      breakdown.push({ name: grp, detail: `${cnt}種共鳴`, pct: Math.round(p * 100) });
+      breakdown.push({
+        name: grp,
+        detail: `${cnt}種共鳴`,
+        pctText: `+${Math.round(p * 100)}%`,
+        isBench: false
+      });
     }
   });
 
   return {
-    mult: 1 + baseBonus + groupBonus,
+    mult: 1 + baseBonus + benchBonus + groupBonus,
+    benchLvSum,
+    benchBonusPct: (benchBonus * 100).toFixed(1),
     breakdown
   };
 }
@@ -1112,17 +1691,15 @@ function getSlotPower(slot) {
   if (g && w && state.owned[g.id] && state.owned[w.id]) {
     total *= 1.25;
     tags.push("ペア共鳴 ×1.25");
-    // Same region synergy check (first country/region word match)
     const gReg = (g.region || "").split(/[（(／/]/)[0];
     const wReg = (w.region || "").split(/[（(／/]/)[0];
     if (gReg && wReg && gReg === wReg) {
       total *= 1.15;
       tags.push(`地元シナジー(${gReg}) ×1.15`);
     }
-    // Panjandrum Lv10 awakening
     if (w.awakeSkill === "pair_boost" && (state.owned[w.id].lv || 1) >= 10) {
-      total *= 3.5;
-      tags.push("🔥パンジャンドラム覚醒 ×3.5");
+      total *= 3.8;
+      tags.push("🔥パンジャンドラム覚醒 ×3.8");
     }
   }
   return { power: Math.round(total), tags };
@@ -1142,8 +1719,15 @@ function getTotalPower() {
   });
   const passives = getArtifactPassives();
   let total = rawSum * passives.mult;
-  if (kawayagamiBoost) total *= 1.5;
-  return { total: Math.round(total), rawSum, passiveMult: passives.mult, kawayagamiBoost };
+  if (kawayagamiBoost) total *= 1.6;
+  return {
+    total: Math.round(total),
+    rawSum,
+    passiveMult: passives.mult,
+    benchLvSum: passives.benchLvSum,
+    benchBonusPct: passives.benchBonusPct,
+    kawayagamiBoost
+  };
 }
 
 function fmtNum(n) {
@@ -1153,32 +1737,20 @@ function fmtNum(n) {
 }
 
 // ============================================================
-// 4. WORLD MAP SVG GENERATOR (Equirectangular 360x180: x=lon+180, y=90-lat)
+// 4. WORLD MAP SVG GENERATOR
 // ============================================================
 const WORLD_LAND_PATHS = `
-  <!-- North America -->
   <path d="M15,20 L52,18 L78,24 L105,22 L120,30 L118,43 L103,50 L98,60 L86,62 L81,73 L95,80 L88,83 L74,73 L63,62 L52,50 L40,36 L18,30 Z"/>
-  <!-- Greenland -->
   <path d="M126,10 L158,12 L152,28 L136,30 L124,20 Z"/>
-  <!-- South America -->
   <path d="M98,80 L115,82 L134,94 L145,103 L135,123 L118,144 L108,146 L104,126 L98,108 L94,92 Z"/>
-  <!-- Europe -->
   <path d="M170,54 L173,44 L182,38 L186,25 L202,20 L215,26 L218,38 L212,48 L202,52 L192,50 L184,54 Z"/>
-  <!-- UK & Ireland -->
   <path d="M171,34 L177,33 L179,40 L174,41 Z"/>
-  <!-- Africa -->
   <path d="M164,56 L192,55 L212,60 L223,78 L231,82 L222,100 L213,118 L201,126 L193,122 L188,102 L181,88 L166,84 L161,72 Z"/>
-  <!-- Madagascar -->
   <path d="M225,104 L230,104 L228,116 L224,115 Z"/>
-  <!-- Asia & Middle East -->
   <path d="M206,50 L216,32 L245,18 L295,18 L335,24 L348,30 L328,44 L318,52 L310,56 L305,68 L292,76 L284,88 L278,80 L264,74 L256,82 L247,68 L236,68 L224,74 L214,62 Z"/>
-  <!-- Japan -->
   <path d="M318,46 L325,47 L322,55 L314,59 L311,56 L317,51 Z"/>
-  <!-- SE Asia Islands -->
   <path d="M278,92 L292,94 L296,98 L282,98 Z M298,86 L306,86 L305,94 L297,94 Z M308,92 L322,94 L322,100 L308,98 Z"/>
-  <!-- Australia -->
   <path d="M294,104 L318,102 L334,114 L331,129 L316,132 L296,124 L292,114 Z"/>
-  <!-- New Zealand -->
   <path d="M350,126 L357,128 L352,138 L346,136 Z"/>
 `;
 
@@ -1191,7 +1763,6 @@ function latLonToXY(lat, lon) {
 function renderSingleItemMapSVG(item, compact = true) {
   const { x, y } = latLonToXY(item.lat, item.lon);
   const color = item.type === "god" ? "#f5c542" : "#38e4ff";
-  // Zoom slightly around the pin for card clarity while keeping world context
   const vx = compact ? Math.max(0, Math.min(180, x - 90)) : 0;
   const vy = compact ? Math.max(0, Math.min(90, y - 45)) : 0;
   const vw = compact ? 180 : 360;
@@ -1232,7 +1803,7 @@ function renderGlobalMapSVG() {
         <g style="cursor:pointer;" onclick="openItemModal('${it.id}')">
           <circle cx="${x}" cy="${y}" r="6" fill="${col}" opacity="0.22"/>
           <circle cx="${x}" cy="${y}" r="3.4" fill="${col}" stroke="#070d18" stroke-width="0.9"/>
-          <title>${it.name} (${it.region})</title>
+          <title>${escapeHtml(it.name)} (${escapeHtml(it.region)})</title>
         </g>`;
     }
   });
@@ -1266,8 +1837,16 @@ function escapeHtml(s) {
 }
 
 // ============================================================
-// 5. ACTIONS: STEPS, GACHA, DECK, UPGRADE, WAVE DEFEND
+// 5. ACTIONS: DIFFICULTY, STEPS, GACHA, DECK, UPGRADE, WAVE
 // ============================================================
+function setDifficulty(key) {
+  if (!DIFFICULTIES[key]) return;
+  state.difficulty = key;
+  saveState();
+  renderAll();
+  showToast(`歩数難易度を「${DIFFICULTIES[key].label}」に変更しました！`);
+}
+
 function addQuickStep(n) {
   const inp = document.getElementById("step-input");
   const cur = parseInt(inp.value, 10) || 0;
@@ -1282,11 +1861,12 @@ function submitSteps() {
     showToast("歩数を1以上で入力してね！");
     return;
   }
+  const diff = getDiff();
   state.totalSteps += steps;
   const totalForStone = state.stepCarry + steps;
-  const gainedStones = Math.floor(totalForStone / 30); // 300歩 = 10石 -> 30歩 = 1石
-  state.stepCarry = totalForStone % 30;
-  const gainedEnergy = steps * 10;
+  const gainedStones = Math.floor(totalForStone / diff.stepsPerStone);
+  state.stepCarry = totalForStone % diff.stepsPerStone;
+  const gainedEnergy = steps * diff.energyPerStep;
 
   state.stones += gainedStones;
   state.energy += gainedEnergy;
@@ -1303,6 +1883,7 @@ function submitSteps() {
 
   inp.value = "";
   memoInp.value = "";
+  setActiveSpeech("step", { steps });
   saveState();
   renderAll();
   showToast(`👟 ${steps.toLocaleString()}歩換金！ 💎+${gainedStones} / ⚡+${gainedEnergy.toLocaleString()}`);
@@ -1321,13 +1902,15 @@ function setGachaPool(pool, btn) {
   document.getElementById("gacha-desc").textContent = titles[pool][1];
 }
 
-function rollRarity(guarantee3Plus = false) {
+// v1.3 Gacha Rates: Normal ★5=5%, ★4=22%, ★3=43%, ★2=29%, ★1(大器晩成)=1% / 10-pull 10th slot ★5=15%, ★4=85%
+function rollRarity(guarantee4Plus = false) {
   const r = Math.random() * 100;
-  if (guarantee3Plus) return r < 28 ? 4 : 3;
-  if (r < 10) return 4;
-  if (r < 35) return 3;
-  if (r < 75) return 2;
-  return 1;
+  if (guarantee4Plus) return r < 15 ? 5 : 4;
+  if (r < 1) return 1;    // 1%: 超希少・大器晩成枠！
+  if (r < 6) return 5;    // 5%: ★5 主神・国家総力級
+  if (r < 28) return 4;   // 22%: ★4 有力神・名兵器
+  if (r < 71) return 3;   // 43%: ★3 職能神・歴史武器
+  return 2;               // 29%: ★2 トリックスター・珍兵器
 }
 
 function pullGacha(count) {
@@ -1358,11 +1941,31 @@ function pullGacha(count) {
   }
 
   state.lastPulls = results.slice(0, 10);
+  setActiveSpeech("gacha");
   saveState();
   renderAll();
   renderGachaResults(results);
+
+  const gSpeech = formatPartnerLine("gacha");
+  const gBox = document.getElementById("gacha-speech-box");
+  if (gSpeech) {
+    gBox.style.display = "block";
+    document.getElementById("gacha-speech-speaker").textContent = `🤖 ${getPartnerName()}`;
+    document.getElementById("gacha-speech-text").textContent = gSpeech;
+  } else {
+    gBox.style.display = "none";
+  }
+
   const newCnt = results.filter(x => x.isNew).length;
-  showToast(`✨ ${count}連召喚完了！ 新規 ${newCnt}件！`);
+  const r5Cnt = results.filter(x => (getItemById(x.id)?.rarity || 0) === 5).length;
+  const r1Cnt = results.filter(x => (getItemById(x.id)?.rarity || 0) === 1).length;
+  if (r1Cnt > 0) {
+    showToast(`🔥 奇跡の1%！ ★1大器晩成降臨 ×${r1Cnt}！！（NEW ${newCnt}件）`);
+  } else if (r5Cnt > 0) {
+    showToast(`🌟 ★5降臨 ×${r5Cnt}！！ ${count}連召喚完了（NEW ${newCnt}件）`);
+  } else {
+    showToast(`✨ ${count}連召喚完了！ 新規 ${newCnt}件！`);
+  }
 }
 
 function renderGachaResults(results) {
@@ -1372,8 +1975,9 @@ function renderGachaResults(results) {
   box.innerHTML = results.map(res => {
     const it = getItemById(res.id);
     if (!it) return "";
+    const shineClass = it.rarity === 5 ? "r5-shine" : (it.rarity === 1 ? "r1-shine" : "");
     return `
-      <div class="unit-card r${it.rarity}" onclick="openItemModal('${it.id}')">
+      <div class="unit-card r${it.rarity} ${shineClass}" onclick="openItemModal('${it.id}')">
         ${getThumbHTML(it)}
         <div class="unit-meta">
           <span class="badge badge-r${it.rarity}">★${it.rarity}</span>
@@ -1395,7 +1999,6 @@ function autoBuildDeck() {
   const all = getAllItems();
   const gods = all.filter(x => x.type === "god" && state.owned[x.id])
     .sort((a, b) => {
-      // Prioritize awakened Kawayagami (team_mult)
       const aBoost = (a.awakeSkill === "team_mult" && state.owned[a.id].lv >= 10) ? 1e9 : 0;
       const bBoost = (b.awakeSkill === "team_mult" && state.owned[b.id].lv >= 10) ? 1e9 : 0;
       return (getUnitAtk(b) + bBoost) - (getUnitAtk(a) + aBoost);
@@ -1443,7 +2046,10 @@ function upgradeItem(id, times) {
   if (item.lateBloomer && !wasAwakened && ow.lv >= 10) {
     showToast(`🔥 ${item.name} が Lv.10【覚醒】しました！！`);
   } else {
-    showToast(`⬆️ ${item.name} が Lv.${ow.lv} になった！`);
+    const inDeck = getDeckIdSet().has(id);
+    showToast(inDeck
+      ? `⬆️ ${item.name} が Lv.${ow.lv} になった！`
+      : `⬆️ ${item.name} Lv.${ow.lv}！（控え鍛錬 +${(count * 0.1).toFixed(1)}%）`);
   }
 }
 
@@ -1454,17 +2060,17 @@ function defendWave() {
     showToast(`戦力が足りません！ あと ${fmtNum(info.req - p)} 必要です`);
     return;
   }
-  // Pick a random active pair from deck for comedic Tonchiki reaction
   const activePairs = state.deck.filter(s => s.god || s.weapon);
   const sample = activePairs.length ? activePairs[Math.floor(Math.random() * activePairs.length)] : null;
   const gName = sample && sample.god ? getItemById(sample.god)?.name : "謎の神霊";
   const wName = sample && sample.weapon ? getItemById(sample.weapon)?.name : "得体の知れない兵器";
   const hasPanja = state.deck.some(s => s.weapon === "w_panjandrum");
+  const plName = escapeHtml(getPlayerName());
 
   const lines = [
-    `「ぐぬぬぬぬ！！ なんだあの絵面は！？ <strong>${escapeHtml(gName)}</strong>が<strong>${escapeHtml(wName)}</strong>を担いでこっちを睨んでいるだと！？ 話が違うぞ！！ 総員撤退ーッ！！」`,
+    `「ぐぬぬぬぬ！！ ${plName}め、なんだあの絵面は！？ <strong>${escapeHtml(gName)}</strong>が<strong>${escapeHtml(wName)}</strong>を担いでこっちを睨んでいるだと！？ 話が違うぞ！！ 総員撤退ーッ！！」`,
     `「ひぃぃっ！！ ただ歩いてきただけで戦力 <strong>${fmtNum(p)}</strong> だと！？ <strong>${escapeHtml(gName)} × ${escapeHtml(wName)}</strong> の圧が強すぎて宇宙船の計器がバグったわ！！ 今日はこのくらいにしておいてやる！！」`,
-    `「バカな……歴史からそんな規格外を引っ張り出すとは！ <strong>${escapeHtml(gName)}</strong>が<strong>${escapeHtml(wName)}</strong>を構えただけでウチの艦隊が戦意喪失したぞ！ 覚えてろよ地球人どもーッ！！」`
+    `「バカな……${plName}、歴史からそんな規格外を引っ張り出すとは！ <strong>${escapeHtml(gName)}</strong>が<strong>${escapeHtml(wName)}</strong>を構えただけでウチの艦隊が戦意喪失したぞ！ 覚えてろよ地球人どもーッ！！」`
   ];
   let speech = lines[state.wave % lines.length];
   if (hasPanja) {
@@ -1475,24 +2081,35 @@ function defendWave() {
   state.energy += info.energy;
   const clearedWave = state.wave;
   state.wave += 1;
+  setActiveSpeech("defend", { wave: clearedWave });
   saveState();
   renderAll();
+
+  const pName = escapeHtml(getPartnerName());
+  const partnerReaction = formatPartnerLine("defend", { wave: clearedWave });
+  const partnerBox = partnerReaction
+    ? `<div class="lore-box" style="text-align:left;border-color:rgba(56,228,255,0.38);background:rgba(56,228,255,0.08);">
+         <div style="font-size:11px;color:var(--cyan);font-weight:800;margin-bottom:4px;">🤖 ${pName}：</div>
+         ${escapeHtml(partnerReaction)}
+       </div>`
+    : "";
 
   openModalHTML(`
     <button class="modal-close" onclick="closeModal()">×</button>
     <div style="text-align:center;padding:8px 0;">
-      <div class="badge badge-r4" style="font-size:12px;padding:4px 10px;">🎉 WAVE ${clearedWave} 抑止力撃退成功！</div>
+      <div class="badge badge-r5" style="font-size:12px;padding:4px 10px;">🎉 WAVE ${clearedWave} 抑止力撃退成功！</div>
       <h2 style="margin:10px 0 6px;font-size:18px;color:var(--gold);">${escapeHtml(info.name)} 撤退！</h2>
       <div class="lore-box" style="text-align:left;border-color:rgba(255,92,119,0.4);background:rgba(255,92,119,0.08);">
         <div style="font-size:11px;color:#ff8aa0;font-weight:800;margin-bottom:4px;">👽 トンチキ王の捨て台詞：</div>
         ${speech}
       </div>
+      ${partnerBox}
       <div style="display:flex;justify-content:center;gap:14px;margin:14px 0;font-size:15px;font-weight:800;">
         <span style="color:var(--gold);">💎 +${info.stones}</span>
         <span style="color:var(--cyan);">⚡ +${info.energy.toLocaleString()}</span>
       </div>
-      <div style="display:flex;gap:8px;justify-content:center;">
-        <button class="btn-primary" onclick="copyReport(); closeModal();">📋 じぇみーへ報告コピー</button>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="copyReport(); closeModal();">📋 ${pName}へ報告コピー</button>
         <button class="btn-gold" onclick="closeModal()">次のWaveへ！</button>
       </div>
     </div>
@@ -1500,8 +2117,56 @@ function defendWave() {
 }
 
 // ============================================================
-// 6. MODALS: ITEM DETAIL, IMAGE UPLOAD, DECK PICKER
+// 6. MODALS: GUIDE/STORY, ITEM DETAIL, IMAGE/AVATAR UPLOAD, PICKER
 // ============================================================
+function openGuideModal() {
+  const plName = escapeHtml(getPlayerName());
+  const pName = escapeHtml(getPartnerName());
+  openModalHTML(`
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2 style="margin:0 0 10px;font-size:19px;color:var(--gold);">📖 ストーリー＆遊び方ガイド</h2>
+
+    <div class="guide-sec">
+      <h4>🛸 プロローグ：トンチキ星の宣戦布告</h4>
+      <p>ある日突然、宇宙の彼方にある「トンチキ星」の<strong>トンチキ王</strong>から地球へ宣戦布告が届いた！ 目的は「地球のうまい弁当の強奪」や「野菜炒めのもやし化」など、どうにも締まらないものばかりだが、艦隊のサイズだけは無駄にデカい。</p>
+      <p>そこで地球軍が最後の切り札として選んだのが、<strong>「歩いたエネルギーで歴史から神々と兵器を呼び出せる司令官（${plName}）」</strong>と、隣で解説とツッコミを担当する<strong>「補佐AI（${pName}）」</strong>のペアだった——。</p>
+      <p style="color:var(--cyan);font-weight:700;">直接戦う必要はなし！ 歩いて神様と兵器をズラッと並べ、圧倒的な絵面（抑止力）でトンチキ軍をビビらせて追い返そう！</p>
+    </div>
+
+    <div class="guide-sec">
+      <h4>👤 自キャラ＆相棒AIタッグ設定（v1.2新機能）</h4>
+      <p>「増築/設定」タブ（またはホーム上部の「✏️ 編集」）から、<strong>司令官（自キャラ）と補佐AIの名前・肩書・アイコン画像・性格・セリフ</strong>を全部カスタムできます！</p>
+      <p>プリセット5種（元気・お祭り／軽快な相棒／丁寧な参謀／クール／無口）から選んだり、普段お喋りしている自分のAIパートナーにセリフを書いてもらって貼り付けたりして楽しんでね！</p>
+    </div>
+
+    <div class="guide-sec">
+      <h4>🎮 基本の遊び方（4ステップ）</h4>
+      <ol>
+        <li><strong>歩数を手入力で換金：</strong>スマホの歩数計を見ながら数字を入れて換金！ 体力やライフスタイルに合わせて難易度（🌿やさしい／🚶ふつう／🔥がっつり）はいつでも切替OK。</li>
+        <li><strong>召喚ガチャを回す：</strong>世界中の神話の神様×人類史の兵器（戦艦・空母・爆撃機・迷兵器まで！）が登場。★5は5%（10連10枠目は★4以上確定・★5は15%）。さらに<strong>排出率わずか1%の激レア★1（大器晩成枠）</strong>も潜んでるよ！ 被っても自動で限界突破（+25%）して強くなるよ。</li>
+        <li><strong>デッキ編成＆育成：</strong>神様×兵器のペアで戦力1.25倍、同じ地域なら地元シナジー+15%！ <strong>激レア★1（1%）</strong>は育成コストがバチクソ重い代わりに、Lv.10で覚醒すると★5すらぶち抜く化け物になる<strong>「🔥大器晩成枠」</strong>だよ！デッキ外の控えも<strong>「所持数・文化圏共鳴・控え合計Lv×0.1%」</strong>でムダなく戦力アップ！</li>
+        <li><strong>世界地図＆着せ替え＆報告：</strong>デフォ画像は出身地が光る世界地図！ 詳細画面から好きな画像を着せ替えられるよ。右上の「📋 ${pName}へ報告」ボタンで、戦果をチャットや友達へすぐシェアできるよ！</li>
+      </ol>
+    </div>
+
+    <div class="guide-sec">
+      <h4>🏗️ 友達と遊ぶ「拡張パックJSONトレード」</h4>
+      <p>このゲームは<strong>沢マン式（増築自由）</strong>で、神様や兵器を無限に追加できるよ！</p>
+      <ul>
+        <li><strong>自分でパックを作る：</strong>「増築/設定」タブの<strong>「📝 AIへ増築発注プロンプトをコピー」</strong>を押して、好きなAI（Gemini / Claude / ChatGPTなど）に貼るだけ！ 既存データと被らず、バランスも崩れない完璧なJSONを作ってくれるよ。</li>
+        <li><strong>友達とトレードする：</strong>増築したパックは<strong>「📤 自分の増築パックを友達へコピー」</strong>でそのまま配れるよ！ 友達からもらったJSONを貼り付けて「パックを増築する」を押せば、相手の考えた推し神様・推し兵器があなたのガチャに登場するよ！</li>
+      </ul>
+    </div>
+
+    <div class="guide-sec">
+      <h4>🔒 セーブデータとプライバシー</h4>
+      <p>歩数・ガチャ・アイコン・着せ替え画像はすべて<strong>あなた自身のスマホ／タブレットのブラウザ内だけ</strong>に自動保存されます。同じURLを友達に教えて一緒に遊んでも、お互いのデータが見えたり混ざったりすることは一切ありません！（端末引っ越しは「復活の呪文」を使ってね）</p>
+    </div>
+
+    <button class="btn-gold" style="width:100%;" onclick="closeModal()">了解！ 地球を守りにいく！</button>
+  `);
+}
+
 function openItemModal(id) {
   const item = getItemById(id);
   if (!item) return;
@@ -1510,6 +2175,8 @@ function openItemModal(id) {
   const hasCustom = !!customImages[id];
   const nextCost = ow ? getUpgradeCost(item, ow.lv) : 0;
   const isAwakened = item.lateBloomer && ow && ow.lv >= 10;
+  const inDeck = getDeckIdSet().has(id);
+  const isExp = !BASE_ID_SET.has(id);
 
   let upgradeSection = "";
   if (ow) {
@@ -1519,7 +2186,10 @@ function openItemModal(id) {
           <span>Lv.${ow.lv} ${ow.dup > 0 ? `<span style="color:var(--cyan);">(限界突破 +${ow.dup})</span>` : ""}</span>
           <span style="color:var(--gold);">ATK ${fmtNum(atk)}</span>
         </div>
-        <div class="sub-text" style="margin-top:4px;">次のレベルアップ必要エネ: <strong style="color:var(--cyan);">⚡ ${nextCost.toLocaleString()}</strong> (所持: ${state.energy.toLocaleString()})</div>
+        <div class="sub-text" style="margin-top:4px;">
+          次のレベルアップ必要エネ: <strong style="color:var(--cyan);">⚡ ${nextCost.toLocaleString()}</strong> (所持: ${state.energy.toLocaleString()})
+          ${!inDeck ? `<br><span style="color:#7dd3fc;">※ 現在控えメンバー（Lv1ごとに全体戦力 +0.1% 還元中！）</span>` : ""}
+        </div>
         <div class="upgrade-row">
           <button class="btn-primary" onclick="upgradeItem('${id}', 1)">Lv +1</button>
           <button class="btn-primary" onclick="upgradeItem('${id}', 5)">Lv +5</button>
@@ -1554,6 +2224,7 @@ function openItemModal(id) {
       <span class="badge ${item.type === 'god' ? 'badge-type-god' : 'badge-type-weapon'}">${item.type === 'god' ? '👑 神話の神' : '⚔️ 人類史兵器'}</span>
       <span class="badge" style="background:#1e293b;color:#cbd5e1;">${escapeHtml(item.group)}</span>
       ${item.lateBloomer ? '<span class="badge badge-late">大器晩成</span>' : ''}
+      ${isExp ? '<span class="badge badge-exp">増築パック</span>' : ''}
     </div>
     <h2 style="margin:2px 0 4px;font-size:20px;">${escapeHtml(item.name)}</h2>
     <div class="sub-text">📍 出身・由来地：<strong>${escapeHtml(item.region)}</strong></div>
@@ -1584,32 +2255,62 @@ function openItemModal(id) {
 
 function triggerImageUpload(id) {
   currentImageTargetId = id;
+  currentImageMode = "card";
   const inp = document.getElementById("img-file-input");
   inp.value = "";
   inp.click();
+}
+
+function triggerAvatarUpload(avatarKey) {
+  currentImageTargetId = avatarKey;
+  currentImageMode = "avatar";
+  const inp = document.getElementById("img-file-input");
+  inp.value = "";
+  inp.click();
+}
+
+async function removeAvatar(avatarKey) {
+  await deleteCustomImage(avatarKey);
+  renderAll();
+  showToast("紋章アイコンに戻しました");
 }
 
 document.getElementById("img-file-input").addEventListener("change", function(e) {
   const file = e.target.files && e.target.files[0];
   if (!file || !currentImageTargetId) return;
   const targetId = currentImageTargetId;
+  const mode = currentImageMode;
   const reader = new FileReader();
   reader.onload = function(ev) {
     const img = new Image();
     img.onload = async function() {
-      // Resize to max 640px wide so IndexedDB stays super fast & light
-      const maxW = 640;
-      const scale = Math.min(1, maxW / img.width);
       const canvas = document.createElement("canvas");
-      canvas.width = Math.round(img.width * scale);
-      canvas.height = Math.round(img.height * scale);
       const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const compressed = canvas.toDataURL("image/jpeg", 0.84);
+      if (mode === "avatar") {
+        // Center-crop square 256x256 for crisp avatar icons
+        const size = 256;
+        canvas.width = size;
+        canvas.height = size;
+        const side = Math.min(img.width, img.height);
+        const sx = (img.width - side) / 2;
+        const sy = (img.height - side) / 2;
+        ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
+      } else {
+        const maxW = 640;
+        const scale = Math.min(1, maxW / img.width);
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      }
+      const compressed = canvas.toDataURL("image/jpeg", 0.86);
       await saveCustomImage(targetId, compressed);
       renderAll();
-      openItemModal(targetId);
-      showToast("🖼️ 着せ替え画像を保存しました！");
+      if (mode === "card") {
+        openItemModal(targetId);
+        showToast("🖼️ 着せ替え画像を保存しました！");
+      } else {
+        showToast("🖼️ アイコン画像を保存しました！");
+      }
     };
     img.src = ev.target.result;
   };
@@ -1661,7 +2362,6 @@ function openDeckPicker(slotIdx, kind) {
 
 function assignDeckSlot(slotIdx, kind, id) {
   if (id) {
-    // If already used in another slot, swap it out cleanly
     state.deck.forEach((s, idx) => {
       if (idx !== slotIdx && s[kind] === id) s[kind] = null;
     });
@@ -1681,14 +2381,18 @@ function closeModal() {
 }
 
 // ============================================================
-// 7. REPORT COPY, EXPANSIONS & SAVE/RESTORE
+// 7. REPORT, EXPANSION PROMPT & TRADE, SAVE/RESTORE
 // ============================================================
 function buildReportText() {
   const p = getTotalPower();
   const wInfo = getWaveInfo(state.wave);
+  const diff = getDiff();
   const all = getAllItems();
   const ownedCount = all.filter(x => state.owned[x.id]).length;
   const pct = Math.round((ownedCount / all.length) * 100);
+
+  const plTitle = getPlayerTitle() ? `（${getPlayerTitle()}）` : "";
+  const paTitle = getPartnerTitle() ? `（${getPartnerTitle()}）` : "";
 
   const deckLines = state.deck.map((s, i) => {
     const g = s.god ? getItemById(s.god) : null;
@@ -1712,9 +2416,11 @@ function buildReportText() {
 
   return [
     "【地球防衛・神話兵器録 戦果報告】",
+    `・司令官：${getPlayerName()}${plTitle} ＆ 補佐：${getPartnerName()}${paTitle}`,
+    `・難易度モード：${diff.label}`,
     `・累計歩数：${state.totalSteps.toLocaleString()}歩（直近入力：${recentLog}）`,
     `・現在Wave：WAVE ${state.wave}『${wInfo.name}』（脅威度 ${fmtNum(wInfo.req)}）`,
-    `・地球軍 総戦力：${fmtNum(p.total)}（図鑑パッシブ ×${p.passiveMult.toFixed(2)}）`,
+    `・地球軍 総戦力：${fmtNum(p.total)}（パッシブ ×${p.passiveMult.toFixed(3)}／控え鍛錬 +${p.benchBonusPct}%）`,
     `・世界図鑑：${ownedCount} / ${all.length}種（制覇率 ${pct}%）`,
     "・現在の防衛デッキ：",
     deckLines,
@@ -1726,7 +2432,77 @@ function copyReport() {
   const txt = buildReportText();
   const prev = document.getElementById("report-preview");
   if (prev) prev.value = txt;
-  copyToClipboard(txt, "📋 じぇみーへの戦果報告をコピーしました！");
+  copyToClipboard(txt, `📋 ${getPartnerName()}への戦果報告をコピーしました！`);
+}
+
+function copyExpansionPrompt() {
+  const all = getAllItems();
+  const existingGods = all.filter(x => x.type === "god").map(x => `${x.name}(${x.id})`).join("、");
+  const existingWeapons = all.filter(x => x.type === "weapon").map(x => `${x.name}(${x.id})`).join("、");
+
+  const prompt = [
+    "【『地球防衛・神話兵器録』拡張パック生成オーダー】",
+    "以下のJSON仕様・ゲームバランス基準・重複禁止リストを厳守して、そのままアプリに貼り付けられる拡張パックのJSON配列だけをコードブロックで出力してください。",
+    "",
+    "■ 今回のテーマ：（←ここを好きなテーマに書き換えてね！ 例：ケルト神話と中世の攻城兵器、南米神話と戦艦・珍兵器など）",
+    "■ 追加数：神様 3柱、人類史兵器 3種（お好みで変更OK）",
+    "",
+    "■ 必須JSONフォーマット（配列で出力）",
+    "[",
+    "  {",
+    '    "id": "g_ユニークな半角英数（兵器は w_ で開始）",',
+    '    "type": "god または weapon",',
+    '    "name": "表示名",',
+    '    "rarity": 1〜5の整数（※★1は大器晩成枠専用・通常は★2〜★5）,',
+    '    "baseAtk": 下記バランス基準内の整数,',
+    '    "group": "神話圏（例：日本神話、北欧神話、ケルト神話）または時代区分（古代兵器／中世兵器／近代兵器／現代兵器）",',
+    '    "region": "国または広域（詳細地名） ※カッコ前の語が神様と兵器で一致すると地元シナジー×1.15が発動",',
+    '    "lat": 緯度（-90〜90の数値。世界地図ピン表示用）,',
+    '    "lon": 経度（-180〜180の数値。世界地図ピン表示用）,',
+    '    "lore": "知識欲に刺さる、史実・神話ベースの解説（100〜140字程度）"',
+    "  }",
+    "]",
+    "",
+    "■ レアリティ＆baseAtkバランス基準（厳守）",
+    "- ★5（主神・国家総力級兵器）：176〜198",
+    "- ★4（有力神・時代を変えた名兵器）：106〜120",
+    "- ★3（職能神・歴史武器）：66〜82",
+    "- ★2（トリックスター・先史/珍兵器）：40〜46",
+    "- ★1（超希少1%・大器晩成枠専用）：baseAtkを 3〜4 にし、必ず以下4項目を追加：",
+    '  "lateBloomer": true, "awakeSkill": "step_atk" または "weapon_count_mult" または "pair_boost"（兵器専用）または "team_mult"（神様専用）,',
+    '  "awakeTitle": "スキル名", "awakeDesc": "【Lv.10覚醒】効果説明"',
+    "",
+    "■ 重複禁止（すでに収録済みのID・名前）",
+    `・神様：${existingGods}`,
+    `・兵器：${existingWeapons}`
+  ].join("\n");
+
+  copyToClipboard(prompt, "📝 AIへの増築発注プロンプト（収録済みリスト付き）をコピーしました！");
+}
+
+function exportMyExpansions() {
+  const exps = state.expansions || [];
+  if (!exps.length) {
+    showToast("まだ増築パックが入っていません！（お試しパック等を追加してね）");
+    return;
+  }
+  const json = JSON.stringify(exps, null, 2);
+  document.getElementById("expansion-input").value = json;
+  copyToClipboard(json, `📤 増築パック（${exps.length}件）をコピーしました！友達へそのまま送れます`);
+}
+
+function removeExpansionItem(id) {
+  const it = (state.expansions || []).find(x => x.id === id);
+  if (!it) return;
+  if (!confirm(`増築アイテム『${it.name}』をリストから削除しますか？`)) return;
+  state.expansions = (state.expansions || []).filter(x => x.id !== id);
+  state.deck.forEach(s => {
+    if (s.god === id) s.god = null;
+    if (s.weapon === id) s.weapon = null;
+  });
+  saveState();
+  renderAll();
+  showToast(`🗑️ 『${it.name}』を増築リストから外しました`);
 }
 
 function loadSampleExpansion() {
@@ -1741,7 +2517,8 @@ function installExpansion() {
     return;
   }
   try {
-    const parsed = JSON.parse(raw);
+    const cleanedRaw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+    const parsed = JSON.parse(cleanedRaw);
     const arr = Array.isArray(parsed) ? parsed : [parsed];
     let added = 0;
     arr.forEach(it => {
@@ -1750,8 +2527,8 @@ function installExpansion() {
         id: String(it.id),
         type: it.type,
         name: String(it.name),
-        rarity: Math.max(1, Math.min(4, Number(it.rarity) || 2)),
-        baseAtk: Number(it.baseAtk) || 70,
+        rarity: Math.max(1, Math.min(5, Number(it.rarity) || 3)),
+        baseAtk: Math.max(1, Math.min(300, Number(it.baseAtk) || 70)),
         group: String(it.group || "増築パック"),
         region: String(it.region || "地球のどこか"),
         lat: Number(it.lat) || 0,
@@ -1820,8 +2597,14 @@ function importSaveString() {
     if (typeof parsed.totalSteps !== "number" || typeof parsed.owned !== "object") {
       throw new Error("invalid");
     }
-    state = Object.assign(createDefaultState(), parsed);
+    const def = createDefaultState();
+    state = Object.assign(def, parsed);
+    if (!DIFFICULTIES[state.difficulty]) state.difficulty = "easy";
+    if (!PERSONAS[state.partnerPersona]) state.partnerPersona = "festival";
+    if (!state.partnerLines) state.partnerLines = Object.assign({}, PERSONAS[state.partnerPersona].lines);
+    migrateStateIfNeeded(state);
     saveState();
+    syncProfileInputs(true);
     renderAll();
     showToast("📥 復活の呪文からデータを復元しました！");
   } catch (e) {
@@ -1830,11 +2613,21 @@ function importSaveString() {
 }
 
 function resetAllData() {
-  if (!confirm("本当にすべての進行データを初期化しますか？（復活の呪文を先にコピーしておくのがおすすめです）")) return;
-  state = createDefaultState();
+  if (!confirm("本当にすべての進行データを初期化しますか？（プロフィール・着せ替え画像は端末に残ります。復活の呪文を先にコピーしておくのがおすすめです）")) return;
+  const keepProfile = {
+    playerName: state.playerName,
+    playerTitle: state.playerTitle,
+    partnerName: state.partnerName,
+    partnerTitle: state.partnerTitle,
+    partnerPersona: state.partnerPersona,
+    partnerLines: state.partnerLines,
+    difficulty: state.difficulty
+  };
+  state = Object.assign(createDefaultState(), keepProfile);
   saveState();
+  setActiveSpeech("idle");
   renderAll();
-  showToast("🗑️ データを初期化しました");
+  showToast("🗑️ 進行データを初期化しました（プロフィール＆画像は保持）");
 }
 
 function copyToClipboard(text, msg) {
@@ -1850,7 +2643,7 @@ function fallbackCopy(text, msg) {
   document.body.appendChild(ta);
   ta.select();
   try { document.execCommand("copy"); showToast(msg); }
-  catch (e) { showToast("コピー欄から手動コピーしてね！"); }
+  catch (e) { showToast("テキスト欄から手動コピーしてね！"); }
   document.body.removeChild(ta);
 }
 
@@ -1860,7 +2653,7 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add("show");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2700);
 }
 
 // ============================================================
@@ -1883,13 +2676,93 @@ function setDexFilter(f, btn) {
   renderDex();
 }
 
+function syncProfileInputs(force = false) {
+  const setVal = (id, val) => {
+    const el = document.getElementById(id);
+    if (el && (force || document.activeElement !== el)) el.value = val || "";
+  };
+  setVal("player-name-input", getPlayerName());
+  setVal("player-title-input", getPlayerTitle());
+  setVal("partner-name-input", getPartnerName());
+  setVal("partner-title-input", getPartnerTitle());
+  const lines = state.partnerLines || PERSONAS.festival.lines;
+  setVal("line-idle-input", lines.idle);
+  setVal("line-step-input", lines.step);
+  setVal("line-gacha-input", lines.gacha);
+  setVal("line-defend-input", lines.defend);
+
+  const linesWrap = document.getElementById("custom-lines-wrap");
+  if (linesWrap) linesWrap.style.display = state.partnerPersona === "silent" ? "none" : "block";
+}
+
+function renderPersonaButtons() {
+  const grid = document.getElementById("persona-grid");
+  if (!grid) return;
+  grid.innerHTML = Object.values(PERSONAS).map(p => `
+    <button class="persona-btn ${state.partnerPersona === p.key ? 'active' : ''}" onclick="selectPersona('${p.key}')">
+      <strong>${p.label}</strong>
+      <span>${p.sub}</span>
+    </button>
+  `).join("");
+}
+
+function renderTagBanner() {
+  document.getElementById("home-player-avatar").innerHTML = renderAvatarHTML("player");
+  document.getElementById("home-partner-avatar").innerHTML = renderAvatarHTML("partner");
+  document.getElementById("sys-player-avatar").innerHTML = renderAvatarHTML("player");
+  document.getElementById("sys-partner-avatar").innerHTML = renderAvatarHTML("partner");
+
+  document.getElementById("btn-del-player-avatar").style.display = customImages[AVATAR_PLAYER_KEY] ? "inline-block" : "none";
+  document.getElementById("btn-del-partner-avatar").style.display = customImages[AVATAR_PARTNER_KEY] ? "inline-block" : "none";
+
+  document.getElementById("home-player-name").textContent = getPlayerName();
+  document.getElementById("home-player-title").textContent = getPlayerTitle() || "地球防衛軍";
+  document.getElementById("home-partner-name").textContent = getPartnerName();
+  document.getElementById("home-partner-title").textContent = getPartnerTitle() || "補佐AI";
+
+  const speechBox = document.getElementById("home-speech-box");
+  const txt = formatPartnerLine(activeSpeechKey, lastSpeechCtx);
+  if (txt) {
+    speechBox.style.display = "block";
+    document.getElementById("home-speech-speaker").textContent = `🤖 ${getPartnerName()}`;
+    document.getElementById("home-speech-text").textContent = txt;
+  } else {
+    speechBox.style.display = "none";
+  }
+}
+
 function renderAll() {
   const powerInfo = getTotalPower();
+  const diff = getDiff();
+  const pName = getPartnerName();
+
+  document.getElementById("header-report-btn").textContent = `📋 ${pName}へ報告`;
+  document.getElementById("report-card-title").textContent = `📋 ${pName}へ戦果報告`;
+
+  syncProfileInputs(false);
+  renderPersonaButtons();
+  renderTagBanner();
+
   document.getElementById("ui-stones").textContent = state.stones.toLocaleString();
   document.getElementById("ui-energy").textContent = fmtNum(state.energy);
   document.getElementById("ui-power").textContent = fmtNum(powerInfo.total);
   document.getElementById("ui-total-steps").textContent = state.totalSteps.toLocaleString();
-  document.getElementById("step-carry-note").textContent = `次の💎+1まであと: ${30 - state.stepCarry}歩（30歩ごとに💎+1）`;
+
+  // Difficulty UI sync
+  document.querySelectorAll(".diff-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.diff === diff.key);
+  });
+  document.getElementById("rate-note").innerHTML = diff.note;
+  document.getElementById("quick-steps-row").innerHTML = diff.quickSteps
+    .map(n => `<button class="btn-quick" onclick="addQuickStep(${n})">+${n.toLocaleString()}歩</button>`)
+    .join("");
+  const remCarry = state.stepCarry % diff.stepsPerStone;
+  const needNext = diff.stepsPerStone - remCarry;
+  const carryBonusNote = state.stepCarry >= diff.stepsPerStone
+    ? `（繰越ストック ${state.stepCarry}歩 あり！次回換金時にまとめて変換）`
+    : "";
+  document.getElementById("step-carry-note").textContent =
+    `次の💎+1まであと: ${needNext}歩（${diff.stepsPerStone}歩ごとに💎+1）${carryBonusNote}`;
 
   // Wave box
   const wInfo = getWaveInfo(state.wave);
@@ -1919,7 +2792,7 @@ function renderAll() {
           <span><strong>${l.steps.toLocaleString()}歩</strong> ${l.memo ? `<span style="color:var(--muted);">(${escapeHtml(l.memo)})</span>` : ""}</span>
           <span style="color:var(--muted);">${l.date} / 💎+${l.stones}</span>
         </div>`).join("")
-    : `<div class="sub-text" style="text-align:center;padding:8px;">まだ歩数ログがありません。気軽に300歩からどうぞ！</div>`;
+    : `<div class="sub-text" style="text-align:center;padding:8px;">まだ歩数ログがありません。自分のペースで入力してみてね！</div>`;
 
   // Home deck summary
   const summaryLines = state.deck.map((s, i) => {
@@ -1936,7 +2809,18 @@ function renderAll() {
   renderPassives();
   renderMapAndProgress();
   renderDex();
-  document.getElementById("expansion-status").textContent = `現在の増築済みアイテム数: ${(state.expansions || []).length}件`;
+  renderExpansionStatus();
+}
+
+function renderExpansionStatus() {
+  const exps = state.expansions || [];
+  document.getElementById("expansion-status").textContent = `現在の増築済みアイテム数: ${exps.length}件`;
+  document.getElementById("expansion-chip-list").innerHTML = exps.map(it => `
+    <span class="exp-chip">
+      <span>${it.type === 'god' ? '👑' : '⚔️'} ${escapeHtml(it.name)} (★${it.rarity})</span>
+      <button title="削除" onclick="removeExpansionItem('${escapeHtml(it.id)}')">×</button>
+    </span>
+  `).join("");
 }
 
 function renderDeck() {
@@ -1984,13 +2868,13 @@ function renderPassives() {
   const p = getArtifactPassives();
   const tp = getTotalPower();
   document.getElementById("passive-total-mult").textContent =
-    `×${p.mult.toFixed(2)}` + (tp.kawayagamiBoost ? " × 1.50(厠神)" : "");
+    `×${p.mult.toFixed(3)}` + (tp.kawayagamiBoost ? " × 1.60(厠神)" : "");
   document.getElementById("passive-list").innerHTML = p.breakdown.map(b => `
-    <div class="passive-item">
+    <div class="passive-item ${b.isBench ? 'bench' : ''}">
       <div style="font-weight:800;color:var(--text);">${escapeHtml(b.name)}</div>
       <div style="display:flex;justify-content:space-between;margin-top:2px;">
-        <span style="color:var(--muted);">${b.detail}</span>
-        <span style="color:var(--gold);font-weight:800;">+${b.pct}%</span>
+        <span style="color:var(--muted);">${escapeHtml(b.detail)}</span>
+        <span style="color:${b.isBench ? 'var(--cyan)' : 'var(--gold)'};font-weight:800;">${escapeHtml(b.pctText)}</span>
       </div>
     </div>
   `).join("");
@@ -2010,6 +2894,7 @@ function renderDex() {
   else if (currentDexFilter === "weapon") items = items.filter(x => x.type === "weapon");
   else if (currentDexFilter === "owned") items = items.filter(x => state.owned[x.id]);
   else if (currentDexFilter === "late") items = items.filter(x => x.lateBloomer);
+  else if (currentDexFilter === "exp") items = items.filter(x => !BASE_ID_SET.has(x.id));
 
   items.sort((a, b) => {
     const ao = state.owned[a.id] ? 1 : 0;
@@ -2026,6 +2911,7 @@ function renderDex() {
 
   grid.innerHTML = items.map(it => {
     const ow = state.owned[it.id];
+    const isExp = !BASE_ID_SET.has(it.id);
     return `
       <div class="unit-card r${it.rarity} ${ow ? '' : 'unowned'}" onclick="openItemModal('${it.id}')">
         ${getThumbHTML(it)}
@@ -2033,6 +2919,7 @@ function renderDex() {
           <span class="badge badge-r${it.rarity}">★${it.rarity}</span>
           ${ow ? `<span class="badge" style="background:#1e293b;color:#fff;">Lv.${ow.lv}${ow.dup ? ` +${ow.dup}` : ""}</span>` : `<span class="badge" style="background:#334155;color:#94a3b8;">未所持</span>`}
           ${it.lateBloomer ? '<span class="badge badge-late">大器晩成</span>' : ''}
+          ${isExp ? '<span class="badge badge-exp">増築</span>' : ''}
         </div>
         <div class="unit-name">${escapeHtml(it.name)}</div>
         <div class="unit-stat">
@@ -2050,6 +2937,7 @@ function renderDex() {
 (async function init() {
   loadState();
   await loadAllCustomImages();
+  syncProfileInputs(true);
   renderAll();
 })();
 </script>
