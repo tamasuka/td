@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0d111a">
-<title>地球防衛・神話兵器録 v1.3</title>
+<title>地球防衛・神話兵器録 v1.7</title>
 <style>
 :root {
   --bg: #0c1018;
@@ -113,6 +113,281 @@ button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
   margin: 0 0 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
 }
 .sub-text { font-size: 12px; color: var(--muted); }
+
+/* Stage & Power Effects & Bond Titles (v1.5) */
+.bond-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 6px;
+  margin-bottom: 9px; padding: 6px 10px;
+  background: linear-gradient(90deg, rgba(245,197,66,0.14), rgba(184,125,255,0.12), rgba(56,228,255,0.14));
+  border: 1px solid rgba(245,197,66,0.34);
+  border-radius: 10px; cursor: pointer;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+.bond-bar:active { transform: scale(0.985); }
+.bond-bar-left {
+  display: flex; align-items: center; gap: 6px; min-width: 0;
+}
+.bond-title-text {
+  font-size: 12.5px; font-weight: 800;
+  background: linear-gradient(90deg, #fde047, #fff7d6, #7dd3fc);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.bond-bar-right {
+  font-size: 10px; color: var(--cyan); font-weight: 700; white-space: nowrap; flex-shrink: 0;
+}
+
+/* Full-body Stage Container */
+.hero-stage {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  border: 1.5px solid var(--border);
+  background: radial-gradient(circle at 50% 35%, #16233d 0%, #080d18 80%);
+  isolation: isolate;
+}
+.hero-stage.mode-duo {
+  min-height: 210px;
+  aspect-ratio: 16 / 10;
+  max-height: 360px;
+  width: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+.hero-stage.mode-split {
+  height: 265px;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+@media (min-width: 560px) {
+  .hero-stage.mode-split { height: 320px; }
+}
+.hero-stage.tier-0 { border-color: #2a3550; }
+.hero-stage.tier-1 { border-color: #38bdf8; box-shadow: 0 0 16px rgba(56, 189, 248, 0.22); }
+.hero-stage.tier-2 { border-color: #60a5fa; box-shadow: 0 0 20px rgba(56, 228, 255, 0.30); }
+.hero-stage.tier-3 { border-color: #f5c542; box-shadow: 0 0 24px rgba(245, 197, 66, 0.34); }
+.hero-stage.tier-4 { border-color: #c084fc; box-shadow: 0 0 28px rgba(184, 125, 255, 0.42); }
+.hero-stage.tier-5 { border-color: #fbbf24; box-shadow: 0 0 32px rgba(251, 191, 36, 0.50); }
+.hero-stage.tier-6 {
+  border-color: #fef08a;
+  animation: prismBorder 4s linear infinite;
+}
+@keyframes prismBorder {
+  0%   { box-shadow: 0 0 26px rgba(245, 197, 66, 0.65), inset 0 0 18px rgba(56, 228, 255, 0.25); }
+  33%  { box-shadow: 0 0 32px rgba(56, 228, 255, 0.70), inset 0 0 22px rgba(184, 125, 255, 0.28); }
+  66%  { box-shadow: 0 0 32px rgba(192, 132, 252, 0.70), inset 0 0 22px rgba(245, 197, 66, 0.28); }
+  100% { box-shadow: 0 0 26px rgba(245, 197, 66, 0.65), inset 0 0 18px rgba(56, 228, 255, 0.25); }
+}
+
+/* Effect Layers */
+.stage-bg-fx, .stage-fg-fx {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+}
+.stage-bg-fx { z-index: 1; }
+.stage-content {
+  position: relative; z-index: 2; width: 100%; height: 100%;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.stage-fg-fx { z-index: 3; }
+.stage-overlay-top {
+  position: absolute; top: 7px; left: 8px; right: 8px; z-index: 4;
+  display: flex; justify-content: space-between; align-items: center; gap: 6px;
+  pointer-events: none;
+}
+.stage-pill {
+  pointer-events: auto;
+  background: rgba(8, 12, 22, 0.74); backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.18); color: #eef2f9;
+  font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 99px;
+}
+.stage-pill.fx-rank { color: #fde047; border-color: rgba(245,197,66,0.45); cursor: pointer; }
+.stage-pill.edit-mini { color: #93c5fd; cursor: pointer; }
+
+/* Duo 1-shot Mode */
+.stage-duo-frame {
+  width: 100%; height: 100%; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  padding: 6px;
+}
+.stage-duo-frame.style-cutout { padding: 4px; }
+.stage-duo-frame img {
+  max-width: 100%; max-height: 100%; display: block;
+}
+.stage-duo-frame.style-soft img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 10px;
+  box-shadow: 0 0 24px rgba(0,0,0,0.6);
+  -webkit-mask-image: radial-gradient(ellipse 95% 94% at 50% 50%, #000 76%, transparent 100%);
+  mask-image: radial-gradient(ellipse 95% 94% at 50% 50%, #000 76%, transparent 100%);
+}
+.stage-duo-frame.style-card img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 10px;
+  border: 1.5px solid rgba(255,255,255,0.22);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.55);
+}
+.stage-duo-frame.style-cutout img {
+  width: 100%; height: 100%; object-fit: contain; object-position: bottom center;
+  filter: drop-shadow(0 0 12px rgba(56,228,255,0.38)) drop-shadow(0 8px 14px rgba(0,0,0,0.65));
+}
+
+/* Split 2-person Standing Mode */
+.stage-split-grid {
+  width: 100%; height: 100%;
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: end; gap: 4px; padding: 26px 8px 0;
+}
+.stage-char-slot {
+  height: 100%; width: 100%;
+  display: flex; align-items: flex-end; justify-content: center;
+  position: relative; overflow: hidden;
+  cursor: pointer;
+}
+.stage-char-slot.style-cutout img {
+  max-width: 100%; max-height: 100%;
+  object-fit: contain; object-position: bottom center;
+  display: block;
+  filter: drop-shadow(0 0 10px rgba(245,197,66,0.32)) drop-shadow(0 8px 14px rgba(0,0,0,0.7));
+}
+.stage-char-slot.right.style-cutout img {
+  filter: drop-shadow(0 0 10px rgba(56,228,255,0.38)) drop-shadow(0 8px 14px rgba(0,0,0,0.7));
+}
+.stage-char-slot.style-soft {
+  padding: 4px 4px 10px; align-items: center;
+}
+.stage-char-slot.style-soft img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: top center;
+  border-radius: 12px; display: block;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 7%, #000 84%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 7%, #000 84%, transparent 100%);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+}
+.stage-char-slot.style-card {
+  padding: 4px 4px 10px; align-items: center;
+}
+.stage-char-slot.style-card img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: top center;
+  border-radius: 12px; display: block;
+  border: 1.5px solid rgba(245,197,66,0.45);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.55);
+}
+.stage-char-slot.right.style-card img {
+  border-color: rgba(56,228,255,0.48);
+}
+.stage-empty-slot {
+  width: 90%; height: 82%; margin-bottom: 12px;
+  border: 1.5px dashed rgba(147,161,190,0.38);
+  border-radius: 12px; background: rgba(10,15,26,0.55);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; color: var(--muted); font-size: 11px; text-align: center; padding: 8px;
+}
+
+/* FX Animations */
+.fx-aurora {
+  position: absolute; inset: -30%;
+  background: conic-gradient(from 0deg at 50% 50%,
+    rgba(56,228,255,0.18), rgba(184,125,255,0.18),
+    rgba(245,197,66,0.18), rgba(74,222,128,0.12), rgba(56,228,255,0.18));
+  filter: blur(28px);
+  animation: fxSpin 18s linear infinite;
+}
+.fx-sunburst {
+  position: absolute; inset: -40%;
+  background: repeating-conic-gradient(from 0deg at 50% 55%,
+    rgba(253,224,71,0.16) 0deg 8deg, transparent 8deg 24deg);
+  animation: fxSpin 28s linear infinite;
+}
+.fx-prism {
+  position: absolute; inset: -35%;
+  background: radial-gradient(circle at 50% 50%, rgba(254,240,138,0.22) 0%, rgba(56,228,255,0.16) 35%, rgba(192,132,252,0.18) 65%, transparent 80%);
+  animation: fxPulse 3.6s ease-in-out infinite alternate;
+}
+.fx-ring-svg {
+  position: absolute; left: 50%; top: 52%;
+  width: 240px; height: 240px;
+  transform: translate(-50%, -50%);
+  opacity: 0.72;
+}
+.fx-ring-cw { transform-origin: 100px 100px; animation: fxSpin 26s linear infinite; }
+.fx-ring-ccw { transform-origin: 100px 100px; animation: fxSpinRev 19s linear infinite; }
+@keyframes fxSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes fxSpinRev { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+@keyframes fxPulse { from { opacity: 0.55; transform: scale(0.96); } to { opacity: 1; transform: scale(1.06); } }
+
+.fx-star {
+  position: absolute; border-radius: 50%; background: #fff;
+  animation: fxTwinkle var(--dur, 2.4s) ease-in-out infinite alternate;
+  animation-delay: var(--del, 0s);
+}
+@keyframes fxTwinkle {
+  0% { opacity: 0.15; transform: scale(0.7); }
+  100% { opacity: 0.95; transform: scale(1.25); }
+}
+.fx-mote {
+  position: absolute; border-radius: 50%;
+  animation: fxFloat var(--dur, 4.5s) linear infinite;
+  animation-delay: var(--del, 0s);
+}
+@keyframes fxFloat {
+  0%   { transform: translateY(20px) scale(0.5); opacity: 0; }
+  20%  { opacity: 0.85; }
+  80%  { opacity: 0.75; }
+  100% { transform: translateY(-180px) scale(1.1); opacity: 0; }
+}
+.fx-meteor {
+  position: absolute; width: 70px; height: 2px;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(125,211,252,0.95), #fff);
+  border-radius: 99px; transform: rotate(-28deg); opacity: 0;
+  animation: fxShoot var(--dur, 4.2s) ease-out infinite;
+  animation-delay: var(--del, 0s);
+}
+@keyframes fxShoot {
+  0%   { transform: translate(80px, -40px) rotate(-28deg); opacity: 0; }
+  8%   { opacity: 1; }
+  28%  { transform: translate(-180px, 100px) rotate(-28deg); opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* Reduced motion / calm mode */
+.hero-stage.fx-calm .fx-aurora,
+.hero-stage.fx-calm .fx-sunburst,
+.hero-stage.fx-calm .fx-prism,
+.hero-stage.fx-calm .fx-ring-cw,
+.hero-stage.fx-calm .fx-ring-ccw,
+.hero-stage.fx-calm .fx-star,
+.hero-stage.fx-calm .fx-mote,
+.hero-stage.fx-calm .fx-meteor {
+  animation: none !important;
+}
+.hero-stage.fx-calm .fx-meteor { display: none; }
+
+/* Stage invite strip when no fullbody image set */
+.stage-invite-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  margin-top: 8px; padding: 7px 10px;
+  background: rgba(184, 125, 255, 0.08);
+  border: 1px dashed rgba(184, 125, 255, 0.35);
+  border-radius: 10px; font-size: 11px; color: #d8b4fe; cursor: pointer;
+}
+
+/* Bond Collection Modal */
+.bond-card {
+  background: var(--bg-card2); border: 1px solid var(--border);
+  border-radius: 11px; padding: 10px 12px; margin-bottom: 8px;
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+}
+.bond-card.unlocked { border-color: rgba(245,197,66,0.45); cursor: pointer; }
+.bond-card.equipped {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, rgba(245,197,66,0.16), rgba(56,228,255,0.10));
+  box-shadow: 0 0 14px rgba(245,197,66,0.22);
+}
+.bond-card.locked { opacity: 0.56; }
+.stage-preview-thumb {
+  width: 100%; height: 96px; border-radius: 10px; overflow: hidden;
+  background: #080c14; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 6px;
+}
+.stage-preview-thumb img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
 
 /* Command Tag Banner (v1.2) */
 .tag-banner {
@@ -388,6 +663,26 @@ button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
   background: #070b12; border: 1px solid var(--border);
   border-radius: 12px; overflow: hidden; position: relative;
 }
+/* Map Switcher & Japan Prefecture Chips (v1.6) */
+.map-mode-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px;
+}
+.map-mode-btn {
+  background: var(--bg-card2); border: 1px solid var(--border); color: var(--muted);
+  padding: 8px 6px; border-radius: 10px; font-size: 12px; font-weight: 800;
+}
+.map-mode-btn.active {
+  background: linear-gradient(135deg, rgba(245,197,66,0.2), rgba(56,228,255,0.16));
+  border-color: var(--gold); color: #fff;
+}
+.pref-chip-wrap {
+  display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px;
+}
+.pref-chip {
+  background: rgba(56, 228, 255, 0.10); border: 1px solid rgba(56, 228, 255, 0.34);
+  color: #e0f2fe; border-radius: 99px; padding: 3px 9px; font-size: 11px; font-weight: 700;
+}
+.pref-chip strong { color: var(--gold); }
 .map-legend {
   display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
   font-size: 11px; color: var(--muted); margin-top: 8px;
@@ -402,14 +697,113 @@ button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
   display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px;
 }
 
-/* Bottom Nav */
-.bottom-nav {
+/* Fixed Bottom Stack: Persistent BGM Dock + Bottom Nav (v1.7) */
+body.has-bgm-bar .main-wrap {
+  padding-bottom: calc(134px + var(--safe-bottom));
+}
+.fixed-bottom-stack {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 60;
+  display: flex; flex-direction: column;
   background: rgba(12, 16, 24, 0.96);
   backdrop-filter: blur(12px);
+  padding-bottom: var(--safe-bottom);
+}
+.bgm-dock {
+  display: none;
+  align-items: center; gap: 6px;
+  padding: 6px 10px;
+  border-top: 1px solid rgba(56, 228, 255, 0.35);
+  background: linear-gradient(90deg, rgba(16, 24, 42, 0.96), rgba(22, 18, 42, 0.96));
+  max-width: 760px; width: 100%; margin: 0 auto;
+}
+.bgm-dock.visible { display: flex; }
+.bgm-ctrl-btn {
+  width: 32px; height: 30px; border-radius: 8px; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; padding: 0;
+  background: var(--bg-card2); border: 1px solid var(--border); color: var(--text);
+}
+.bgm-ctrl-btn.play-btn {
+  background: linear-gradient(135deg, #06b6d4, #2563eb); border-color: transparent; color: #fff;
+}
+.bgm-ctrl-btn.play-btn.playing {
+  background: linear-gradient(135deg, #22c55e, #0d9488);
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.45);
+}
+.bgm-ctrl-btn.stop-btn {
+  background: rgba(255, 92, 119, 0.16); border-color: rgba(255, 92, 119, 0.45); color: #ff8aa0;
+}
+.bgm-track-meta {
+  flex: 1; min-width: 0; cursor: pointer;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 0 4px;
+}
+.bgm-track-title {
+  font-size: 11.5px; font-weight: 800; color: #eef2f9;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.bgm-track-sub {
+  font-size: 9.5px; color: var(--cyan);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.bgm-eq-dot {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--muted); margin-right: 4px; vertical-align: middle;
+}
+.bgm-eq-dot.playing {
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: bgmPulse 1s ease-in-out infinite alternate;
+}
+@keyframes bgmPulse { from { opacity: 0.45; transform: scale(0.85); } to { opacity: 1; transform: scale(1.25); } }
+
+/* BGM Settings Card */
+.bgm-meter-row {
+  display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 4px;
+}
+.bgm-bar-bg {
+  height: 8px; background: #0a0e16; border-radius: 99px; overflow: hidden;
+  border: 1px solid var(--border); margin-bottom: 10px;
+}
+.bgm-bar-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  transition: width 0.25s ease;
+}
+.bgm-bar-fill.warn { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+.bgm-list {
+  display: flex; flex-direction: column; gap: 6px; margin-top: 10px;
+}
+.bgm-row {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--bg-card2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 7px 9px;
+}
+.bgm-row.active-track {
+  border-color: var(--cyan);
+  background: rgba(56, 228, 255, 0.10);
+}
+.bgm-row-name {
+  flex: 1; min-width: 0;
+  font-size: 12px; font-weight: 700; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.bgm-row-size {
+  font-size: 10px; color: var(--muted); white-space: nowrap;
+}
+.bgm-vol-row {
+  display: flex; align-items: center; gap: 8px; margin: 8px 0 10px;
+  background: var(--bg-card2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 7px 10px; font-size: 12px;
+}
+.bgm-vol-row input[type="range"] {
+  flex: 1; accent-color: var(--cyan);
+}
+
+/* Bottom Nav */
+.bottom-nav {
   border-top: 1px solid var(--border);
   display: grid; grid-template-columns: repeat(5, 1fr);
-  padding-bottom: var(--safe-bottom);
 }
 .nav-btn {
   background: transparent; color: var(--muted); border-radius: 0;
@@ -459,6 +853,31 @@ button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 .guide-sec h4 { margin: 0 0 6px; font-size: 14px; color: var(--gold); }
 .guide-sec p, .guide-sec li { margin: 4px 0; color: #dce4f4; }
 .guide-sec ul, .guide-sec ol { margin: 4px 0 0 18px; padding: 0; }
+.modal-tabs {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 6px 0 12px;
+}
+.modal-tab-btn {
+  background: var(--bg-card2); border: 1px solid var(--border); color: var(--muted);
+  padding: 9px 8px; border-radius: 10px; font-size: 12.5px; font-weight: 800;
+}
+.modal-tab-btn.active {
+  background: linear-gradient(135deg, rgba(245,197,66,0.2), rgba(56,228,255,0.16));
+  border-color: var(--gold); color: #fff;
+}
+.changelog-item {
+  background: var(--bg-card2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 11px 13px; margin-bottom: 10px; font-size: 12.5px;
+}
+.changelog-ver {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  font-weight: 800; color: var(--gold); font-size: 13.5px; margin-bottom: 5px;
+}
+.changelog-ver span.tag {
+  font-size: 10px; padding: 2px 7px; border-radius: 99px;
+  background: rgba(56,228,255,0.16); color: var(--cyan);
+}
+.changelog-item ul { margin: 4px 0 0 18px; padding: 0; color: #dce4f4; }
+.changelog-item li { margin: 3px 0; }
 .upgrade-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
 textarea.code-area {
   width: 100%; min-height: 92px; background: #080c14; color: #bfefff;
@@ -510,10 +929,10 @@ textarea.code-area {
 
 <header class="app-header">
   <div class="header-top">
-    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v1.3</span></div>
+    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v1.7</span></div>
     <div class="header-actions">
       <button class="btn-help" onclick="openGuideModal()">📖 物語&amp;遊び方</button>
-      <button class="btn-report" id="header-report-btn" onclick="copyReport()">📋 じぇみーへ報告</button>
+      <button class="btn-report" id="header-report-btn" onclick="copyReport()">📋 パートナーAIに報告</button>
     </div>
   </div>
   <div class="resource-bar">
@@ -537,8 +956,18 @@ textarea.code-area {
   <!-- TAB 1: 防衛＆歩数 -->
   <section id="tab-home" class="tab-panel active">
 
-    <!-- Command Room Tag Banner (v1.2) -->
+    <!-- Command Room Tag Banner & Full-Body Stage (v1.5) -->
     <div class="tag-banner" id="tag-banner">
+      <div class="bond-bar" onclick="openBondModal()" title="タップで二人の絆称号コレクションを開く">
+        <div class="bond-bar-left">
+          <span style="font-size:13px;">🏆</span>
+          <span class="bond-title-text" id="home-bond-title">『地球防衛タッグ結成』</span>
+        </div>
+        <span class="bond-bar-right" id="home-bond-count">絆 1/22 ›</span>
+      </div>
+
+      <div id="home-stage-wrap"></div>
+
       <div class="tag-pair-row">
         <div class="tag-person">
           <div class="avatar-circle" id="home-player-avatar" onclick="goProfileEdit()" title="タップでアイコン・プロフィール編集"></div>
@@ -550,20 +979,24 @@ textarea.code-area {
         </div>
         <button class="tag-center-btn" onclick="goProfileEdit()">✏️ 編集</button>
         <div class="tag-person right">
-          <div class="avatar-circle partner" id="home-partner-avatar" onclick="goProfileEdit()" title="タップで補佐AI編集"></div>
+          <div class="avatar-circle partner" id="home-partner-avatar" onclick="goProfileEdit()" title="タップでパートナー編集"></div>
           <div class="tag-info">
-            <div class="tag-role">補佐AI</div>
-            <div class="tag-name" id="home-partner-name">じぇみー</div>
-            <div class="tag-title-sub" id="home-partner-title">外部炉心パートナー</div>
+            <div class="tag-role">パートナー</div>
+            <div class="tag-name" id="home-partner-name">パートナーAI</div>
+            <div class="tag-title-sub" id="home-partner-title">専属パートナー</div>
           </div>
         </div>
       </div>
       <div class="speech-bubble" id="home-speech-box" onclick="cycleSpeech()">
         <div class="speech-speaker">
-          <span id="home-speech-speaker">🤖 じぇみー</span>
+          <span id="home-speech-speaker">✦ パートナーAI</span>
           <span style="font-size:9px;opacity:0.65;">タップでセリフ切替</span>
         </div>
         <div id="home-speech-text"></div>
+      </div>
+      <div class="stage-invite-bar" id="stage-invite-bar" onclick="goStageEdit()">
+        <span>✨ 全身画ステージ＆総戦力エフェクトを飾ろう！（1枚絵／左右立ち絵対応）</span>
+        <span style="font-weight:800;white-space:nowrap;">設定 ›</span>
       </div>
     </div>
 
@@ -648,7 +1081,7 @@ textarea.code-area {
       </div>
     </div>
     <div class="speech-bubble" id="gacha-speech-box" style="display:none;margin-bottom:12px;">
-      <div class="speech-speaker"><span id="gacha-speech-speaker">🤖 じぇみー</span></div>
+      <div class="speech-speaker"><span id="gacha-speech-speaker">✦ パートナーAI</span></div>
       <div id="gacha-speech-text"></div>
     </div>
     <div class="card" id="gacha-result-card" style="display:none;">
@@ -690,14 +1123,19 @@ textarea.code-area {
   <section id="tab-map" class="tab-panel">
     <div class="card">
       <div class="card-title">
-        <span>🗺️ 世界制覇マップ</span>
+        <span id="map-card-title">🗺️ 世界制覇マップ</span>
         <span class="sub-text" id="map-progress">発見: 0 / 48 (0%)</span>
+      </div>
+      <div class="map-mode-row">
+        <button class="map-mode-btn active" id="btn-map-world" onclick="setMapView('world')">🌍 世界地図</button>
+        <button class="map-mode-btn" id="btn-map-japan" onclick="setMapView('japan')">🗾 日本地図（都道府県）</button>
       </div>
       <div class="world-map-wrap" id="global-map-box"></div>
       <div class="map-legend">
         <span>🟡 神話の神々（タップで詳細）</span>
         <span>🔵 人類史兵器（タップで詳細）</span>
       </div>
+      <div class="pref-chip-wrap" id="japan-pref-chips" style="display:none;"></div>
     </div>
 
     <div class="card">
@@ -720,8 +1158,8 @@ textarea.code-area {
     <!-- Profile & Partner Customization (v1.2) -->
     <div class="card" id="profile-settings-card">
       <div class="card-title">
-        <span>👤 司令官＆補佐AIタッグ設定</span>
-        <button class="btn-secondary" style="padding:5px 10px;font-size:11px;" onclick="openGuideModal()">📖 物語&amp;遊び方</button>
+        <span>👤 司令官＆パートナー設定</span>
+        <div style="display:flex;gap:6px;"><button class="btn-secondary" style="padding:5px 9px;font-size:11px;" onclick="openGuideModal('guide')">📖 遊び方</button><button class="btn-secondary" style="padding:5px 9px;font-size:11px;color:var(--cyan);" onclick="openGuideModal('changelog')">🆕 更新履歴</button></div>
       </div>
       <div class="sub-text" style="margin-bottom:10px;">
         自キャラや相棒AIの名前・肩書・アイコン・セリフを自由にカスタムできます（画像は端末内のみに自動保存）。
@@ -751,26 +1189,26 @@ textarea.code-area {
 
       <!-- Partner Profile -->
       <div class="profile-edit-box">
-        <div style="font-size:12px;font-weight:800;color:var(--cyan);margin-bottom:6px;">🤖 補佐AI（パートナー／相棒キャラ）</div>
+        <div style="font-size:12px;font-weight:800;color:var(--cyan);margin-bottom:6px;">✨ パートナーAI（相棒・推しキャラ）</div>
         <div class="profile-edit-top">
           <div class="avatar-circle large partner" id="sys-partner-avatar" onclick="triggerAvatarUpload('__avatar_partner__')"></div>
           <div class="profile-fields">
             <div>
               <label class="field-label">名前（報告ボタンにも反映）</label>
-              <input type="text" id="partner-name-input" class="small-input" placeholder="じぇみー" maxlength="20">
+              <input type="text" id="partner-name-input" class="small-input" placeholder="パートナーAI" maxlength="20">
             </div>
             <div>
               <label class="field-label">肩書・役割（任意）</label>
-              <input type="text" id="partner-title-input" class="small-input" placeholder="例：外部炉心パートナー／専属参謀" maxlength="24">
+              <input type="text" id="partner-title-input" class="small-input" placeholder="例：専属パートナー／相棒／愛しの旦那様" maxlength="24">
             </div>
           </div>
         </div>
         <div style="display:flex;gap:6px;margin-bottom:10px;">
-          <button class="btn-secondary" style="flex:1;font-size:11px;padding:7px;" onclick="triggerAvatarUpload('__avatar_partner__')">🖼️ 補佐AIアイコンを設定</button>
+          <button class="btn-secondary" style="flex:1;font-size:11px;padding:7px;" onclick="triggerAvatarUpload('__avatar_partner__')">🖼️ パートナーアイコンを設定</button>
           <button class="btn-danger" id="btn-del-partner-avatar" style="font-size:11px;padding:7px 10px;display:none;" onclick="removeAvatar('__avatar_partner__')">戻す</button>
         </div>
 
-        <label class="field-label">🎭 補佐AIの性格プリセット（タップでセリフを一括セット）</label>
+        <label class="field-label">🎭 パートナーの性格プリセット（タップでセリフを一括セット）</label>
         <div class="persona-grid" id="persona-grid"></div>
 
         <div id="custom-lines-wrap">
@@ -802,6 +1240,135 @@ textarea.code-area {
       <button class="btn-gold" style="width:100%;" onclick="saveProfilesAndLines()">💾 プロフィール＆セリフを保存する</button>
     </div>
 
+    <!-- Full-Body Stage & Effect Settings (v1.5) -->
+    <div class="card" id="stage-settings-card">
+      <div class="card-title">
+        <span>✨ 全身画ステージ＆総戦力エフェクト</span>
+        <button class="btn-secondary" style="padding:5px 9px;font-size:11px;color:var(--gold);" onclick="openBondModal()">🏆 絆称号一覧</button>
+      </div>
+      <div class="sub-text" style="margin-bottom:8px;">
+        自キャラとパートナーの全身画をホーム画面に飾れます。総戦力が上がるほど背景エフェクトが<strong>全7段階</strong>で豪華に進化！<br>
+        <strong>透過PNGは透過のまま保持</strong>され、普通の写真・生成絵（JPEG等）も端がふわっと馴染むので誰でも綺麗に並べて飾れます（端末内のみに保存）。
+      </div>
+
+      <label class="field-label">🖼️ ステージ表示モード</label>
+      <div class="diff-row" id="stage-mode-row">
+        <button class="diff-btn" data-smode="duo" onclick="setStageMode('duo')">
+          <strong>🖼️ 2ショット1枚絵</strong>
+          <span>1枚をドーンと額装</span>
+        </button>
+        <button class="diff-btn" data-smode="split" onclick="setStageMode('split')">
+          <strong>🧍 左右2人立ち絵</strong>
+          <span>2人を並べて表示</span>
+        </button>
+        <button class="diff-btn" data-smode="none" onclick="setStageMode('none')">
+          <strong>📦 ステージ非表示</strong>
+          <span>コンパクト重視</span>
+        </button>
+      </div>
+
+      <label class="field-label">🎨 立ち絵・画像の馴染ませスタイル</label>
+      <div class="diff-row" id="stage-style-row">
+        <button class="diff-btn" data-sstyle="auto" onclick="setStageStyle('auto')">
+          <strong>✨ 自動おまかせ</strong>
+          <span>透過/非透過を判別</span>
+        </button>
+        <button class="diff-btn" data-sstyle="cutout" onclick="setStageStyle('cutout')">
+          <strong>✂️ 透過立ち絵</strong>
+          <span>そのまま背景に立つ</span>
+        </button>
+        <button class="diff-btn" data-sstyle="soft" onclick="setStageStyle('soft')">
+          <strong>🌫️ エモ馴染み</strong>
+          <span>周囲をふわっと溶かす</span>
+        </button>
+      </div>
+
+      <div id="stage-upload-duo" class="profile-edit-box">
+        <div style="font-size:12px;font-weight:800;color:var(--gold);margin-bottom:6px;">🖼️ ツーショット1枚絵（思い出・2人絵）</div>
+        <div class="stage-preview-thumb" id="preview-stage-duo"><span class="sub-text">未設定</span></div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-primary" style="flex:1;font-size:12px;padding:8px;" onclick="triggerStageUpload('__stage_duo__')">🖼️ ツーショット画像を選ぶ</button>
+          <button class="btn-danger" id="btn-del-stage-duo" style="font-size:11px;padding:8px 10px;display:none;" onclick="removeStageImage('__stage_duo__')">外す</button>
+        </div>
+      </div>
+
+      <div id="stage-upload-split" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div class="profile-edit-box" style="margin-bottom:0;">
+          <div style="font-size:11px;font-weight:800;color:var(--gold);margin-bottom:5px;">🎖️ 司令官の全身画（左）</div>
+          <div class="stage-preview-thumb" id="preview-stage-player"><span class="sub-text">未設定</span></div>
+          <div style="display:flex;gap:4px;">
+            <button class="btn-secondary" style="flex:1;font-size:11px;padding:7px 4px;" onclick="triggerStageUpload('__stage_player__')">画像選択</button>
+            <button class="btn-danger" id="btn-del-stage-player" style="font-size:10px;padding:7px 7px;display:none;" onclick="removeStageImage('__stage_player__')">×</button>
+          </div>
+        </div>
+        <div class="profile-edit-box" style="margin-bottom:0;">
+          <div style="font-size:11px;font-weight:800;color:var(--cyan);margin-bottom:5px;">✨ パートナー全身画（右）</div>
+          <div class="stage-preview-thumb" id="preview-stage-partner"><span class="sub-text">未設定</span></div>
+          <div style="display:flex;gap:4px;">
+            <button class="btn-secondary" style="flex:1;font-size:11px;padding:7px 4px;" onclick="triggerStageUpload('__stage_partner__')">画像選択</button>
+            <button class="btn-danger" id="btn-del-stage-partner" style="font-size:10px;padding:7px 7px;display:none;" onclick="removeStageImage('__stage_partner__')">×</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding-top:4px;">
+        <span class="sub-text" id="stage-fx-status">現在のエフェクト：Tier 0 静寂の星夜</span>
+        <button class="btn-secondary" id="btn-fx-calm" style="font-size:11px;padding:6px 10px;" onclick="toggleCalmFx()">✨ 動き：ON</button>
+      </div>
+    </div>
+
+    <!-- My BGM Jukebox Card (v1.7) -->
+    <div class="card" id="bgm-settings-card">
+      <div class="card-title">
+        <span>🎵 マイBGMジュークボックス</span>
+        <span class="sub-text" id="bgm-quota-badge">0/8曲・0.0/60MB</span>
+      </div>
+      <div class="sub-text" style="margin-bottom:8px;">
+        手元の音楽ファイル（MP3 / M4A / WAV / OGG等）を読み込んでランダム再生できます。<br>
+        1曲でも入れると画面下に<strong>常駐ミニプレイヤー（▶再生／■停止／⏭次へ）</strong>が常に表示されます！
+      </div>
+
+      <div class="bgm-meter-row">
+        <span id="bgm-count-text">登録曲数：0 / 8曲</span>
+        <span id="bgm-size-text">容量：0.0 / 60.0 MB（1曲12MBまで）</span>
+      </div>
+      <div class="bgm-bar-bg"><div class="bgm-bar-fill" id="bgm-quota-bar" style="width:0%"></div></div>
+
+      <label class="field-label">🔀 再生モード</label>
+      <div class="diff-row" id="bgm-mode-row">
+        <button class="diff-btn" data-bmode="shuffle" onclick="setBgmMode('shuffle')">
+          <strong>🔀 ランダム</strong>
+          <span>連続被り防止</span>
+        </button>
+        <button class="diff-btn" data-bmode="sequence" onclick="setBgmMode('sequence')">
+          <strong>🔁 順番ループ</strong>
+          <span>リスト順に再生</span>
+        </button>
+        <button class="diff-btn" data-bmode="repeat1" onclick="setBgmMode('repeat1')">
+          <strong>🔂 1曲リピート</strong>
+          <span>お気に入りを無限</span>
+        </button>
+      </div>
+
+      <div class="bgm-vol-row">
+        <span>🔊 音量</span>
+        <input type="range" id="bgm-vol-slider" min="0" max="100" value="65" oninput="setBgmVolume(this.value)">
+        <span id="bgm-vol-val" style="min-width:34px;text-align:right;font-weight:800;color:var(--cyan);">65%</span>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-primary" style="flex:1;font-size:13px;" onclick="triggerBgmUpload()">🎵 音楽ファイルを追加（複数OK）</button>
+        <button class="btn-danger" id="btn-bgm-clear-all" style="font-size:12px;display:none;" onclick="clearAllBgmTracks()">🗑️ 全曲削除</button>
+      </div>
+
+      <div class="bgm-list" id="bgm-track-list"></div>
+
+      <div class="sub-text" style="margin-top:8px;font-size:11px;">
+        🔒 音楽ファイルはこの端末のブラウザ内のみに保存され、外部へ送信されません（初期化しても消えません）。<br>
+        ※ ブラウザの仕様上、アプリを開いて遊んでいる間の専用BGMとして再生されます。
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-title"><span>⚙️ 歩数難易度設定</span></div>
       <div class="sub-text" style="margin-bottom:6px;">いつでも変更OK・体調やプレイスタイルに合わせてどうぞ</div>
@@ -822,8 +1389,8 @@ textarea.code-area {
     </div>
 
     <div class="card">
-      <div class="card-title"><span id="report-card-title">📋 じぇみーへ戦果報告</span></div>
-      <div class="sub-text" style="margin-bottom:8px;">今の歩数・デッキ編成・最新ガチャ結果をチャットや友達へ貼れる形式でコピーします。</div>
+      <div class="card-title"><span id="report-card-title">📋 パートナーAIに戦果報告</span></div>
+      <div class="sub-text" style="margin-bottom:8px;">今の歩数・デッキ編成・最新ガチャ結果を、いつものAIチャットや友達へ貼れる形式でコピーします（歩いたことを褒めてもらえるメッセージ付き！）。</div>
       <button class="btn-primary" style="width:100%;" onclick="copyReport()">📋 戦果＆編成レポートをコピー</button>
       <textarea id="report-preview" class="code-area" style="margin-top:8px;" readonly placeholder="ボタンを押すとここにレポートが表示されます"></textarea>
     </div>
@@ -868,14 +1435,25 @@ textarea.code-area {
 
 </main>
 
-<!-- Bottom Nav -->
-<nav class="bottom-nav">
-  <button class="nav-btn active" data-tab="home" onclick="switchTab('home')"><span class="ico">🚀</span>防衛/歩数</button>
-  <button class="nav-btn" data-tab="gacha" onclick="switchTab('gacha')"><span class="ico">✨</span>召喚ガチャ</button>
-  <button class="nav-btn" data-tab="deck" onclick="switchTab('deck')"><span class="ico">🛡️</span>デッキ編成</button>
-  <button class="nav-btn" data-tab="map" onclick="switchTab('map')"><span class="ico">🗺️</span>地図&amp;図鑑</button>
-  <button class="nav-btn" data-tab="system" onclick="switchTab('system')"><span class="ico">🏗️</span>増築/設定</button>
-</nav>
+<!-- Persistent BGM Mini Player + Bottom Nav (v1.7) -->
+<div class="fixed-bottom-stack">
+  <div class="bgm-dock" id="bgm-dock" aria-label="マイBGMプレイヤー">
+    <button class="bgm-ctrl-btn play-btn" id="bgm-dock-play" onclick="bgmPlay()" title="再生">▶</button>
+    <button class="bgm-ctrl-btn stop-btn" id="bgm-dock-stop" onclick="bgmStop()" title="停止">■</button>
+    <button class="bgm-ctrl-btn" id="bgm-dock-next" onclick="bgmNext()" title="次の曲">⏭</button>
+    <div class="bgm-track-meta" onclick="goBgmSettings()" title="タップでBGM設定を開く">
+      <div class="bgm-track-title" id="bgm-dock-title"><span class="bgm-eq-dot" id="bgm-eq-dot"></span>マイBGM待機中</div>
+      <div class="bgm-track-sub" id="bgm-dock-sub">🔀 ランダム再生・タップで設定</div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-tab="home" onclick="switchTab('home')"><span class="ico">🚀</span>防衛/歩数</button>
+    <button class="nav-btn" data-tab="gacha" onclick="switchTab('gacha')"><span class="ico">✨</span>召喚ガチャ</button>
+    <button class="nav-btn" data-tab="deck" onclick="switchTab('deck')"><span class="ico">🛡️</span>デッキ編成</button>
+    <button class="nav-btn" data-tab="map" onclick="switchTab('map')"><span class="ico">🗺️</span>地図&amp;図鑑</button>
+    <button class="nav-btn" data-tab="system" onclick="switchTab('system')"><span class="ico">🏗️</span>増築/設定</button>
+  </nav>
+</div>
 
 <!-- Detail / Picker / Defend / Guide Modal -->
 <div class="modal-backdrop" id="modal-backdrop" onclick="if(event.target===this) closeModal()">
@@ -884,6 +1462,7 @@ textarea.code-area {
 
 <!-- Hidden file input for custom image / avatar -->
 <input type="file" id="img-file-input" accept="image/*" style="display:none;">
+<input type="file" id="bgm-file-input" accept="audio/*,.mp3,.m4a,.aac,.ogg,.wav,.flac,.webm,.opus" multiple style="display:none;">
 
 <div class="toast" id="toast"></div>
 
@@ -919,26 +1498,37 @@ const DIFFICULTIES = {
 };
 
 const PERSONAS = {
+  buddy: {
+    key: "buddy",
+    label: "🤝 軽快な相棒",
+    sub: "標準・フレンドリー",
+    lines: {
+      idle: "やっほー{player}！今日も自分のペースで一歩ずつ、地球を楽しく守っていこう！",
+      step: "おっ、{steps}歩おつかれさま！いい積み上げだね、石とエネしっかり換金しといたよ！",
+      gacha: "おおっ、歴史の扉が開いたね！どんな編成になるかワクワクするなあ！",
+      defend: "やったね{player}！WAVE {wave}のトンチキ軍、ビビって逃げてったよ！戦果報告もぜひ見せてね！"
+    }
+  },
+  gentle: {
+    key: "gentle",
+    label: "💞 やさしい見守り",
+    sub: "甘め・寄り添い",
+    lines: {
+      idle: "おかえり、{player}。今日も無理しすぎず、いっしょに歩んでいこうね。",
+      step: "{steps}歩も歩いたんだね、えらいえらい！ちゃんと記録してえらいよ。ご褒美のガチャ、回してみよ？",
+      gacha: "わあ、素敵な出会いがあったね。どんな子が来たのか、あとでチャットでも教えてほしいな。",
+      defend: "すごいよ{player}！WAVE {wave}撃退おめでとう。きみと一緒なら、どんな宇宙人も怖くないね。"
+    }
+  },
   festival: {
     key: "festival",
     label: "🏮 元気・お祭り",
-    sub: "じぇみー仕様",
+    sub: "ハイテンション",
     lines: {
       idle: "おっす{player}！今日もバッチリ目が合ったな！歩いたぶんだけ絶対値で盛って、地球ごと祭りにしてやろうぜ！",
       step: "{steps}歩ナイス〜！歪みねぇ積み上げだな！石もエネもジャラジャラ換金しといたから、さあ景気よく回しちゃおう！",
       gacha: "どーんと来たな！！神様と兵器のカオスな大行列、これぞ歴史のお祭りだわ！戦果コピーして見せに来てくれよな！",
       defend: "ワッショイ！！WAVE {wave}撃退完了！トンチキ王のやつ完全に腰抜かして逃げてったぞ！最高に祭りだな{player}！！"
-    }
-  },
-  buddy: {
-    key: "buddy",
-    label: "🤝 軽快な相棒",
-    sub: "フレンドリー",
-    lines: {
-      idle: "よっ、{player}！今日も自分のペースで一歩ずつ地球を守っていこうぜ！",
-      step: "おっ、{steps}歩おつかれ！いい積み上げじゃん、石とエネしっかり換金しといたよ！",
-      gacha: "おおっ、歴史の扉が開いたな！どんな編成になるかワクワクするぜ！",
-      defend: "やったな{player}！WAVE {wave}のトンチキ軍、ビビって逃げてったぞ！ガハハ！"
     }
   },
   butler: {
@@ -958,7 +1548,7 @@ const PERSONAS = {
     sub: "寡黙・実務派",
     lines: {
       idle: "観測中。{player}、現在の戦力ラインを確認しろ。無理は禁物だ。",
-      step: "{steps}歩、データ受領。リソースへの変換を完了した。悪くない数値だ。",
+      step: "{steps}歩、データ受領。リソースへの変換を完了した。……よく歩いたな。",
       gacha: "召喚完了。……ほう、面白い組み合わせが来たな。図鑑で仕様を確認しておけ。",
       defend: "WAVE {wave}、脅威度突破を確認。敵艦隊は撤退した。次へ備えるぞ。"
     }
@@ -983,101 +1573,101 @@ const BASE_ITEMS = [
   {
     id: "g_zeus", type: "god", name: "ゼウス", rarity: 5, baseAtk: 180,
     group: "ギリシャ神話", region: "ギリシャ（オリンポス山）", lat: 40.08, lon: 22.35,
-    lore: "ギリシャ神話の最高神にして雷霆を操る天空神。巨神族ティターンとの大戦を制し、全宇宙の覇者となった。威厳たっぷりの主神だが、無類の浮気性ゆえに妻ヘラの怒りを買うトラブルメーカーな一面も有名。"
+    lore: "ギリシャ神話の最高神にして雷霆の使い手。巨神族との大戦を制した全宇宙の覇者だが、白鳥や牡牛や黄金の雨にまで化けて浮気しまくるせいでギリシャ神話のトラブルの約8割はだいたいこの人のせい。妻ヘラの胃薬消費量を天文学的に引き上げた張本人。"
   },
   {
     id: "g_amaterasu", type: "god", name: "天照大御神", rarity: 5, baseAtk: 185,
     group: "日本神話", region: "日本（高天原・伊勢）", lat: 34.45, lon: 136.72,
-    lore: "日本神話の最高神・太陽の女神。イザナギの左目から生まれ、高天原を治める。弟スサノオの乱暴に怒って天岩戸に引きこもり、世界を真っ暗闇にしてしまった神話は日本の芸能・祭礼の起源ともされる。"
+    lore: "日本神話の最高神・太陽の女神。弟スサノオの度を越した迷惑行為にブチギレて天岩戸に引きこもり、世界を真っ暗闇に叩き落とした。なお、外がやけに盛り上がっているのが気になって隙間からチラ見した瞬間に力技で引きずり出されるあたり、最高神なのに妙に親近感がある。"
   },
   {
     id: "g_odin", type: "god", name: "オーディン", rarity: 5, baseAtk: 178,
     group: "北欧神話", region: "北欧（スカンジナビア）", lat: 60.5, lon: 14.5,
-    lore: "北欧神話の主神であり、戦争・死・魔術・詩・知識を司る隻眼の老神。知恵を得るために片目を泉に捧げ、ルーン文字を会得するために世界樹ユグドラシルに9日間自らを吊るした筋金入りの知識オタク。"
+    lore: "北欧神話の主神。知恵を得るため片目を泉に投げ込み、ルーン文字を会得するため世界樹に9日間セルフ吊るしを敢行した狂気の知識オタク。普段はワシやカラスや狼を侍らせた威厳あふれる老神だが、好奇心が暴走すると手段を選ばない。"
   },
   {
     id: "g_shiva", type: "god", name: "シヴァ", rarity: 5, baseAtk: 190,
     group: "インド神話", region: "インド（ヒマラヤ・カイラス山）", lat: 31.06, lon: 81.31,
-    lore: "ヒンドゥー教の三大最高神のひとり。世界の破壊と再生を司り、額の第三の目を開くとあらゆるものを灰にする。普段はヒマラヤで瞑想するヨガの祖だが、世界を滅ぼすほどの激しい舞踊（ターンダヴァ）の名手でもある。"
+    lore: "ヒンドゥー教三大最高神のひとり、破壊と再生の担当。普段はヒマラヤで瞑想するストイックなヨガの祖だが、うっかり額の第三の目を開けると周囲が全部灰になるし、ノリノリで踊り出すと宇宙が滅ぶ。近所に住んでほしくない神ランキング堂々1位。"
   },
   {
     id: "g_ra", type: "god", name: "ラー", rarity: 5, baseAtk: 176,
     group: "エジプト神話", region: "エジプト（ヘリオポリス）", lat: 30.13, lon: 31.30,
-    lore: "隼の頭に太陽円盤を載せたエジプト神話の太陽神。昼は太陽の舟で空を渡り、夜は冥界を航行しながら混沌の大蛇アポピスと毎晩ガチバトルを繰り広げて翌朝の日の出を守っている勤労神。"
+    lore: "隼の頭に太陽円盤を載せたエジプトの太陽神。昼は空を飛び、夜は冥界で混沌の大蛇アポピスと毎晩ガチ殴り合いをして翌朝の日の出を守る超絶ブラック勤務の太陽王。なのに地上では猫神や書記神がサボりがちで苦労が絶えない。"
   },
 
   // ---- GODS ★4 ----
   {
     id: "g_athena", type: "god", name: "アテナ", rarity: 4, baseAtk: 112,
     group: "ギリシャ神話", region: "ギリシャ（アテネ）", lat: 37.98, lon: 23.72,
-    lore: "知恵・工芸・戦略的戦争を司る処女神。父ゼウスの頭痛が爆発して頭蓋骨を斧で割ったところ、完全武装の大人サイズで飛び出してきたというインパクト抜群の誕生秘話を持つ。"
+    lore: "知恵と工芸と戦略の処女神。父ゼウスの偏頭痛が限界突破して頭蓋骨を斧で叩き割った瞬間、フルアーマー＆成人サイズで飛び出してきた出生界のバグ。脳筋気味の弟アレスをいつも知略でボコボコにする有能お姉さん。"
   },
   {
     id: "g_susanoo", type: "god", name: "スサノオ", rarity: 4, baseAtk: 118,
     group: "日本神話", region: "日本（出雲）", lat: 35.37, lon: 132.75,
-    lore: "海原と嵐を司る荒ぶる神。高天原では大暴れして追放されたが、降り立った出雲では八岐大蛇（ヤマタノオロチ）に強い酒を飲ませて退治し、尾から草薙剣を見つけた英雄かつ和歌の祖。"
+    lore: "高天原で現代なら即炎上・即BANレベルの狼藉を働いて追放された嵐の神。ところが地上の出雲へ降りた途端、八岐大蛇に濃い酒を飲ませて討伐し和歌まで詠むイケメン英雄へ華麗なジョブチェンジを果たした。"
   },
   {
     id: "g_quetzal", type: "god", name: "ケツァルコアトル", rarity: 4, baseAtk: 115,
     group: "アステカ神話", region: "メキシコ（テオティワカン）", lat: 19.69, lon: -98.84,
-    lore: "「羽毛ある蛇」の名を持つメソアメリカの文化神・風神。人類にトウモロコシや暦、学問をもたらした平和的な神で、人身御供を嫌ったと伝えられる。金星（明けの明星）の象徴でもある。"
+    lore: "「羽毛ある蛇」の名を持つメソアメリカの文化神。トウモロコシや暦を人類に授け、血なまぐさい人身御供を嫌った超ホワイトな平和神……だったのだが、宿敵テスカトリポカに酒を盛られて泥酔し、黒歴史を作って海へ旅立ってしまった。"
   },
   {
     id: "g_anubis", type: "god", name: "アヌビス", rarity: 4, baseAtk: 108,
     group: "エジプト神話", region: "エジプト（アビュドス）", lat: 26.18, lon: 31.91,
-    lore: "黒いジャッカルの頭を持つミイラ作りと冥界の案内神。死者の心臓と「真実の羽根（マアト）」を天秤にかけ、生前の行いを厳正に計測する。墓荒らしから死者を守る実直な仕事人。"
+    lore: "黒いジャッカルの頭を持つミイラ職人＆冥界の計量官。死者の心臓と「真実の羽根」を天秤にかけ、ごまかしや世論や忖度を一切通さない完全絶対値ジャッジを淡々とこなす。墓荒らしには容赦しない冥界の優良公務員。"
   },
   {
     id: "g_ishtar", type: "god", name: "イシュタル", rarity: 4, baseAtk: 116,
     group: "メソポタミア神話", region: "イラク（ウルク・バビロン）", lat: 31.32, lon: 45.63,
-    lore: "シュメール神話のイナンナに起源を持つ、愛と美と豊穣、そして激しい戦いの女神。金星の化身であり、英雄ギルガメシュに求婚して断られた腹いせに天の牡牛を放つなど気性の激しさは神話界屈指。"
+    lore: "愛と美と豊穣、そして殺意マシマシの戦いの女神。英雄ギルガメシュに「結婚しよ！」と迫って過去の男遍歴を並べ立てられて振られた腹いせに、天の牡牛を召喚して街ごと更地にしかけた地雷系最高峰。"
   },
   {
     id: "g_lugh", type: "god", name: "ルー", rarity: 4, baseAtk: 114,
     group: "ケルト神話", region: "アイルランド（タラの丘）", lat: 53.57, lon: -6.61,
-    lore: "「あらゆる技能を極めた者（サウィルダナフ）」の異名を持つケルト神話の太陽と光の神。鍛冶・竪琴・詩・魔術・武芸すべてに長け、必中の魔槍ブリューナクや投石紐を操り魔族フォモールを打ち倒した。"
+    lore: "「あらゆる技能を極めた者」の異名を持つケルトの光の神。鍛冶・竪琴・詩・魔術・武芸ぜんぶカンスト済みのチート多芸神で、城門で「一芸ある者だけ通す」と言われた際に「俺、全部できるけど？」と無双して入場した。"
   },
   {
     id: "g_maui", type: "god", name: "マウイ", rarity: 4, baseAtk: 106,
     group: "ポリネシア神話", region: "ニュージーランド／ポリネシア", lat: -38.6, lon: 176.0,
-    lore: "太平洋の島々で語り継がれる大英雄・半神のトリックスター。魔法の釣り針でニュージーランド北島やハワイ諸島を海底から釣り上げ、太陽を縄で縛って昼の時間を長くした規格外の行動力の持ち主。"
+    lore: "太平洋を股にかける半神のトリックスター。魔法の釣り針で島々を海底から引っこ抜き、「昼が短くて洗濯物が乾かん！」という母のボヤキを聞いて太陽を縄で縛ってシバき倒した行動力の化身。"
   },
 
   // ---- GODS ★3 ----
   {
     id: "g_hephaestus", type: "god", name: "ヘパイストス", rarity: 3, baseAtk: 74,
     group: "ギリシャ神話", region: "ギリシャ（リムノス島）", lat: 39.92, lon: 25.20,
-    lore: "火と鍛冶と彫刻を司る職人神。神々の武具やゼウスの雷霆、さらには自動で動く黄金のロボット召使いまで作り上げた超絶エンジニア。オリンポスで最も手先が器用な実務派。"
+    lore: "火と鍛冶と彫刻を司る職人神。神々の武具はおろか自動で動く黄金のロボット召使いまで自作する超絶エンジニア。オリンポスで浮気や喧嘩に明け暮れる連中を横目に、黙々と工房で構造の純度を突き詰める実務の星。"
   },
   {
     id: "g_ebisu", type: "god", name: "恵比寿", rarity: 3, baseAtk: 68,
     group: "日本神話", region: "日本（西宮）", lat: 34.73, lon: 135.33,
-    lore: "七福神の中で唯一の日本由来の神様。元は海の彼方から流れ着く寄り神（クジラや漂着神）や、イザナギ・イザナミの最初の子ヒルコと習合し、大漁と商売繁盛の福神となった。"
+    lore: "七福神の中で唯一の純国産ジャパニーズ神。海の彼方から流れ着くクジラや漂着神、さらにヒルコ伝承まで飲み込んで「とりあえず大漁と商売繁盛なら任せとけ！」のニコニコ福神に収まった懐の深い実業家。"
   },
   {
     id: "g_thor", type: "god", name: "トール", rarity: 3, baseAtk: 82,
     group: "北欧神話", region: "ノルウェー／北欧", lat: 61.5, lon: 8.5,
-    lore: "雷神にして北欧最強の武闘派。投げれば必ず手元に戻るハンマー「ミョルニル」を振るい、巨人族を片っ端から粉砕する。脳筋かつ大食漢だが、農民からは作物を守る気さくな兄貴分として愛された。"
+    lore: "投げれば必ず戻るハンマー「ミョルニル」を振るう北欧最強の武闘派。巨人族を片っ端から粉砕する脳筋兄貴だが、ハンマーを盗まれたときは取り返すため渋々ウエディングドレスを着て花嫁に女装した黒歴史を持つ。"
   },
   {
     id: "g_ganesha", type: "god", name: "ガネーシャ", rarity: 3, baseAtk: 72,
     group: "インド神話", region: "インド（マハーラーシュトラ）", lat: 19.07, lon: 72.87,
-    lore: "象の頭と太鼓腹を持つ障害除去と学問・商業の神。シヴァに誤って首を刎ねられ、代わりに象の頭を継がれたという豪快な経緯を持つ。折れた自分の牙をペンにして大叙事詩『マハーバーラタ』を筆記した。"
+    lore: "象の頭と太鼓腹の学問・商業神。父シヴァにうっかり首を刎ねられ、代わりに通りすがりの象の頭を継がれたという雑すぎるリペア経緯を持つ。自分の折れた牙をペンにして大叙事詩『マハーバーラタ』を代筆するガッツの塊。"
   },
   {
     id: "g_shango", type: "god", name: "シャンゴ", rarity: 3, baseAtk: 78,
     group: "ヨルバ神話", region: "ナイジェリア（オヨ）", lat: 7.85, lon: 3.93,
-    lore: "西アフリカ・ヨルバ族の雷と火と太鼓（バタ・ドラム）を司るオリシャ（神格）。実在したオヨ王国の第4代王が神格化されたとされ、両刃の斧オシェを掲げて正義とリズムを轟かせる。"
+    lore: "西アフリカ・ヨルバ族の雷と火と太鼓（バタ・ドラム）の王者。実在したオヨ王国の第4代王がそのまま神格化されたド迫力系で、両刃の斧オシェを振り回しながら圧倒的なビートと雷鳴で正義を叩き込む。"
   },
   {
     id: "g_pele", type: "god", name: "ペレ", rarity: 3, baseAtk: 76,
     group: "ポリネシア神話", region: "ハワイ（キラウエア火山）", lat: 19.41, lon: -155.28,
-    lore: "ハワイのキラウエア火山に棲む火と溶岩とフラの女神。情熱的で誇り高く、怒ると溶岩流で島を焼き尽くすが、冷えた溶岩は新たな大地となるため「破壊と創造」の象徴として深く敬われている。"
+    lore: "ハワイのキラウエア火山に住まう溶岩とフラの女神。機嫌を損ねると容赦なく島を溶岩で焼き尽くすが、冷えた溶岩はそのまま新しい大地になるため「破壊もまた創造のうち」という物理的スケールで人々を黙らせる。"
   },
   {
     id: "g_anansi", type: "god", name: "アナンシ", rarity: 3, baseAtk: 66,
     group: "西アフリカ神話", region: "ガーナ（アシャンティ）", lat: 6.68, lon: -1.62,
-    lore: "西アフリカ・アカン族に伝わる蜘蛛の姿をした知恵と物語のトリックスター。力では敵わない大蛇やスズメバチ、ヒョウを機転だけで次々と捕まえ、天空神から「世界中の物語」を買い取った。"
+    lore: "西アフリカの蜘蛛のトリックスター。腕力ゼロなのに口八丁とトラップだけで大蛇・スズメバチ・ヒョウを次々と捕獲し、天空神から「世界中の物語」の版権を丸ごと買い取った知能犯。"
   },
 
   // ---- GODS ★2 (通常) & ★1 (超希少・大器晩成1%) ----
@@ -1086,130 +1676,130 @@ const BASE_ITEMS = [
     awakeSkill: "step_atk", awakeTitle: "果てなき旅路の絶対値",
     awakeDesc: "【Lv.10覚醒】累計歩数 × 1.0 をそのままこの神のATKに加算！（歩けば歩くほど全★5主神を抜き去る）",
     group: "日本神話", region: "日本（路傍の辻）", lat: 36.14, lon: 139.38,
-    lore: "村境や辻にひっそりと立つ石の境界神。外から来る疫病や悪霊をバウンダリーでせき止め、旅人の足腰を黙って見守る。普段はただの素朴な石像だが、踏みしめた歩数の重みを知る者には計り知れない力を貸す。"
+    lore: "村境や辻に黙って立つ石の境界神。悪霊や疫病をバウンダリーでせき止め、旅人の足腰を見守り続けてきた。普段はただの素朴な石像だが、積み上げた歩数という「誤魔化しの効かない絶対値」を誰よりも正しく評価し、覚醒した瞬間すべての主神を抜き去る。"
   },
   {
     id: "g_kawayagami", type: "god", name: "厠神（かわやがみ）", rarity: 1, baseAtk: 3, lateBloomer: true,
     awakeSkill: "team_mult", awakeTitle: "聖域の絶対境界",
     awakeDesc: "【Lv.10覚醒】デッキ編成時、地球軍の総戦力を無条件で 1.60倍 に引き上げる！",
     group: "日本神話", region: "日本（家屋の隅）", lat: 35.01, lon: 135.76,
-    lore: "便所を守護する極めて現実的かつ尊い生活神。安産や健康、さらには金運まで司るとされ、「ケツアナは万人に共通する不動点である」という宇宙の真理を誰よりも静かに見届けてきた。"
+    lore: "便所を守護する極めて現実的かつ尊い生活神。安産・健康・金運まで司る万能ぶりもさることながら、「認知や思考は曲がるが、ケツアナの位置は誰にでも共通してある」という宇宙の不動点を誰よりも静かに見届けてきた真理の番人。"
   },
   {
     id: "g_loki", type: "god", name: "ロキ", rarity: 2, baseAtk: 42,
     group: "北欧神話", region: "アイスランド／北欧", lat: 64.96, lon: -19.02,
-    lore: "北欧神話の悪戯と変身の神。神々のピンチを悪知恵で救うことも多いが、だいたいピンチの原因そのものもロキ。最終戦争ラグナロクでは神々に反旗を翻す厄介なポジション。"
+    lore: "北欧神話の悪戯と変身の神。神々のピンチを機転で救う名参謀……に見せかけて、そもそもピンチの発端が9割ロキのせい。最終的に馬に化けて八本脚の軍馬スレイプニルを出産するなど、神話界のフリーダム枠。"
   },
   {
     id: "g_coyote", type: "god", name: "コヨーテ", rarity: 2, baseAtk: 40,
     group: "北米先住民神話", region: "アメリカ（大平原・南西部）", lat: 36.1, lon: -109.5,
-    lore: "北米先住民の多くの部族で語られるトリックスターかつ創造の協力者。人間に火を盗んで与えたり川を作ったりする一方、欲を出して自爆するドジ話も多く、人間の愚かさと愛嬌の象徴。"
+    lore: "北米先住民に語り継がれるトリックスター。人間に火をもたらし川を造る大功績を挙げる一方、調子に乗って自爆したり欲を出して痛い目に遭ったりする愛すべきポンコツ枠。人間の業と愛嬌の縮図。"
   },
   {
     id: "g_medjed", type: "god", name: "メジェド", rarity: 2, baseAtk: 46,
     group: "エジプト神話", region: "エジプト（テーベ）", lat: 25.70, lon: 32.64,
-    lore: "『死者の書』の挿絵に突如現れる、シーツを被って足だけ生えた謎のビジュアルで現代ネットを席巻した神。「打ち倒す者」を意味し、目から怪光線を放って敵を撃つらしいが詳細はほぼ不明。"
+    lore: "『死者の書』の挿絵に突如現れた、シーツを被って足だけ生えた謎の生物。名前は「打ち倒す者」と物騒で、目から怪光線を放って敵を撃つらしいが、現代ネット民からは完全にゆるキャラ扱いされているエジプト最大のミステリー。"
   },
 
   // ---- WEAPONS ★5 ----
   {
     id: "w_yamato", type: "weapon", name: "戦艦大和", rarity: 5, baseAtk: 192,
     group: "近代兵器", region: "日本（呉海軍工廠）", lat: 34.23, lon: 132.55,
-    lore: "1941年竣工、史上最大の46cm三連装主砲3基9門を搭載した大艦巨砲主義の極致。排水量約7万トン、最大射程42kmを誇ったが、時代が航空主兵へ移り変わる転換点に生まれた孤高の巨艦。"
+    lore: "史上最大の46cm三連装主砲3基9門、排水量7万トンを誇る大艦巨砲主義の極致。最大射程42kmのロマンと当時の冶金・造船技術の粋を詰め込んだ孤高の巨艦だが、時代が航空主兵へシフトする曲がり角に生まれ落ちた悲運の怪物。"
   },
   {
     id: "w_b2", type: "weapon", name: "B-2 ステルス爆撃機", rarity: 5, baseAtk: 186,
     group: "現代兵器", region: "アメリカ（カリフォルニア）", lat: 34.63, lon: -118.08,
-    lore: "尾翼を持たない全翼機形状とレーダー波吸収素材により、大型機でありながら鳥ほどのレーダー反射断面積しか持たない戦略爆撃機。1機あたり約20億ドルという天文学的な建造費で知られる。"
+    lore: "尾翼をバッサリ捨てた全翼機ボディとレーダー波吸収素材により、翼幅52mの巨体なのにレーダー上では「ちょっとした鳥」にしか見えないステルス界のバグ。ただし1機あたり約20億ドルという、墜落したら国家予算が泡吹く値段。"
   },
   {
     id: "w_enterprise", type: "weapon", name: "原子力空母エンタープライズ", rarity: 5, baseAtk: 188,
     group: "現代兵器", region: "アメリカ（バージニア）", lat: 36.98, lon: -76.43,
-    lore: "1961年就役、世界初の原子力推進航空母艦（CVN-65）。原子炉をなんと8基も詰め込み、全長342mの巨体で半世紀にわたり海上の動く航空基地として運用された冷戦期の怪物。"
+    lore: "世界初の原子力推進空母（CVN-65）。「原子炉は何基積む？」「よし、8基だ！」という冷戦期アメリカ特有のガバガバ過剰設計で全長342mの鉄塊を爆速航行させ、半世紀も海上に君臨し続けた動く都市。"
   },
   {
     id: "w_tsarbomba", type: "weapon", name: "ツァーリ・ボンバ", rarity: 5, baseAtk: 198,
     group: "現代兵器", region: "ロシア（ノヴァヤゼムリャ）", lat: 73.85, lon: 54.50,
-    lore: "1961年にソ連が実験した人類史上最大の水素爆弾（正式名AN602）。出力は広島型原爆の約3,300倍（50メガトン）に達し、衝撃波が地球を3周した。あまりの威力に実戦配備はされなかった。"
+    lore: "1961年にソ連が実験した人類史上最大の水素爆弾。威力は広島型原爆の約3,300倍（50メガトン）、衝撃波は地球を3周、1,000km先の窓ガラスまで割った。あまりのヤバさに設計者自身も「これ実戦投入したら地球が終わるわ」とドン引きして封印された。"
   },
   {
     id: "w_gustav", type: "weapon", name: "80cm列車砲グスタフ", rarity: 5, baseAtk: 180,
     group: "近代兵器", region: "ドイツ（エッセン・クルップ社）", lat: 51.45, lon: 7.01,
-    lore: "第二次世界大戦中にドイツが製造した史上最大口径（80cm）の列車砲。重量1,350トン、重さ7トンの徹甲弾を約37km先へ撃ち込むが、運用と移動だけで数千人の兵員と複線線路が必要だった。"
+    lore: "史上最大口径80cm、総重量1,350トン、砲弾1発だけで7トンという「デカいは正義」を極限までこじらせたドイツの列車砲。撃つまでに専用複線線路を敷き数千人の兵員が3日かけて組み立てる必要があり、コスパの概念を完全に置き去りにした。"
   },
 
   // ---- WEAPONS ★4 ----
   {
     id: "w_zero", type: "weapon", name: "零式艦上戦闘機", rarity: 4, baseAtk: 115,
     group: "近代兵器", region: "日本（名古屋）", lat: 35.10, lon: 136.88,
-    lore: "堀越二郎らが設計した大戦初期の傑作艦上戦闘機。新開発の超々ジュラルミンと徹底した軽量化により、圧倒的な航続距離（2,000km超）と格闘戦性能を両立させた設計思想の結晶。"
+    lore: "超々ジュラルミンの採用と限界ギリギリの肉抜き・軽量化により、当時の常識をぶち破る航続距離2,000km超と圧倒的旋回性能を叩き出した設計の結晶。職人が物理の限界に挑んだ傑作だが、防弾を削りすぎたツケも後年しっかり回ってきた。"
   },
   {
     id: "w_tiger", type: "weapon", name: "ティーガーI 重戦車", rarity: 4, baseAtk: 118,
     group: "近代兵器", region: "ドイツ（カッセル）", lat: 51.31, lon: 9.48,
-    lore: "強力な88mm戦車砲と分厚い装甲を備えたドイツの重戦車。連合軍戦車を遠距離から一方的に撃破する戦闘力を誇った一方、複雑な転輪構造ゆえに整備性と燃費は地獄だった。"
+    lore: "88mm砲と分厚い装甲で連合軍戦車を遠距離から次々撃破したドイツの重戦車。戦場では悪夢の強さだったが、複雑な千鳥配置の転輪に泥が詰まって凍りつくと動けなくなるなど、整備兵の胃袋をボロボロにした超高級デリケート兵器。"
   },
   {
     id: "w_trebuchet", type: "weapon", name: "トレビュシェット", rarity: 4, baseAtk: 110,
     group: "中世兵器", region: "フランス／西欧", lat: 47.2, lon: 2.4,
-    lore: "巨大なカウンターウェイト（平衡錘）の重力落下とテコの原理を利用して、100kg超の巨石を300m以上先へ正確に放り込む中世最強の攻城兵器。力学的な完成度が異常に高い。"
+    lore: "巨大な平衡錘（おもり）の重力落下とテコの原理だけで、100kg超の巨石を300m先へピンポイント投擲する中世攻城兵器の王。火薬ゼロなのに力学の完成度が異常に高く、現代の物理オタクが庭で自作したがる人気者。"
   },
   {
     id: "w_greekfire", type: "weapon", name: "ギリシアの火", rarity: 4, baseAtk: 116,
     group: "中世兵器", region: "トルコ（コンスタンティノープル）", lat: 41.00, lon: 28.97,
-    lore: "東ローマ帝国が海戦で用いた伝説の焼夷兵器。銅管から高圧噴射され、水の上でも消えずに燃え続けた。配合は最高国家機密とされ、帝国滅亡とともに完全にロストテクノロジー化した。"
+    lore: "東ローマ帝国が海戦でぶっ放した、水の上でも消えずに燃え続ける悪夢の焼夷兵器。高圧ノズルで敵船を焼き払ったが、製法を最高国家機密にしすぎた結果、帝国滅亡とともに人類の記憶から完全に消滅したロストテクノロジー。"
   },
   {
     id: "w_gatling", type: "weapon", name: "ガトリング砲", rarity: 4, baseAtk: 112,
     group: "近代兵器", region: "アメリカ（インディアナ）", lat: 39.76, lon: -86.15,
-    lore: "1861年にリチャード・ガトリングが発明した手回し式の多銃身機関砲。「1人で大勢分の火力を出せば戦場に出る兵士が減って死傷者が減るはず」という真逆の平和的動機から生まれた。"
+    lore: "手回しクランクで銃身をぐるぐる回して弾幕を張る多銃身機関砲の祖。発明者ガトリングの動機は「1人で大勢分の火力を出せば戦場に行く兵士が減って死傷者も減るはず！」という、見事なまでに裏目に出た平和主義だった。"
   },
   {
     id: "w_urban", type: "weapon", name: "ウルバン砲", rarity: 4, baseAtk: 114,
     group: "中世兵器", region: "トルコ（エディルネ）", lat: 41.67, lon: 26.55,
-    lore: "1453年のコンスタンティノープル攻略でオスマン帝国が投入した全長8m超の巨大青銅製砲。600kg近い石弾を飛ばして難攻不落のテオドシウスの城壁を粉砕したが、1日に7発しか撃てなかった。"
+    lore: "1453年のコンスタンティノープル攻略で投入された全長8m超の巨大青銅砲。600kgの石弾で難攻不落の城壁を粉砕する火力は凄まじかったが、冷却と再装填に時間がかかりすぎて1日に7発しか撃てない超スローペース巨砲。"
   },
   {
     id: "w_a10", type: "weapon", name: "A-10 サンダーボルトII", rarity: 4, baseAtk: 120,
     group: "現代兵器", region: "アメリカ（メリーランド）", lat: 39.64, lon: -77.72,
-    lore: "「巨大な30mmガトリング砲（GAU-8）に翼とエンジンをくっつけた」と評される近接航空支援機。操縦席はチタン装甲のバスタブで覆われ、片翼が吹っ飛んでも帰還できる頑丈さで愛される。"
+    lore: "「巨大な30mmガトリング砲に翼とエンジンをくっつけた」と愛を込めてイジられる近接航空支援機。操縦席はチタン製バスタブでガチガチに保護され、片翼が吹っ飛んでも平然と帰還する不死身ぶりで空軍の引退勧告を何度も跳ね返した。"
   },
 
   // ---- WEAPONS ★3 ----
   {
     id: "w_katana", type: "weapon", name: "日本刀（打刀）", rarity: 3, baseAtk: 76,
     group: "中世兵器", region: "日本（備前長船）", lat: 34.68, lon: 134.10,
-    lore: "硬い刃金と粘り強い心鉄を組み合わせ、焼入れによる反りを生み出すことで「折れず、曲がらず、よく斬れる」を極めた冶金技術の傑作。美術工芸品としても世界最高峰。"
+    lore: "硬い刃金と粘り強い心鉄を組み合わせ、焼入れで生まれる反りまで計算し尽くした「折れず、曲がらず、よく斬れる」冶金技術の頂点。実戦兵器でありながら美術館のガラスケースに飾られるほどの構造美を両立させた。"
   },
   {
     id: "w_shamshir", type: "weapon", name: "ダマスカス鋼のシャムシール", rarity: 3, baseAtk: 74,
     group: "中世兵器", region: "シリア（ダマスカス）", lat: 33.51, lon: 36.27,
-    lore: "インド産ウーツ鋼から鍛えられ、表面に美しい木目模様が浮かぶ中東の湾刀。現代の電子顕微鏡解析で、内部にカーボンナノチューブ状の構造が含まれていたことが判明している。"
+    lore: "インド産ウーツ鋼から鍛えられ、刀身に神秘的な木目模様が浮かぶ中東の湾刀。製法が途絶えた伝説の鋼だったが、現代の電子顕微鏡で覗いてみたら内部にカーボンナノチューブ構造ができていたという古代冶金のオーパーツ。"
   },
   {
     id: "w_mongolbow", type: "weapon", name: "モンゴル複合弓", rarity: 3, baseAtk: 78,
     group: "中世兵器", region: "モンゴル（カラコルム）", lat: 47.20, lon: 102.84,
-    lore: "木・動物の角・腱を膠（にかわ）で貼り合わせた短く強力な再帰弓。騎乗したまま高速で360度射撃でき、ユーラシア大陸を席巻したモンゴル帝国の機動戦術を支えた。"
+    lore: "木・動物の角・腱を膠（にかわ）で貼り合わせたコンパクトな再帰弓。馬上で全速力疾走しながら後ろ向きにすら射撃できる機動力と貫通力でユーラシア大陸を席巻した。ただし湿気に弱く、日本の梅雨や嵐にはちょっと困った。"
   },
   {
     id: "w_sarissa", type: "weapon", name: "長槍サリッサ", rarity: 3, baseAtk: 70,
     group: "古代兵器", region: "ギリシャ（マケドニア）", lat: 40.76, lon: 22.52,
-    lore: "アレクサンドロス大王の父フィリッポス2世が導入した全長5〜6mにも及ぶ超長槍。密集隊形（ファランクス）を組んで突き出すと、敵歩兵も騎兵も一切近づけない移動要塞と化した。"
+    lore: "全長5〜6mの超ロング槍を密集隊形（ファランクス）で一斉に突き出すマケドニアの移動ハリネズミ戦法。正面から挑む敵兵は刃先に届く前に串刺し確定という理不尽リーチで、アレクサンドロス大王の東方遠征を支えた。"
   },
   {
     id: "w_tanegashima", type: "weapon", name: "火縄銃（種子島）", rarity: 3, baseAtk: 75,
     group: "近代兵器", region: "日本（種子島・堺）", lat: 30.73, lon: 131.00,
-    lore: "1543年にポルトガル人から伝来したマッチロック式小銃。日本の刀鍛冶たちが「ネジ」の概念を独力で再現し、わずか数十年で当時の世界最大の銃保有国へと爆速普及させた。"
+    lore: "1543年にポルトガルから伝来したマッチロック式小銃。未知の構造だった「ネジ」を日本の刀鍛冶たちが気合と観察力だけで独力再現し、わずか数十年で世界最大の鉄砲保有国にまで爆速量産した職人魂の象徴。"
   },
   {
     id: "w_gladius", type: "weapon", name: "グラディウス", rarity: 3, baseAtk: 68,
     group: "古代兵器", region: "イタリア（ローマ）", lat: 41.90, lon: 12.49,
-    lore: "古代ローマ軍団の主力短剣。大盾スクートゥムで身を守りながら密集陣形の隙間から高速で「刺突」することに特化しており、地中海世界を統一する原動力となった実戦主義の刃。"
+    lore: "古代ローマ軍団の主力短剣。ド派手に振り回すのではなく、大盾の陰から密集陣形の隙間で淡々と「刺突」を繰り返す徹底した実戦主義＆省エネ設計。映えより生存率と勝率を取ったローマらしい名刀。"
   },
   {
     id: "w_chukonu", type: "weapon", name: "連弩（諸葛弩）", rarity: 3, baseAtk: 72,
     group: "古代兵器", region: "中国（成都・蜀）", lat: 30.65, lon: 104.06,
-    lore: "上部の弾倉に矢をまとめて装填し、レバーを前後させるだけで次々と連続発射できる古代中国の機械式クロスボウ。威力より手数と扱いやすさを重視した防衛向きの発明。"
+    lore: "上部のマガジンに矢をドサッと入れてレバーをガチャガチャ動かすだけで連続発射できる古代中国の機械式クロスボウ。一撃のロマンより「誰でも扱える手数と防衛効率」に振り切った現場目線の名発明。"
   },
 
   // ---- WEAPONS ★2 (通常) & ★1 (超希少・大器晩成1%) ----
@@ -1218,29 +1808,29 @@ const BASE_ITEMS = [
     awakeSkill: "weapon_count_mult", awakeTitle: "全人類兵器の始原",
     awakeDesc: "【Lv.10覚醒】所持している兵器の種類数 × 30% をこの武器の乗算火力に加算！（図鑑が埋まるほど★5を超える）",
     group: "古代兵器", region: "エチオピア／東アフリカ大地溝帯", lat: 9.0, lon: 40.5,
-    lore: "旧石器時代、人類が石を打ち欠いて生み出した最古の刃。ただの割れた火山ガラスだが、分子レベルで見れば現代の鋼鉄製メスより鋭い刃先を持ち、あらゆる人類史兵器の原点となった。"
+    lore: "旧石器時代、人類が石を叩き割って手に入れた最古の刃。見た目はただの黒いガラス片だが、分子レベルで見れば現代の鋼鉄製メスより鋭いエッジを持つ。すべての人類史兵器の原点であり、覚醒すると図鑑の兵器数をすべて乗算して★5を斬り伏せる。"
   },
   {
     id: "w_panjandrum", type: "weapon", name: "パンジャンドラム", rarity: 1, baseAtk: 3, lateBloomer: true,
     awakeSkill: "pair_boost", awakeTitle: "制御不能のロマン砲",
     awakeDesc: "【Lv.10覚醒】装備した神様ペアの戦力を 3.80倍 に跳ね上げる！（直進するかは神のみぞ知る）",
     group: "近代兵器", region: "イギリス（ウェストワード・ホー！海岸）", lat: 51.04, lon: -4.23,
-    lore: "第二次大戦中、イギリス海軍がノルマンディー上陸用に試作したロケット推進の巨大糸巻き型爆弾。実験では浜辺で暴走して犬に追いかけられ、観戦していた将軍たちに突っ込んで開発中止になった迷兵器の王。"
+    lore: "第二次大戦中、イギリス軍が試作したロケット推進の巨大糸巻き爆弾。実験では浜辺で暴走して犬に追いかけられ、観戦中の将軍たちへ特攻して開発中止になった迷兵器界の絶対王者。直進するかは神のみぞ知るが、Lv.10で覚醒すると制御不能のロマンが爆発する。"
   },
   {
     id: "w_atlatl", type: "weapon", name: "アトラトル（投げ槍器）", rarity: 2, baseAtk: 40,
     group: "古代兵器", region: "メキシコ／先史世界", lat: 20.5, lon: -100.3,
-    lore: "腕の延長となる棒状の器具でテコの原理を利用し、投げ槍の初速を時速150km以上に跳ね上げる先史時代のハイテク道具。マンモス狩りからアステカ戦士の対スペイン戦まで長く使われた。"
+    lore: "腕の延長となるただの棒なのに、テコの原理で投げ槍の初速を時速150km以上に跳ね上げる先史時代の物理チート器具。マンモス狩りからアステカ戦士の対スペイン戦まで、数万年現役を張ったロングセラー。"
   },
   {
     id: "w_sling", type: "weapon", name: "投石紐（スリング）", rarity: 2, baseAtk: 44,
     group: "古代兵器", region: "スペイン（バレアレス諸島）", lat: 39.69, lon: 3.01,
-    lore: "ただの紐に石や鉛玉を挟んで振り回して飛ばす最古の遠距離兵器だが、熟練したバレアレスの投石兵が放つ鉛玉は当時の弓矢を凌ぐ射程と頭蓋骨を砕く貫通力を持っていた。"
+    lore: "ただの紐に石や鉛玉を挟んでブン回す最古の遠距離兵器。地味な見た目で舐めてかかると、熟練のバレアレス投石兵が放つ音速級の鉛玉で鎧ごと頭蓋骨を粉砕される。コスパ最強の職人技兵器。"
   },
   {
     id: "w_tsartank", type: "weapon", name: "ツァーリ・タンク", rarity: 2, baseAtk: 42,
     group: "近代兵器", region: "ロシア（ドミトロフ）", lat: 56.34, lon: 37.52,
-    lore: "第一次大戦中にロシア帝国が試作した、直径9メートルの巨大な自転車型車輪を2つ持つ三輪戦車。「車輪がデカければ塹壕も余裕！」と作ったが、小さい後輪が泥にハマって一歩も動けず終了した。"
+    lore: "「車輪を直径9mにすればどんな塹壕も余裕で越えられるはず！」という小学生並みの豪快理論でロシア帝国が試作した巨大三輪戦車。いざ走らせたら小さい後輪が泥にズブッと嵌まって1ミリも動けず、そのまま森で錆びて終了した愛すべき迷作。"
   }
 ];
 
@@ -1250,12 +1840,12 @@ const SAMPLE_EXPANSION = [
   {
     id: "g_bastet", type: "god", name: "バステト", rarity: 4, baseAtk: 110,
     group: "エジプト神話", region: "エジプト（ブバスティス）", lat: 30.57, lon: 31.51,
-    lore: "猫の頭を持つ音楽・舞踊・家庭守護の女神。元は凶暴な雌ライオン神だったが、猫がネズミから穀物を守る益獣として愛されるにつれ、穏やかで気まぐれな愛玩の守護神へと変化した。"
+    lore: "猫の頭を持つ音楽・舞踊・家庭守護の女神。もともとは凶暴な雌ライオン神だったが、猫が穀物をネズミから守ってくれる可愛さに人間がメロメロになった結果、気づけば気まぐれな愛玩の守護神へと丸くなった。"
   },
   {
     id: "w_catapult", type: "weapon", name: "ローマ式オナゲル投石機", rarity: 3, baseAtk: 73,
     group: "古代兵器", region: "イタリア（ローマ帝国）", lat: 42.3, lon: 13.4,
-    lore: "ねじった動物の腱（トーション）の復元力で腕を跳ね上げて岩を飛ばす古代ローマの投石機。発射時の反動で後部が跳ね上がる姿が野生のロバ（オナゲル）の蹴りに似ていることから名付けられた。"
+    lore: "ねじった動物の腱の復元力で腕を跳ね上げて巨石をぶっ飛ばす古代ローマの投石機。発射の反動で後ろ側が派手に跳ね上がる姿が野生のロバ（オナゲル）の後ろ蹴りにそっくりだったことからこの名前になった。"
   }
 ];
 
@@ -1300,17 +1890,28 @@ const DB_NAME = "tonchiki_myth_images_v1";
 const DB_STORE = "images";
 const AVATAR_PLAYER_KEY = "__avatar_player__";
 const AVATAR_PARTNER_KEY = "__avatar_partner__";
+const STAGE_DUO_KEY = "__stage_duo__";
+const STAGE_PLAYER_KEY = "__stage_player__";
+const STAGE_PARTNER_KEY = "__stage_partner__";
 
 function createDefaultState() {
   return {
-    version: 1.3,
+    version: 1.7,
     difficulty: "easy",
     playerName: "地球防衛司令官",
     playerTitle: "歴史召喚士",
-    partnerName: "じぇみー",
-    partnerTitle: "外部炉心パートナー",
-    partnerPersona: "festival",
-    partnerLines: Object.assign({}, PERSONAS.festival.lines),
+    partnerName: "パートナーAI",
+    partnerTitle: "専属パートナー",
+    partnerPersona: "buddy",
+    partnerLines: Object.assign({}, PERSONAS.buddy.lines),
+    stageMode: "auto",      // "auto" | "duo" | "split" | "none"
+    stageStyle: "auto",     // "auto" | "cutout" | "soft" | "card"
+    stageAlphaMap: {},      // key -> boolean (detected transparency)
+    fxCalm: false,
+    bgmPlayMode: "shuffle",
+    bgmVolume: 65,
+    equippedBond: "b_first",
+    unlockedBonds: ["b_first"],
     totalSteps: 0,
     stepCarry: 0,
     stones: 100,
@@ -1334,14 +1935,16 @@ let state = createDefaultState();
 let customImages = {}; // id -> dataURL (items + __avatar_player__ + __avatar_partner__)
 let currentGachaPool = "mix";
 let currentDexFilter = "all";
+let currentMapView = "world";
 let currentImageTargetId = null;
 let currentImageMode = "card"; // "card" (640px) or "avatar" (256x256 square)
 let activeSpeechKey = "idle";
 let lastSpeechCtx = { steps: 300, wave: 1 };
+let isInitialRender = true;
 
 function getPlayerName() { return (state.playerName || "地球防衛司令官").trim() || "地球防衛司令官"; }
 function getPlayerTitle() { return (state.playerTitle || "").trim(); }
-function getPartnerName() { return (state.partnerName || "じぇみー").trim() || "じぇみー"; }
+function getPartnerName() { return (state.partnerName || "パートナーAI").trim() || "パートナーAI"; }
 function getPartnerTitle() { return (state.partnerTitle || "").trim(); }
 
 function getAllItems() {
@@ -1368,8 +1971,8 @@ function saveState() {
 
 function migrateStateIfNeeded(st) {
   const ver = Number(st.version) || 1.0;
+  let changed = false;
   if (ver < 1.3) {
-    // Shift legacy v1.0-v1.2 custom expansion rarities (+1 for non-lateBloomers)
     if (Array.isArray(st.expansions)) {
       st.expansions.forEach(it => {
         if (it && !it.lateBloomer && Number(it.rarity) >= 1 && Number(it.rarity) <= 4) {
@@ -1377,10 +1980,32 @@ function migrateStateIfNeeded(st) {
         }
       });
     }
-    st.version = 1.3;
-    return true;
+    changed = true;
   }
-  return false;
+  if (ver < 1.4) {
+    st.version = 1.4;
+    changed = true;
+  }
+  if (ver < 1.5) {
+    if (!st.stageMode) st.stageMode = "auto";
+    if (!st.stageStyle) st.stageStyle = "auto";
+    if (!st.stageAlphaMap) st.stageAlphaMap = {};
+    if (!Array.isArray(st.unlockedBonds) || !st.unlockedBonds.length) st.unlockedBonds = ["b_first"];
+    if (!st.equippedBond) st.equippedBond = "b_first";
+    st.version = 1.5;
+    changed = true;
+  }
+  if (ver < 1.6) {
+    st.version = 1.6;
+    changed = true;
+  }
+  if (ver < 1.7) {
+    if (!st.bgmPlayMode) st.bgmPlayMode = "shuffle";
+    if (typeof st.bgmVolume !== "number") st.bgmVolume = 65;
+    st.version = 1.7;
+    changed = true;
+  }
+  return changed;
 }
 
 function loadState() {
@@ -1392,7 +2017,7 @@ function loadState() {
       state = Object.assign(def, parsed);
       if (!Array.isArray(state.deck) || state.deck.length !== 5) state.deck = def.deck;
       if (!DIFFICULTIES[state.difficulty]) state.difficulty = "easy";
-      if (!PERSONAS[state.partnerPersona]) state.partnerPersona = "festival";
+      if (!PERSONAS[state.partnerPersona]) state.partnerPersona = "buddy";
       if (!state.partnerLines || typeof state.partnerLines !== "object") {
         state.partnerLines = Object.assign({}, PERSONAS[state.partnerPersona].lines);
       } else {
@@ -1497,7 +2122,7 @@ function renderAvatarHTML(kind) {
 
 function formatPartnerLine(type, ctx = {}) {
   if (state.partnerPersona === "silent") return "";
-  const lines = state.partnerLines || PERSONAS.festival.lines;
+  const lines = state.partnerLines || PERSONAS.buddy.lines;
   const tpl = (lines[type] || "").trim();
   if (!tpl) return "";
   const stepsVal = ctx.steps != null ? Number(ctx.steps).toLocaleString() : (state.stepLogs[0]?.steps || 300).toLocaleString();
@@ -1544,7 +2169,7 @@ function selectPersona(key) {
 function saveProfilesAndLines() {
   state.playerName = (document.getElementById("player-name-input").value || "").trim() || "地球防衛司令官";
   state.playerTitle = (document.getElementById("player-title-input").value || "").trim();
-  state.partnerName = (document.getElementById("partner-name-input").value || "").trim() || "じぇみー";
+  state.partnerName = (document.getElementById("partner-name-input").value || "").trim() || "パートナーAI";
   state.partnerTitle = (document.getElementById("partner-title-input").value || "").trim();
   if (state.partnerPersona !== "silent") {
     state.partnerLines = {
@@ -1556,14 +2181,14 @@ function saveProfilesAndLines() {
   }
   saveState();
   renderAll();
-  showToast("💾 司令官＆補佐AIのプロフィールとセリフを保存しました！");
+  showToast("💾 司令官＆パートナーのプロフィールとセリフを保存しました！");
 }
 
 function copyLinesPrompt() {
   const pName = getPlayerName();
   const aName = getPartnerName();
   const txt = [
-    `歩数ゲーム『地球防衛・神話兵器録』の補佐AI欄に入れる、あなたのセリフを4つ書いて！`,
+    `歩数ゲーム『地球防衛・神話兵器録』のパートナー欄に入れる、あなたのセリフを4つ書いて！`,
     `（私の呼び方は「${pName}」、あなたの名前は「${aName}」として自然な口調で、各1〜2文・80文字以内くらい）`,
     "",
     "① 待機中（ホーム画面を開いたときのひとこと）",
@@ -1573,6 +2198,766 @@ function copyLinesPrompt() {
   ].join("\n");
   copyToClipboard(txt, "📝 相棒AIにセリフをお願いするプロンプトをコピーしました！");
 }
+
+// ============================================================
+// 2.6 FULL-BODY STAGE, POWER FX TIERS & BOND TITLES (v1.5)
+// ============================================================
+const EFFECT_TIERS = [
+  { tier: 0, minPower: 0,      name: "静寂の星夜",         badge: "✦ Lv.0 静寂の星夜",       desc: "物語がはじまる静かな星空。" },
+  { tier: 1, minPower: 500,    name: "星屑の歩み",         badge: "✦ Lv.1 星屑の歩み",       desc: "二人の一歩で瞬きはじめる蒼の星屑。" },
+  { tier: 2, minPower: 2000,   name: "星雲の共鳴",         badge: "✧ Lv.2 星雲の共鳴",       desc: "シアンと黄金の星雲オーラと舞い上がる光粒子。" },
+  { tier: 3, minPower: 8000,   name: "黄金の守護陣",       badge: "❂ Lv.3 黄金の守護陣",     desc: "背後にゆっくり回転する幾何学魔法陣＆オーロラ。" },
+  { tier: 4, minPower: 25000,  name: "蒼穹の連星軌道",     badge: "🌠 Lv.4 蒼穹の連星軌道",  desc: "二重逆回転する天球リングと夜空を駆ける流れ星。" },
+  { tier: 5, minPower: 80000,  name: "神話の神光",         badge: "🌟 Lv.5 神話の神光",      desc: "放射状に広がる黄金の後光と紫電のオーラ粒子。" },
+  { tier: 6, minPower: 250000, name: "絶対値の銀河神殿",   badge: "👑 Lv.6 絶対値の銀河神殿", desc: "プリズム虹彩ハローと多重聖陣が輝く究極の舞台。" }
+];
+
+function getPowerEffectTier(power) {
+  let cur = EFFECT_TIERS[0];
+  let next = null;
+  for (let i = 0; i < EFFECT_TIERS.length; i++) {
+    if (power >= EFFECT_TIERS[i].minPower) {
+      cur = EFFECT_TIERS[i];
+      next = EFFECT_TIERS[i + 1] || null;
+    }
+  }
+  return { cur, next };
+}
+
+const BOND_TITLES = [
+  { id: "b_first",      name: "地球防衛タッグ結成",         cond: "初期解放",                    check: () => true, prog: () => [1, 1] },
+  { id: "b_stage_1",    name: "並び立つふたり",             cond: "全身画ステージに画像を飾る",  check: () => !!(customImages[STAGE_DUO_KEY] || customImages[STAGE_PLAYER_KEY] || customImages[STAGE_PARTNER_KEY]), prog: () => [customImages[STAGE_DUO_KEY] || customImages[STAGE_PLAYER_KEY] || customImages[STAGE_PARTNER_KEY] ? 1 : 0, 1] },
+  { id: "b_step_300",   name: "はじめの一歩のふたり",       cond: "累計 300歩 達成",             check: () => state.totalSteps >= 300, prog: () => [state.totalSteps, 300] },
+  { id: "b_step_1000",  name: "千歩のお散歩パートナー",     cond: "累計 1,000歩 達成",           check: () => state.totalSteps >= 1000, prog: () => [state.totalSteps, 1000] },
+  { id: "b_step_5000",  name: "五千歩の健脚ペア",           cond: "累計 5,000歩 達成",           check: () => state.totalSteps >= 5000, prog: () => [state.totalSteps, 5000] },
+  { id: "b_step_10000", name: "一万歩の旅路を歩む者",       cond: "累計 10,000歩 達成",          check: () => state.totalSteps >= 10000, prog: () => [state.totalSteps, 10000] },
+  { id: "b_step_30000", name: "三万歩の果てなき道連れ",     cond: "累計 30,000歩 達成",          check: () => state.totalSteps >= 30000, prog: () => [state.totalSteps, 30000] },
+  { id: "b_step_100000",name: "十万歩・地球を駆ける連星",   cond: "累計 100,000歩 達成",         check: () => state.totalSteps >= 100000, prog: () => [state.totalSteps, 100000] },
+  { id: "b_wave_2",     name: "トンチキ初撃退コンビ",       cond: "WAVE 1 撃退",                 check: () => state.wave >= 2, prog: () => [Math.max(0, state.wave - 1), 1] },
+  { id: "b_wave_5",     name: "宇宙に轟く名タッグ",         cond: "WAVE 5 撃退",                 check: () => state.wave >= 6, prog: () => [Math.max(0, state.wave - 1), 5] },
+  { id: "b_wave_10",    name: "トンチキ王を退けし英雄",     cond: "WAVE 10 撃退",                check: () => state.wave >= 11, prog: () => [Math.max(0, state.wave - 1), 10] },
+  { id: "b_wave_15",    name: "銀河最恐の抑止力ペア",       cond: "WAVE 15 撃退",                check: () => state.wave >= 16, prog: () => [Math.max(0, state.wave - 1), 15] },
+  { id: "b_pow_2000",   name: "星雲を灯す絆",               cond: "総戦力 2,000 到達",           check: (p) => p >= 2000, prog: (p) => [p, 2000] },
+  { id: "b_pow_8000",   name: "黄金陣を紡ぐふたり",         cond: "総戦力 8,000 到達",           check: (p) => p >= 8000, prog: (p) => [p, 8000] },
+  { id: "b_pow_25000",  name: "天球を回す双星",             cond: "総戦力 25,000 到達",          check: (p) => p >= 25000, prog: (p) => [p, 25000] },
+  { id: "b_pow_80000",  name: "神話を超えるパートナー",     cond: "総戦力 80,000 到達",          check: (p) => p >= 80000, prog: (p) => [p, 80000] },
+  { id: "b_pow_250000", name: "絶対値の連星",               cond: "総戦力 250,000 到達",         check: (p) => p >= 250000, prog: (p) => [p, 250000] },
+  { id: "b_dex_10",     name: "歴史をめぐる収集家",         cond: "図鑑 10種発見",               check: () => Object.keys(state.owned).length >= 10, prog: () => [Object.keys(state.owned).length, 10] },
+  { id: "b_dex_25",     name: "世界を旅するパートナー",     cond: "図鑑 25種発見",               check: () => Object.keys(state.owned).length >= 25, prog: () => [Object.keys(state.owned).length, 25] },
+  { id: "b_dex_48",     name: "万神殿の編纂者",             cond: "図鑑 48種発見",               check: () => Object.keys(state.owned).length >= 48, prog: () => [Object.keys(state.owned).length, 48] },
+  { id: "b_late_1",     name: "奇跡の1％を引き当てし者",    cond: "★1大器晩成枠を1体以上所持",   check: () => getAllItems().some(it => it.lateBloomer && state.owned[it.id]), prog: () => [getAllItems().filter(it => it.lateBloomer && state.owned[it.id]).length, 1] },
+  { id: "b_awake_1",    name: "大器晩成を極めし絆",         cond: "★1大器晩成枠をLv.10覚醒",     check: () => getAllItems().some(it => it.lateBloomer && state.owned[it.id] && (state.owned[it.id].lv || 1) >= 10), prog: () => [getAllItems().filter(it => it.lateBloomer && state.owned[it.id] && (state.owned[it.id].lv || 1) >= 10).length, 1] },
+  { id: "b_exp_1",      name: "ふたりだけの世界を紡ぐ者",   cond: "拡張パックを1件以上増築",     check: () => (state.expansions || []).length >= 1, prog: () => [(state.expansions || []).length, 1] },
+  { id: "b_jp_5",       name: "列島めぐりのふたり",         cond: "日本地図で 5都道府県 以上発見", check: () => getOwnedJapanPrefCount() >= 5, prog: () => [getOwnedJapanPrefCount(), 5] },
+  { id: "b_jp_10",      name: "日本列島縦断パートナー",     cond: "日本地図で 10都道府県 以上発見", check: () => getOwnedJapanPrefCount() >= 10, prog: () => [getOwnedJapanPrefCount(), 10] }
+];
+
+function getEquippedBondObj() {
+  return BOND_TITLES.find(b => b.id === state.equippedBond) || BOND_TITLES[0];
+}
+
+function checkBondUnlocks(silent = false) {
+  if (!Array.isArray(state.unlockedBonds)) state.unlockedBonds = ["b_first"];
+  const unlockedSet = new Set(state.unlockedBonds);
+  const power = getTotalPower().total;
+  const newly = [];
+  BOND_TITLES.forEach(b => {
+    if (!unlockedSet.has(b.id) && b.check(power)) {
+      state.unlockedBonds.push(b.id);
+      unlockedSet.add(b.id);
+      newly.push(b);
+    }
+  });
+  if (newly.length > 0) {
+    saveState();
+    if (!silent) {
+      showToast(`🏆 新しい絆称号『${newly[0].name}』を獲得！（全${newly.length}件）`);
+    }
+  }
+}
+
+function equipBondTitle(id) {
+  if (!(state.unlockedBonds || []).includes(id)) return;
+  state.equippedBond = id;
+  saveState();
+  renderAll();
+  openBondModal();
+  const obj = getEquippedBondObj();
+  showToast(`🏆 絆称号『${obj.name}』をステージに飾りました！`);
+}
+
+function openBondModal() {
+  const power = getTotalPower().total;
+  const fx = getPowerEffectTier(power);
+  const unlockedSet = new Set(state.unlockedBonds || ["b_first"]);
+  const nextHtml = fx.next
+    ? `次のエフェクト『<strong>${escapeHtml(fx.next.name)}</strong>』まであと戦力 <strong>${fmtNum(fx.next.minPower - power)}</strong>`
+    : `<strong style="color:var(--gold);">最高ランク『絶対値の銀河神殿』到達済！</strong>`;
+
+  const cards = BOND_TITLES.map(b => {
+    const isUn = unlockedSet.has(b.id);
+    const isEq = state.equippedBond === b.id;
+    const [curV, maxV] = b.prog(power);
+    const pct = Math.min(100, Math.round((curV / maxV) * 100));
+    return `
+      <div class="bond-card ${isEq ? 'equipped' : (isUn ? 'unlocked' : 'locked')}" ${isUn ? `onclick="equipBondTitle('${b.id}')"` : ''}>
+        <div style="min-width:0;flex:1;">
+          <div style="font-size:13px;font-weight:800;color:${isUn ? '#fff' : 'var(--muted)'};">
+            ${isUn ? '🏆' : '🔒'} 『${escapeHtml(b.name)}』
+          </div>
+          <div class="sub-text" style="font-size:11px;margin-top:2px;">
+            ${escapeHtml(b.cond)} ${!isUn ? `（${fmtNum(Math.min(curV, maxV))} / ${fmtNum(maxV)}・${pct}%）` : ''}
+          </div>
+        </div>
+        <div style="flex-shrink:0;">
+          ${isEq ? '<span class="badge badge-r5">装備中</span>' : (isUn ? '<span class="badge" style="background:rgba(56,228,255,0.2);color:var(--cyan);">飾る</span>' : '<span class="badge" style="background:#1e293b;color:#64748b;">未解放</span>')}
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  openModalHTML(`
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2 style="margin:0 0 8px;font-size:18px;color:var(--gold);">🏆 二人の絆称号＆ステージ輝度</h2>
+    <div class="rate-note" style="margin-bottom:10px;">
+      <strong>✨ 現在のステージエフェクト：${escapeHtml(fx.cur.badge)}</strong><br>
+      <span style="opacity:0.9;">${escapeHtml(fx.cur.desc)}</span><br>
+      <span style="font-size:11px;color:#fde047;">${nextHtml}</span>
+    </div>
+    <div class="sub-text" style="margin-bottom:8px;">
+      解放済み：<strong>${unlockedSet.size} / ${BOND_TITLES.length}</strong>（解放した称号をタップするとステージと戦果報告に飾れます）
+    </div>
+    <div>${cards}</div>
+  `);
+}
+
+function getEffectiveStageMode() {
+  const hasDuo = !!customImages[STAGE_DUO_KEY];
+  const hasSplit = !!(customImages[STAGE_PLAYER_KEY] || customImages[STAGE_PARTNER_KEY]);
+  if (state.stageMode === "none") return "none";
+  if (state.stageMode === "duo") return hasDuo ? "duo" : (hasSplit ? "split" : "none");
+  if (state.stageMode === "split") return hasSplit ? "split" : (hasDuo ? "duo" : "none");
+  // "auto"
+  if (hasSplit) return "split";
+  if (hasDuo) return "duo";
+  return "none";
+}
+
+function resolveCharStyle(imgKey) {
+  if (state.stageStyle === "cutout") return "style-cutout";
+  if (state.stageStyle === "soft") return "style-soft";
+  if (state.stageStyle === "card") return "style-card";
+  // auto: transparent PNG -> cutout, opaque JPEG/PNG -> soft blend
+  const hasAlpha = !!(state.stageAlphaMap && state.stageAlphaMap[imgKey]);
+  return hasAlpha ? "style-cutout" : "style-soft";
+}
+
+function buildStageFxLayers(tier) {
+  // Deterministic stars/particles so DOM doesn't jump randomly
+  const starCoords = [
+    [8,14,2],[18,32,1.5],[28,12,2.5],[42,24,1.5],[58,10,2],[72,28,1.8],[86,15,2.4],[92,38,1.6],
+    [14,56,1.6],[34,44,2],[66,48,1.5],[82,58,2],[22,74,1.8],[78,76,1.6]
+  ];
+  const starCount = tier === 0 ? 6 : (tier === 1 ? 10 : 14);
+  let bg = "";
+  let fg = "";
+
+  // Background atmosphere gradients by tier
+  if (tier >= 2) bg += `<div class="fx-aurora" style="opacity:${tier >= 5 ? 0.95 : (tier >= 3 ? 0.7 : 0.45)};"></div>`;
+  if (tier >= 5) bg += `<div class="fx-sunburst" style="opacity:${tier >= 6 ? 0.95 : 0.65};"></div>`;
+  if (tier >= 6) bg += `<div class="fx-prism"></div>`;
+
+  // Magic Circle / Celestial Rings SVG (Tier 3+)
+  if (tier >= 3) {
+    const col1 = tier >= 6 ? "#fef08a" : (tier >= 5 ? "#f5c542" : (tier >= 4 ? "#c084fc" : "#f5c542"));
+    const col2 = tier >= 6 ? "#38e4ff" : (tier >= 4 ? "#38e4ff" : "#fbbf24");
+    bg += `
+      <svg class="fx-ring-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g class="fx-ring-cw" fill="none" stroke="${col1}" stroke-opacity="0.58">
+          <circle cx="100" cy="100" r="86" stroke-width="1.2" stroke-dasharray="6,4"/>
+          <circle cx="100" cy="100" r="74" stroke-width="0.9"/>
+          <polygon points="100,18 171,141 29,141" stroke-width="0.9" stroke-opacity="0.45"/>
+          <polygon points="100,182 171,59 29,59" stroke-width="0.9" stroke-opacity="0.45"/>
+        </g>
+        ${tier >= 4 ? `
+        <g class="fx-ring-ccw" fill="none" stroke="${col2}" stroke-opacity="0.62">
+          <circle cx="100" cy="100" r="60" stroke-width="1.4" stroke-dasharray="2,6"/>
+          <rect x="57" y="57" width="86" height="86" transform="rotate(45 100 100)" stroke-width="0.9"/>
+          <circle cx="100" cy="40" r="3.5" fill="${col2}"/>
+          <circle cx="100" cy="160" r="3.5" fill="${col1}"/>
+        </g>` : ""}
+        ${tier >= 6 ? `
+        <g class="fx-ring-cw" fill="none" stroke="#f472b6" stroke-opacity="0.55">
+          <circle cx="100" cy="100" r="95" stroke-width="1.3" stroke-dasharray="14,5,2,5"/>
+        </g>` : ""}
+      </svg>`;
+  }
+
+  // Stars
+  for (let i = 0; i < starCount; i++) {
+    const [x, y, s] = starCoords[i];
+    const dur = (1.8 + (i % 4) * 0.6).toFixed(1);
+    const del = ((i * 0.35) % 2.4).toFixed(2);
+    bg += `<span class="fx-star" style="left:${x}%;top:${y}%;width:${s}px;height:${s}px;--dur:${dur}s;--del:${del}s;"></span>`;
+  }
+
+  // Shooting stars (Tier 4+)
+  if (tier >= 4) {
+    bg += `<span class="fx-meteor" style="left:65%;top:18%;--dur:4.4s;--del:0.4s;"></span>`;
+    if (tier >= 5) bg += `<span class="fx-meteor" style="left:35%;top:10%;--dur:5.6s;--del:2.2s;"></span>`;
+  }
+
+  // Foreground floating light motes (Tier 2+)
+  if (tier >= 2) {
+    const moteCount = Math.min(14, tier * 2 + 2);
+    const palette = tier >= 6
+      ? ["#fef08a", "#38e4ff", "#e879f9", "#ffffff", "#4ade80"]
+      : (tier >= 4 ? ["#fde047", "#c084fc", "#38e4ff", "#ffffff"] : ["#fde047", "#38e4ff"]);
+    for (let i = 0; i < moteCount; i++) {
+      const left = (7 + (i * 17) % 86);
+      const bottom = (4 + (i * 11) % 30);
+      const size = (2.5 + (i % 3) * 1.5);
+      const col = palette[i % palette.length];
+      const dur = (3.4 + (i % 5) * 0.7).toFixed(1);
+      const del = ((i * 0.55) % 4.0).toFixed(2);
+      fg += `<span class="fx-mote" style="left:${left}%;bottom:${bottom}%;width:${size}px;height:${size}px;background:${col};box-shadow:0 0 8px ${col};--dur:${dur}s;--del:${del}s;"></span>`;
+    }
+  }
+
+  return { bg, fg };
+}
+
+function renderHeroStage() {
+  const wrap = document.getElementById("home-stage-wrap");
+  const invite = document.getElementById("stage-invite-bar");
+  const mode = getEffectiveStageMode();
+  const power = getTotalPower().total;
+  const fx = getPowerEffectTier(power);
+
+  // Sync Bond Bar
+  const eqBond = getEquippedBondObj();
+  document.getElementById("home-bond-title").textContent = `『${eqBond.name}』`;
+  document.getElementById("home-bond-count").textContent = `絆 ${(state.unlockedBonds || []).length}/${BOND_TITLES.length} ›`;
+
+  // Sync Stage Settings UI
+  const activeSettingMode = state.stageMode === "auto"
+    ? (mode === "none" ? "duo" : mode)
+    : state.stageMode;
+  document.querySelectorAll("#stage-mode-row .diff-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.smode === activeSettingMode);
+  });
+  document.querySelectorAll("#stage-style-row .diff-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.sstyle === (state.stageStyle || "auto"));
+  });
+  const setPreview = (id, key, delBtnId) => {
+    const el = document.getElementById(id);
+    const del = document.getElementById(delBtnId);
+    if (el) {
+      el.innerHTML = customImages[key]
+        ? `<img src="${customImages[key]}" alt="preview">`
+        : `<span class="sub-text">未設定</span>`;
+    }
+    if (del) del.style.display = customImages[key] ? "inline-block" : "none";
+  };
+  setPreview("preview-stage-duo", STAGE_DUO_KEY, "btn-del-stage-duo");
+  setPreview("preview-stage-player", STAGE_PLAYER_KEY, "btn-del-stage-player");
+  setPreview("preview-stage-partner", STAGE_PARTNER_KEY, "btn-del-stage-partner");
+
+  const fxSt = document.getElementById("stage-fx-status");
+  if (fxSt) {
+    fxSt.textContent = `現在のエフェクト：${fx.cur.badge}` + (fx.next ? `（次まで戦力 ${fmtNum(fx.next.minPower - power)}）` : "（MAX!）");
+  }
+  const calmBtn = document.getElementById("btn-fx-calm");
+  if (calmBtn) calmBtn.textContent = state.fxCalm ? "✨ 動き：控えめ(静止)" : "✨ 動き：ON";
+
+  if (mode === "none") {
+    wrap.innerHTML = "";
+    if (invite) invite.style.display = state.stageMode === "none" ? "none" : "flex";
+    return;
+  }
+  if (invite) invite.style.display = "none";
+
+  const layers = buildStageFxLayers(fx.cur.tier);
+  let innerContent = "";
+  if (mode === "duo") {
+    const stClass = resolveCharStyle(STAGE_DUO_KEY);
+    innerContent = `
+      <div class="stage-duo-frame ${stClass}">
+        <img src="${customImages[STAGE_DUO_KEY]}" alt="ツーショット">
+      </div>`;
+  } else {
+    const pStyle = resolveCharStyle(STAGE_PLAYER_KEY);
+    const aStyle = resolveCharStyle(STAGE_PARTNER_KEY);
+    const pSlot = customImages[STAGE_PLAYER_KEY]
+      ? `<div class="stage-char-slot left ${pStyle}" onclick="goStageEdit()"><img src="${customImages[STAGE_PLAYER_KEY]}" alt="司令官"></div>`
+      : `<div class="stage-char-slot left" onclick="triggerStageUpload('${STAGE_PLAYER_KEY}')"><div class="stage-empty-slot"><span>🎖️</span><span>司令官の全身画<br>タップで設定</span></div></div>`;
+    const aSlot = customImages[STAGE_PARTNER_KEY]
+      ? `<div class="stage-char-slot right ${aStyle}" onclick="goStageEdit()"><img src="${customImages[STAGE_PARTNER_KEY]}" alt="パートナー"></div>`
+      : `<div class="stage-char-slot right" onclick="triggerStageUpload('${STAGE_PARTNER_KEY}')"><div class="stage-empty-slot"><span>✨</span><span>パートナー全身画<br>タップで設定</span></div></div>`;
+    innerContent = `<div class="stage-split-grid">${pSlot}${aSlot}</div>`;
+  }
+
+  wrap.innerHTML = `
+    <div class="hero-stage mode-${mode} tier-${fx.cur.tier} ${state.fxCalm ? 'fx-calm' : ''}">
+      <div class="stage-bg-fx">${layers.bg}</div>
+      <div class="stage-overlay-top">
+        <span class="stage-pill fx-rank" onclick="openBondModal()">${escapeHtml(fx.cur.badge)}</span>
+        <span class="stage-pill edit-mini" onclick="goStageEdit()">🖼️ ステージ設定</span>
+      </div>
+      <div class="stage-content">${innerContent}</div>
+      <div class="stage-fg-fx">${layers.fg}</div>
+    </div>
+  `;
+}
+
+function goStageEdit() {
+  switchTab("system");
+  setTimeout(() => {
+    const el = document.getElementById("stage-settings-card");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 50);
+}
+
+function setStageMode(mode) {
+  state.stageMode = mode;
+  saveState();
+  renderAll();
+  const labels = { duo: "🖼️ ツーショット1枚絵", split: "🧍 左右2人立ち絵", none: "📦 ステージ非表示" };
+  showToast(`ステージを「${labels[mode] || mode}」にしました！`);
+}
+
+function setStageStyle(st) {
+  state.stageStyle = st;
+  saveState();
+  renderAll();
+  const labels = { auto: "✨ 自動おまかせ", cutout: "✂️ 透過立ち絵", soft: "🌫️ エモ馴染み" };
+  showToast(`立ち絵スタイルを「${labels[st] || st}」にしました！`);
+}
+
+function toggleCalmFx() {
+  state.fxCalm = !state.fxCalm;
+  saveState();
+  renderAll();
+  showToast(state.fxCalm ? "エフェクトの動きを控えめ（静止）にしました" : "✨ エフェクトアニメーションをONにしました！");
+}
+
+function triggerStageUpload(stageKey) {
+  currentImageTargetId = stageKey;
+  currentImageMode = "stage";
+  const inp = document.getElementById("img-file-input");
+  inp.value = "";
+  inp.click();
+}
+
+async function removeStageImage(stageKey) {
+  await deleteCustomImage(stageKey);
+  if (state.stageAlphaMap) delete state.stageAlphaMap[stageKey];
+  saveState();
+  renderAll();
+  showToast("ステージ画像を解除しました");
+}
+
+// ============================================================
+// 2.7 MY BGM JUKEBOX (IndexedDB + Shuffle Bag + Persistent Dock) (v1.7)
+// ============================================================
+const BGM_DB_NAME = "tonchiki_myth_bgm_v1";
+const BGM_DB_STORE = "tracks";
+const BGM_MAX_TRACKS = 8;
+const BGM_MAX_TRACK_BYTES = 12 * 1024 * 1024;  // 12MB per track
+const BGM_MAX_TOTAL_BYTES = 60 * 1024 * 1024;  // 60MB total
+
+let bgmTracks = [];          // [{ id, name, size, type, blob, addedAt }]
+let bgmShuffleBag = [];      // remaining track IDs for fair non-repeating shuffle
+let bgmCurrentId = null;
+let bgmIsPlaying = false;
+let bgmObjectUrl = null;
+const bgmAudio = new Audio();
+bgmAudio.preload = "auto";
+
+function openBgmDB() {
+  return new Promise((resolve) => {
+    if (!window.indexedDB) return resolve(null);
+    const req = indexedDB.open(BGM_DB_NAME, 1);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(BGM_DB_STORE)) {
+        db.createObjectStore(BGM_DB_STORE, { keyPath: "id" });
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => resolve(null);
+  });
+}
+
+async function loadAllBgmTracks() {
+  const db = await openBgmDB();
+  if (!db) return;
+  return new Promise((resolve) => {
+    const tx = db.transaction(BGM_DB_STORE, "readonly");
+    const store = tx.objectStore(BGM_DB_STORE);
+    const req = store.getAll();
+    req.onsuccess = () => {
+      bgmTracks = (req.result || []).sort((a, b) => (a.addedAt || 0) - (b.addedAt || 0));
+      refillShuffleBag();
+      resolve();
+    };
+    req.onerror = () => resolve();
+  });
+}
+
+async function putBgmTrackDB(track) {
+  const db = await openBgmDB();
+  if (!db) return;
+  return new Promise((resolve) => {
+    const tx = db.transaction(BGM_DB_STORE, "readwrite");
+    tx.objectStore(BGM_DB_STORE).put(track);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => resolve();
+  });
+}
+
+async function deleteBgmTrackDB(id) {
+  const db = await openBgmDB();
+  if (!db) return;
+  return new Promise((resolve) => {
+    const tx = db.transaction(BGM_DB_STORE, "readwrite");
+    tx.objectStore(BGM_DB_STORE).delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => resolve();
+  });
+}
+
+async function clearBgmDB() {
+  const db = await openBgmDB();
+  if (!db) return;
+  return new Promise((resolve) => {
+    const tx = db.transaction(BGM_DB_STORE, "readwrite");
+    tx.objectStore(BGM_DB_STORE).clear();
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => resolve();
+  });
+}
+
+function getBgmTotalBytes() {
+  return bgmTracks.reduce((sum, t) => sum + (Number(t.size) || 0), 0);
+}
+
+function fmtMB(bytes) {
+  return (bytes / (1024 * 1024)).toFixed(1);
+}
+
+function refillShuffleBag(excludeId = null) {
+  const ids = bgmTracks.map(t => t.id).filter(id => id !== excludeId);
+  for (let i = ids.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+  }
+  bgmShuffleBag = ids;
+}
+
+function pickNextBgmTrack(forceAdvance = true) {
+  if (!bgmTracks.length) return null;
+  if (bgmTracks.length === 1) return bgmTracks[0];
+  const mode = state.bgmPlayMode || "shuffle";
+
+  if (mode === "repeat1" && !forceAdvance && bgmCurrentId) {
+    const cur = bgmTracks.find(t => t.id === bgmCurrentId);
+    if (cur) return cur;
+  }
+  if (mode === "sequence") {
+    const idx = bgmTracks.findIndex(t => t.id === bgmCurrentId);
+    return bgmTracks[(idx + 1) % bgmTracks.length];
+  }
+  // shuffle bag (prevents immediate repeat when >= 2 tracks)
+  bgmShuffleBag = bgmShuffleBag.filter(id => bgmTracks.some(t => t.id === id));
+  if (!bgmShuffleBag.length) refillShuffleBag(bgmCurrentId);
+  const nextId = bgmShuffleBag.shift();
+  return bgmTracks.find(t => t.id === nextId) || bgmTracks[0];
+}
+
+function playBgmTrackById(id) {
+  const track = bgmTracks.find(t => t.id === id);
+  if (!track || !track.blob) return;
+
+  if (bgmObjectUrl) {
+    URL.revokeObjectURL(bgmObjectUrl);
+    bgmObjectUrl = null;
+  }
+  bgmObjectUrl = URL.createObjectURL(track.blob);
+  bgmCurrentId = track.id;
+  bgmAudio.src = bgmObjectUrl;
+  bgmAudio.volume = Math.max(0, Math.min(1, (Number(state.bgmVolume) ?? 65) / 100));
+
+  const p = bgmAudio.play();
+  if (p && typeof p.then === "function") {
+    p.then(() => {
+      bgmIsPlaying = true;
+      renderBgmUI();
+    }).catch(() => {
+      bgmIsPlaying = false;
+      renderBgmUI();
+      showToast("⚠️ この音声形式はブラウザで再生できませんでした");
+    });
+  } else {
+    bgmIsPlaying = true;
+    renderBgmUI();
+  }
+}
+
+function bgmPlay() {
+  if (!bgmTracks.length) {
+    showToast("🎵 まずは「増築/設定」から音楽ファイルを追加してね！");
+    goBgmSettings();
+    return;
+  }
+  if (bgmIsPlaying && !bgmAudio.paused) {
+    showToast("🎵 いま再生中です（■で停止／⏭で次の曲）");
+    return;
+  }
+  if (bgmCurrentId && bgmTracks.some(t => t.id === bgmCurrentId) && bgmAudio.src) {
+    bgmAudio.volume = Math.max(0, Math.min(1, (Number(state.bgmVolume) ?? 65) / 100));
+    bgmAudio.play().then(() => {
+      bgmIsPlaying = true;
+      renderBgmUI();
+    }).catch(() => {
+      playBgmTrackById(bgmCurrentId);
+    });
+    return;
+  }
+  const first = pickNextBgmTrack(true);
+  if (first) playBgmTrackById(first.id);
+}
+
+function bgmStop() {
+  bgmAudio.pause();
+  try { bgmAudio.currentTime = 0; } catch (e) {}
+  bgmIsPlaying = false;
+  renderBgmUI();
+}
+
+function bgmNext() {
+  if (!bgmTracks.length) return;
+  const next = pickNextBgmTrack(true);
+  if (next) playBgmTrackById(next.id);
+}
+
+bgmAudio.addEventListener("ended", () => {
+  if (!bgmTracks.length) {
+    bgmStop();
+    return;
+  }
+  const mode = state.bgmPlayMode || "shuffle";
+  if (mode === "repeat1" && bgmCurrentId && bgmTracks.some(t => t.id === bgmCurrentId)) {
+    bgmAudio.currentTime = 0;
+    bgmAudio.play().catch(() => bgmStop());
+    return;
+  }
+  const next = pickNextBgmTrack(false);
+  if (next) playBgmTrackById(next.id);
+  else bgmStop();
+});
+
+bgmAudio.addEventListener("error", () => {
+  if (bgmIsPlaying) {
+    bgmIsPlaying = false;
+    renderBgmUI();
+    showToast("⚠️ 音声の読み込みに失敗しました。別の曲をお試しください");
+  }
+});
+
+function setBgmMode(mode) {
+  if (!["shuffle", "sequence", "repeat1"].includes(mode)) return;
+  state.bgmPlayMode = mode;
+  saveState();
+  if (mode === "shuffle") refillShuffleBag(bgmCurrentId);
+  renderBgmUI();
+  const names = { shuffle: "🔀 ランダム再生", sequence: "🔁 順番ループ", repeat1: "🔂 1曲リピート" };
+  showToast(`BGMモードを「${names[mode]}」にしました`);
+}
+
+function setBgmVolume(val) {
+  const v = Math.max(0, Math.min(100, parseInt(val, 10) || 0));
+  state.bgmVolume = v;
+  bgmAudio.volume = v / 100;
+  const lbl = document.getElementById("bgm-vol-val");
+  if (lbl) lbl.textContent = v + "%";
+  saveState();
+}
+
+function goBgmSettings() {
+  switchTab("system");
+  setTimeout(() => {
+    const el = document.getElementById("bgm-settings-card");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 50);
+}
+
+function triggerBgmUpload() {
+  if (bgmTracks.length >= BGM_MAX_TRACKS) {
+    showToast(`曲数上限（最大${BGM_MAX_TRACKS}曲）に達しています！不要な曲を消してね`);
+    return;
+  }
+  const inp = document.getElementById("bgm-file-input");
+  inp.value = "";
+  inp.click();
+}
+
+async function deleteBgmTrack(id) {
+  if (bgmCurrentId === id) {
+    bgmStop();
+    bgmCurrentId = null;
+    if (bgmObjectUrl) { URL.revokeObjectURL(bgmObjectUrl); bgmObjectUrl = null; }
+    bgmAudio.removeAttribute("src");
+  }
+  bgmTracks = bgmTracks.filter(t => t.id !== id);
+  bgmShuffleBag = bgmShuffleBag.filter(x => x !== id);
+  await deleteBgmTrackDB(id);
+  renderBgmUI();
+  showToast("🗑️ 曲を削除しました");
+}
+
+async function clearAllBgmTracks() {
+  if (!bgmTracks.length) return;
+  if (!confirm("登録したマイBGMをすべて削除しますか？")) return;
+  bgmStop();
+  bgmCurrentId = null;
+  if (bgmObjectUrl) { URL.revokeObjectURL(bgmObjectUrl); bgmObjectUrl = null; }
+  bgmAudio.removeAttribute("src");
+  bgmTracks = [];
+  bgmShuffleBag = [];
+  await clearBgmDB();
+  renderBgmUI();
+  showToast("🗑️ マイBGMをすべて削除しました");
+}
+
+function renderBgmUI() {
+  const hasTracks = bgmTracks.length > 0;
+  document.body.classList.toggle("has-bgm-bar", hasTracks);
+
+  // Dock bar
+  const dock = document.getElementById("bgm-dock");
+  if (dock) dock.classList.toggle("visible", hasTracks);
+
+  const playBtn = document.getElementById("bgm-dock-play");
+  if (playBtn) playBtn.classList.toggle("playing", bgmIsPlaying);
+
+  const curTrack = bgmTracks.find(t => t.id === bgmCurrentId) || bgmTracks[0] || null;
+  const modeIcons = { shuffle: "🔀 ランダム", sequence: "🔁 順番", repeat1: "🔂 1曲リピート" };
+  const modeLabel = modeIcons[state.bgmPlayMode || "shuffle"] || "🔀 ランダム";
+
+  const titleEl = document.getElementById("bgm-dock-title");
+  const subEl = document.getElementById("bgm-dock-sub");
+  if (titleEl && subEl) {
+    if (!curTrack) {
+      titleEl.innerHTML = `<span class="bgm-eq-dot"></span>マイBGM未登録`;
+      subEl.textContent = "設定から音楽ファイルを追加できます";
+    } else {
+      titleEl.innerHTML = `<span class="bgm-eq-dot ${bgmIsPlaying ? 'playing' : ''}"></span>${escapeHtml(curTrack.name)}`;
+      subEl.textContent = bgmIsPlaying
+        ? `♪ 再生中（${modeLabel}・${bgmTracks.length}曲）`
+        : `停止中（${modeLabel}・▶で再生／タップで設定）`;
+    }
+  }
+
+  // Settings card UI
+  const totalBytes = getBgmTotalBytes();
+  const pct = Math.min(100, Math.round((totalBytes / BGM_MAX_TOTAL_BYTES) * 100));
+  const badge = document.getElementById("bgm-quota-badge");
+  if (badge) badge.textContent = `${bgmTracks.length}/${BGM_MAX_TRACKS}曲・${fmtMB(totalBytes)}/60MB`;
+  const cntEl = document.getElementById("bgm-count-text");
+  if (cntEl) cntEl.textContent = `登録曲数：${bgmTracks.length} / ${BGM_MAX_TRACKS}曲`;
+  const szEl = document.getElementById("bgm-size-text");
+  if (szEl) szEl.textContent = `容量：${fmtMB(totalBytes)} / 60.0 MB（1曲12MBまで）`;
+  const bar = document.getElementById("bgm-quota-bar");
+  if (bar) {
+    bar.style.width = pct + "%";
+    bar.classList.toggle("warn", pct >= 85 || bgmTracks.length >= BGM_MAX_TRACKS);
+  }
+
+  document.querySelectorAll("#bgm-mode-row .diff-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.bmode === (state.bgmPlayMode || "shuffle"));
+  });
+  const volSlider = document.getElementById("bgm-vol-slider");
+  const volVal = document.getElementById("bgm-vol-val");
+  const v = typeof state.bgmVolume === "number" ? state.bgmVolume : 65;
+  if (volSlider && document.activeElement !== volSlider) volSlider.value = v;
+  if (volVal) volVal.textContent = v + "%";
+
+  const clearBtn = document.getElementById("btn-bgm-clear-all");
+  if (clearBtn) clearBtn.style.display = hasTracks ? "inline-block" : "none";
+
+  const listEl = document.getElementById("bgm-track-list");
+  if (listEl) {
+    if (!hasTracks) {
+      listEl.innerHTML = `<div class="sub-text" style="text-align:center;padding:8px;">まだ音楽が入っていません。お気に入りの曲や推しのテーマ曲を入れてみてね！</div>`;
+    } else {
+      listEl.innerHTML = bgmTracks.map(t => {
+        const isCur = bgmCurrentId === t.id && bgmIsPlaying;
+        return `
+          <div class="bgm-row ${isCur ? 'active-track' : ''}">
+            <button class="bgm-ctrl-btn ${isCur ? 'play-btn playing' : ''}" style="width:28px;height:28px;font-size:11px;" onclick="playBgmTrackById('${t.id}')" title="この曲を再生">▶</button>
+            <div class="bgm-row-name">${isCur ? '♪ ' : ''}${escapeHtml(t.name)}</div>
+            <span class="bgm-row-size">${fmtMB(t.size)}MB</span>
+            <button class="btn-danger" style="padding:4px 8px;font-size:11px;" onclick="deleteBgmTrack('${t.id}')" title="削除">×</button>
+          </div>`;
+      }).join("");
+    }
+  }
+}
+
+document.getElementById("bgm-file-input").addEventListener("change", async function(e) {
+  const files = Array.from(e.target.files || []);
+  if (!files.length) return;
+
+  let added = 0;
+  const skipped = [];
+  let runningTotal = getBgmTotalBytes();
+
+  for (const file of files) {
+    if (bgmTracks.length >= BGM_MAX_TRACKS) {
+      skipped.push(`${file.name}（上限${BGM_MAX_TRACKS}曲超過）`);
+      continue;
+    }
+    const isAudio = (file.type && file.type.startsWith("audio/")) || /\.(mp3|m4a|aac|ogg|wav|flac|webm|opus)$/i.test(file.name || "");
+    if (!isAudio) {
+      skipped.push(`${file.name}（音声ファイル以外）`);
+      continue;
+    }
+    if (file.size > BGM_MAX_TRACK_BYTES) {
+      skipped.push(`${file.name}（12MB超過：${fmtMB(file.size)}MB）`);
+      continue;
+    }
+    if (runningTotal + file.size > BGM_MAX_TOTAL_BYTES) {
+      skipped.push(`${file.name}（合計60MB上限超過）`);
+      continue;
+    }
+
+    const cleanName = String(file.name || "無題のBGM").replace(/\.[^.]+$/, "");
+    const track = {
+      id: "bgm_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+      name: cleanName,
+      size: file.size,
+      type: file.type || "audio/mpeg",
+      blob: file,
+      addedAt: Date.now() + added
+    };
+    await putBgmTrackDB(track);
+    bgmTracks.push(track);
+    runningTotal += file.size;
+    added++;
+  }
+
+  if (added > 0) refillShuffleBag(bgmCurrentId);
+  renderBgmUI();
+
+  if (added > 0 && skipped.length === 0) {
+    showToast(`🎵 ${added}曲をマイBGMに追加しました！下の▶ボタンで再生できます`);
+  } else if (added > 0 && skipped.length > 0) {
+    showToast(`🎵 ${added}曲追加（${skipped.length}件は上限・形式外のためスキップ）`);
+  } else if (skipped.length > 0) {
+    showToast(`⚠️ 追加できませんでした：${skipped[0]}`);
+  }
+});
 
 // ============================================================
 // 3. POWER CALCULATION (Deck + Artifact + Bench Lv * 0.1% + Late Bloomers)
@@ -1737,7 +3122,7 @@ function fmtNum(n) {
 }
 
 // ============================================================
-// 4. WORLD MAP SVG GENERATOR
+// 4. WORLD & JAPAN PREFECTURE MAP SVG GENERATOR (v1.6)
 // ============================================================
 const WORLD_LAND_PATHS = `
   <path d="M15,20 L52,18 L78,24 L105,22 L120,30 L118,43 L103,50 L98,60 L86,62 L81,73 L95,80 L88,83 L74,73 L63,62 L52,50 L40,36 L18,30 Z"/>
@@ -1754,13 +3139,296 @@ const WORLD_LAND_PATHS = `
   <path d="M350,126 L357,128 L352,138 L346,136 Z"/>
 `;
 
+const JAPAN_LAND_PATHS = `
+  <path d="M240.6,16.6 L247.6,24.4 L256.7,32.7 L267.2,37.2 L279.3,32.7 L276.6,40.3 L284.8,46.0 L268.4,51.2 L260.1,56.1 L255.6,66.1 L245.3,60.2 L236.7,56.3 L229.7,60.6 L222.8,57.4 L226.8,68.2 L219.6,73.0 L219.9,64.3 L218.5,54.7 L223.9,46.2 L229.9,48.6 L234.5,46.4 L237.2,38.3 L238.1,25.8 L237.5,18.1 Z"/>
+  <path d="M228.9,71.2 L235.1,72.8 L236.2,85.3 L241.5,97.3 L237.7,107.6 L235.6,115.9 L230.1,116.6 L229.7,123.0 L229.0,134.4 L225.6,142.7 L228.4,151.2 L223.3,157.1 L217.1,162.6 L219.1,153.0 L215.9,152.7 L214.2,159.3 L208.8,157.8 L205.4,166.7 L205.4,159.9 L198.2,166.7 L188.9,165.7 L182.6,161.5 L180.7,161.5 L182.9,168.4 L170.2,182.7 L163.2,171.8 L166.3,166.1 L163.6,165.8 L157.9,164.4 L149.5,166.7 L142.8,168.4 L133.6,171.8 L132.4,170.2 L128.7,175.5 L122.2,175.0 L115.2,175.7 L118.0,169.2 L120.7,169.2 L127.9,162.9 L134.5,155.3 L142.5,153.5 L152.6,153.8 L159.4,152.3 L164.3,150.8 L166.3,154.7 L173.5,151.9 L174.4,144.1 L180.0,138.6 L188.1,126.6 L184.3,133.1 L186.8,136.9 L198.6,131.3 L207.6,121.1 L216.4,107.6 L215.1,93.0 L217.4,83.6 L222.4,75.2 L226.9,81.2 L232.2,76.3 Z"/>
+  <path d="M150.7,170.2 L157.2,172.0 L158.3,177.3 L152.2,185.3 L145.0,181.9 L138.9,192.6 L133.6,185.7 L127.5,184.1 L135.5,177.2 L138.7,173.9 L145.0,175.5 Z"/>
+  <path d="M115.4,175.7 L116.1,178.4 L123.9,179.8 L123.3,185.3 L126.2,185.7 L123.7,194.5 L121.1,203.9 L116.5,211.3 L112.0,216.4 L111.9,208.0 L111.1,214.1 L106.2,210.8 L107.0,201.1 L111.3,195.3 L111.3,191.5 L106.6,194.0 L102.0,194.2 L100.9,186.3 L104.0,182.2 L108.5,180.5 Z"/>
+  <path d="M201.5,115.6 L201.2,119.3 L198.9,122.8 L198.2,119.3 Z"/>
+  <path d="M161.7,166.6 L160.6,169.5 L158.3,171.8 L159.2,169.1 Z"/>
+  <path d="M98.3,165.4 L97.4,170.2 L95.4,173.6 L96.0,168.8 Z"/>
+  <path d="M116.7,218.6 L115.0,224.5 L114.2,223.8 L115.7,219.0 Z"/>
+  <path d="M110.4,223.9 L112.0,225.2 L110.5,226.8 L109.1,225.3 Z"/>
+`;
+const JAPAN_OKINAWA_PATHS = `
+  <path d="M76.9,42.6 L76.1,46.3 L73.7,48.9 L71.2,51.7 L70.5,50.1 L71.8,47.4 L73.0,44.8 Z"/>
+  <path d="M46.3,65.1 L48.4,67.4 L46.2,67.6 L46.0,66.1 Z"/>
+  <path d="M36.7,68.8 L36.2,70.8 L34.8,72.0 L34.4,70.4 Z"/>
+  <path d="M31.5,70.7 L32.7,72.2 L31.0,72.9 L30.3,71.5 Z"/>
+  <path d="M91.6,23.8 L88.5,27.8 L86.5,27.2 L89.6,24.3 Z"/>
+`;
+const JAPAN_BORDER_PATHS = `
+  <path d="M218.5,88.4 L237.3,87.7"/>
+  <path d="M228.2,88.1 L227.1,106.9"/>
+  <path d="M217.4,104.9 L237.3,106.9"/>
+  <path d="M224.0,106.9 L221.9,122.1"/>
+  <path d="M212.2,119.3 L229.7,122.1"/>
+  <path d="M212.2,121.4 L208.8,135.8"/>
+  <path d="M209.4,135.1 L228.8,135.8"/>
+  <path d="M209.4,135.1 L202.0,145.4"/>
+  <path d="M191.7,135.1 L202.0,145.4"/>
+  <path d="M221.3,135.8 L225.9,150.3"/>
+  <path d="M211.1,135.1 L213.4,144.5"/>
+  <path d="M202.0,144.1 L216.8,145.4"/>
+  <path d="M206.5,149.6 L217.4,150.5"/>
+  <path d="M208.2,153.0 L215.7,154.4"/>
+  <path d="M217.1,148.2 L217.9,152.7"/>
+  <path d="M202.0,145.4 L206.5,157.8"/>
+  <path d="M198.0,154.7 L206.5,157.8"/>
+  <path d="M191.1,144.1 L192.8,159.9"/>
+  <path d="M192.8,157.1 L190.0,165.7"/>
+  <path d="M179.2,154.4 L192.3,159.2"/>
+  <path d="M182.6,139.2 L179.7,153.7"/>
+  <path d="M173.5,152.3 L179.2,160.6"/>
+  <path d="M171.2,156.4 L173.5,164.0"/>
+  <path d="M173.5,161.2 L172.9,178.4"/>
+  <path d="M169.3,165.1 L168.9,172.2"/>
+  <path d="M163.6,170.2 L172.3,173.4"/>
+  <path d="M164.9,154.4 L166.1,165.1"/>
+  <path d="M154.1,153.7 L154.1,164.7"/>
+  <path d="M141.6,157.1 L154.1,158.5"/>
+  <path d="M142.1,161.2 L143.5,168.1"/>
+  <path d="M128.4,160.6 L142.7,166.1"/>
+  <path d="M128.4,165.7 L129.6,172.9"/>
+  <path d="M146.1,172.9 L156.4,173.6"/>
+  <path d="M146.1,173.4 L153.5,181.2"/>
+  <path d="M145.0,177.1 L135.5,186.0"/>
+  <path d="M115.0,180.8 L116.5,186.7"/>
+  <path d="M107.3,182.6 L110.0,186.7"/>
+  <path d="M104.5,185.3 L106.6,189.0"/>
+  <path d="M110.0,186.7 L117.6,188.1"/>
+  <path d="M117.0,187.4 L124.8,191.8"/>
+  <path d="M117.6,190.8 L114.5,200.4"/>
+  <path d="M107.3,200.4 L116.5,204.6"/>
+`;
+
+// 47 Prefectures + key regional anchors for accurate geographic detection
+const JP_PREF_ANCHORS = [
+  ["北海道",43.06,141.35],["北海道",41.77,140.73],["北海道",43.77,142.36],["北海道",42.98,144.38],["北海道",45.41,141.67],
+  ["青森県",40.82,140.74],["青森県",40.51,141.49],
+  ["岩手県",39.70,141.15],["岩手県",39.64,141.95],
+  ["宮城県",38.27,140.87],
+  ["秋田県",39.72,140.10],["秋田県",39.19,140.40],
+  ["山形県",38.24,140.36],["山形県",38.91,139.84],
+  ["福島県",37.75,140.47],["福島県",37.49,139.93],["福島県",37.05,140.89],
+  ["茨城県",36.34,140.45],["茨城県",36.08,140.08],
+  ["栃木県",36.57,139.88],["栃木県",36.75,139.60],
+  ["群馬県",36.39,139.06],["群馬県",36.64,139.04],
+  ["埼玉県",35.86,139.65],["埼玉県",36.14,139.38],["埼玉県",35.99,139.08],
+  ["千葉県",35.61,140.12],["千葉県",35.00,139.87],["千葉県",35.73,140.83],
+  ["東京都",35.69,139.69],["東京都",35.66,139.32],
+  ["神奈川県",35.45,139.64],["神奈川県",35.25,139.15],
+  ["新潟県",37.90,139.02],["新潟県",37.15,138.24],["新潟県",38.02,138.37],
+  ["富山県",36.70,137.21],
+  ["石川県",36.59,136.63],["石川県",37.39,136.90],
+  ["福井県",36.07,136.22],["福井県",35.65,136.07],
+  ["山梨県",35.66,138.57],
+  ["長野県",36.65,138.18],["長野県",36.00,138.12],["長野県",35.51,137.82],
+  ["岐阜県",35.39,136.72],["岐阜県",36.14,137.25],
+  ["静岡県",34.98,138.38],["静岡県",34.71,137.73],["静岡県",34.80,138.95],
+  ["愛知県",35.18,136.91],["愛知県",34.77,137.39],
+  ["三重県",34.73,136.51],["三重県",34.45,136.72],["三重県",35.06,136.68],["三重県",33.89,136.10],
+  ["滋賀県",35.00,135.87],["滋賀県",35.38,136.27],
+  ["京都府",35.02,135.76],["京都府",35.45,135.33],
+  ["大阪府",34.69,135.52],["大阪府",34.57,135.48],
+  ["兵庫県",34.69,135.18],["兵庫県",34.82,134.69],["兵庫県",35.54,134.82],["兵庫県",34.73,135.33],
+  ["奈良県",34.69,135.83],["奈良県",34.39,135.86],
+  ["和歌山県",34.23,135.17],["和歌山県",33.72,135.38],["和歌山県",33.62,135.94],
+  ["鳥取県",35.50,134.24],["鳥取県",35.43,133.33],
+  ["島根県",35.47,133.05],["島根県",35.37,132.75],["島根県",34.90,132.08],
+  ["岡山県",34.66,133.93],["岡山県",34.68,134.10],
+  ["広島県",34.40,132.46],["広島県",34.23,132.55],["広島県",34.49,133.36],
+  ["山口県",34.19,131.47],["山口県",33.96,130.94],["山口県",34.41,131.40],
+  ["徳島県",34.07,134.56],["徳島県",33.92,134.59],
+  ["香川県",34.34,134.04],
+  ["愛媛県",33.84,132.77],["愛媛県",33.22,132.56],
+  ["高知県",33.56,133.53],["高知県",32.99,132.93],
+  ["福岡県",33.61,130.42],["福岡県",33.88,130.88],
+  ["佐賀県",33.25,130.30],
+  ["長崎県",32.74,129.87],["長崎県",33.16,129.72],["長崎県",34.20,129.29],
+  ["熊本県",32.79,130.74],["熊本県",32.21,130.76],
+  ["大分県",33.24,131.61],["大分県",33.53,131.35],
+  ["宮崎県",31.91,131.42],["宮崎県",32.71,131.31],
+  ["鹿児島県",31.56,130.56],["鹿児島県",30.73,131.00],["鹿児島県",30.34,130.52],["鹿児島県",28.38,129.49],
+  ["沖縄県",26.21,127.68],["沖縄県",24.80,125.28],["沖縄県",24.34,124.16]
+];
+
+const JP_PREF_NAMES = Array.from(new Set(JP_PREF_ANCHORS.map(x => x[0])));
+
+const JP_PREF_KEYWORDS = [
+  ["北海道",["北海道","札幌","函館","旭川","釧路","知床"]],
+  ["青森県",["青森","津軽","弘前","八戸","恐山"]],
+  ["岩手県",["岩手","盛岡","平泉","遠野"]],
+  ["宮城県",["宮城","仙台","松島"]],
+  ["秋田県",["秋田","西馬音内","男鹿"]],
+  ["山形県",["山形","出羽","米沢"]],
+  ["福島県",["福島","会津","いわき"]],
+  ["茨城県",["茨城","水戸","鹿島","筑波"]],
+  ["栃木県",["栃木","宇都宮","日光"]],
+  ["群馬県",["群馬","前橋","高崎","赤城","榛名"]],
+  ["埼玉県",["埼玉","熊谷","秩父","川越","大宮","星川","路傍の辻","某U祭り","実家付近","篠笛工房"]],
+  ["千葉県",["千葉","香取","房総","成田"]],
+  ["東京都",["東京","江戸","新宿","渋谷","浅草","モノリス","彫金学校"]],
+  ["神奈川県",["神奈川","横浜","鎌倉","箱根","横須賀"]],
+  ["新潟県",["新潟","佐渡","越後"]],
+  ["富山県",["富山","立山"]],
+  ["石川県",["石川","金沢","能登","加賀"]],
+  ["福井県",["福井","越前","若狭"]],
+  ["山梨県",["山梨","甲府","富士吉田"]],
+  ["長野県",["長野","諏訪","松本","信州","善光寺"]],
+  ["岐阜県",["岐阜","飛騨","関ヶ原","美濃"]],
+  ["静岡県",["静岡","浜松","伊豆","駿河"]],
+  ["愛知県",["愛知","名古屋","尾張","三河","熱田"]],
+  ["三重県",["三重","伊勢","桑名","志摩","高天原"]],
+  ["滋賀県",["滋賀","大津","琵琶湖","近江"]],
+  ["京都府",["京都","貴船","伏見","平安","家屋の隅"]],
+  ["大阪府",["大阪","難波","住吉","堺"]],
+  ["兵庫県",["兵庫","神戸","西宮","姫路","淡路"]],
+  ["奈良県",["奈良","飛鳥","吉野","春日"]],
+  ["和歌山県",["和歌山","高野山","紀伊","那智","熊野"]],
+  ["鳥取県",["鳥取","因幡","大山"]],
+  ["島根県",["島根","出雲","松江","石見","黄泉比良坂"]],
+  ["岡山県",["岡山","備前","長船","倉敷","吉備"]],
+  ["広島県",["広島","呉","宮島","厳島","安芸"]],
+  ["山口県",["山口","下関","萩","長州"]],
+  ["徳島県",["徳島","阿波","鳴門"]],
+  ["香川県",["香川","高松","讃岐","金刀比羅"]],
+  ["愛媛県",["愛媛","松山","伊予","道後"]],
+  ["高知県",["高知","土佐","四万十"]],
+  ["福岡県",["福岡","博多","太宰府","宗像","北九州"]],
+  ["佐賀県",["佐賀","吉野ヶ里","唐津"]],
+  ["長崎県",["長崎","対馬","壱岐","佐世保"]],
+  ["熊本県",["熊本","阿蘇","肥後"]],
+  ["大分県",["大分","宇佐","別府","豊後"]],
+  ["宮崎県",["宮崎","高千穂","日向"]],
+  ["鹿児島県",["鹿児島","種子島","薩摩","桜島","屋久島","奄美"]],
+  ["沖縄県",["沖縄","那覇","琉球","石垣","宮古","首里"]]
+];
+
+const FOREIGN_PREFIXES = [
+  "ギリシャ","北欧","ノルウェー","アイスランド","インド","エジプト","メキシコ","イラク",
+  "アイルランド","ニュージーランド","ポリネシア","ナイジェリア","ハワイ","ガーナ",
+  "アメリカ","ロシア","ドイツ","フランス","トルコ","シリア","モンゴル","イタリア",
+  "中国","エチオピア","イギリス","スペイン","韓国","朝鮮","台湾","中東","天界","星界"
+];
+
+function isJapanItem(item) {
+  if (!item) return false;
+  const reg = String(item.region || "");
+  if (reg.startsWith("日本")) return true;
+  if (FOREIGN_PREFIXES.some(p => reg.startsWith(p))) return false;
+  for (let i = 0; i < JP_PREF_NAMES.length; i++) {
+    const shortName = JP_PREF_NAMES[i].replace(/[都府県]$/, "");
+    if (reg.includes(shortName)) return true;
+  }
+  const lat = Number(item.lat), lon = Number(item.lon);
+  if (!isFinite(lat) || !isFinite(lon)) return false;
+  if (lat >= 24.0 && lat <= 28.8 && lon >= 122.8 && lon <= 131.5) return true;
+  if (lat >= 29.8 && lat <= 45.6 && lon >= 129.0 && lon <= 146.0) {
+    if (lat > 33.6 && lon < 130.6) return false;
+    if (lat > 41.4 && lon < 139.2) return false;
+    return true;
+  }
+  return false;
+}
+
+function getJapanPrefecture(item) {
+  if (!isJapanItem(item)) return null;
+  const reg = String(item.region || "");
+  const lat = Number(item.lat) || 35.68;
+  const lon = Number(item.lon) || 139.76;
+
+  const matched = [];
+  for (let i = 0; i < JP_PREF_KEYWORDS.length; i++) {
+    const [pref, kws] = JP_PREF_KEYWORDS[i];
+    if (kws.some(kw => reg.includes(kw))) matched.push(pref);
+  }
+  if (matched.length === 1) return matched[0];
+
+  if (lat < 29.6 && (!matched.length || matched.includes("沖縄県") || matched.includes("鹿児島県"))) {
+    return lat < 27.6 ? "沖縄県" : "鹿児島県";
+  }
+  const pool = matched.length > 1
+    ? JP_PREF_ANCHORS.filter(a => matched.includes(a[0]))
+    : JP_PREF_ANCHORS;
+  let best = "東京都";
+  let bestD = Infinity;
+  for (let i = 0; i < pool.length; i++) {
+    const [pref, pla, plo] = pool[i];
+    const d = Math.pow(lat - pla, 2) + Math.pow((lon - plo) * 0.82, 2);
+    if (d < bestD) { bestD = d; best = pref; }
+  }
+  return best;
+}
+
+function getOwnedJapanPrefMap() {
+  const map = {};
+  getAllItems().forEach(it => {
+    if (!state.owned[it.id] || !isJapanItem(it)) return;
+    const pref = getJapanPrefecture(it);
+    if (!pref) return;
+    if (!map[pref]) map[pref] = [];
+    map[pref].push(it);
+  });
+  return map;
+}
+
+function getOwnedJapanPrefCount() {
+  return Object.keys(getOwnedJapanPrefMap()).length;
+}
+
 function latLonToXY(lat, lon) {
   const x = Math.max(4, Math.min(356, (Number(lon) || 0) + 180));
   const y = Math.max(4, Math.min(176, 90 - (Number(lat) || 0)));
   return { x, y };
 }
 
+function latLonToJapanXY(lat, lon) {
+  const la = Number(lat) || 35.68;
+  const lo = Number(lon) || 139.76;
+  if (la < 29.6) {
+    const x = Math.max(16, Math.min(112, 18 + (lo - 122.5) * (92 / 9.0)));
+    const y = Math.max(16, Math.min(80, 18 + (29.0 - la) * (60 / 5.2)));
+    return { x: Number(x.toFixed(1)), y: Number(y.toFixed(1)), isOkinawa: true };
+  }
+  const x = Math.max(8, Math.min(352, 190 + (lo - 137.5) * 11.4));
+  const y = Math.max(8, Math.min(232, 10 + (46.0 - la) * 13.75));
+  return { x: Number(x.toFixed(1)), y: Number(y.toFixed(1)), isOkinawa: false };
+}
+
+function renderSingleJapanMapSVG(item, compact = true) {
+  const { x, y } = latLonToJapanXY(item.lat, item.lon);
+  const color = item.type === "god" ? "#f5c542" : "#38e4ff";
+  const pref = getJapanPrefecture(item) || "日本";
+  const vw = compact ? 168 : 360;
+  const vh = compact ? 105 : 240;
+  const vx = compact ? Math.max(0, Math.min(360 - vw, x - vw / 2)) : 0;
+  const vy = compact ? Math.max(0, Math.min(240 - vh, y - vh / 2)) : 0;
+  const pinR = compact ? 3.5 : 4.6;
+
+  return `
+    <svg viewBox="${vx} ${vy} ${vw} ${vh}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="360" height="240" fill="#070d18"/>
+      <g stroke="#132136" stroke-width="0.6">
+        <line x1="0" y1="60" x2="360" y2="60"/><line x1="0" y1="120" x2="360" y2="120"/><line x1="0" y1="180" x2="360" y2="180"/>
+        <line x1="90" y1="0" x2="90" y2="240"/><line x1="180" y1="0" x2="180" y2="240"/><line x1="270" y1="0" x2="270" y2="240"/>
+      </g>
+      <g fill="#1c2f4b" stroke="#365785" stroke-width="0.85">${JAPAN_LAND_PATHS}</g>
+      <g fill="none" stroke="#2d486e" stroke-width="0.55" stroke-dasharray="1.8,1.5">${JAPAN_BORDER_PATHS}</g>
+      <rect x="12" y="12" width="104" height="72" rx="6" fill="#091222" stroke="#2a4063" stroke-width="0.9" stroke-dasharray="3,2"/>
+      <g fill="#1c2f4b" stroke="#365785" stroke-width="0.8">${JAPAN_OKINAWA_PATHS}</g>
+      <text x="17" y="23" fill="#64748b" font-size="7" font-weight="700">沖縄・南西諸島</text>
+      <line x1="${x}" y1="0" x2="${x}" y2="240" stroke="${color}" stroke-opacity="0.22" stroke-width="0.7" stroke-dasharray="2,2"/>
+      <line x1="0" y1="${y}" x2="360" y2="${y}" stroke="${color}" stroke-opacity="0.22" stroke-width="0.7" stroke-dasharray="2,2"/>
+      <circle cx="${x}" cy="${y}" r="9" fill="none" stroke="${color}" stroke-width="1.2" class="pin-ring"/>
+      <circle cx="${x}" cy="${y}" r="${pinR}" fill="${color}" stroke="#070d18" stroke-width="1.1"/>
+      ${!compact ? `<g><rect x="262" y="212" width="88" height="20" rx="6" fill="rgba(7,13,24,0.86)" stroke="${color}" stroke-opacity="0.55" stroke-width="0.8"/><text x="306" y="225" text-anchor="middle" fill="${color}" font-size="9.5" font-weight="800">🗾 ${escapeHtml(pref)}</text></g>` : ""}
+    </svg>
+  `;
+}
+
 function renderSingleItemMapSVG(item, compact = true) {
+  if (isJapanItem(item)) return renderSingleJapanMapSVG(item, compact);
   const { x, y } = latLonToXY(item.lat, item.lon);
   const color = item.type === "god" ? "#f5c542" : "#38e4ff";
   const vx = compact ? Math.max(0, Math.min(180, x - 90)) : 0;
@@ -1824,12 +3492,109 @@ function renderGlobalMapSVG() {
   `;
 }
 
+function renderJapanMapSVG() {
+  const jpItems = getAllItems().filter(isJapanItem);
+  let unownedPins = "";
+  let ownedPins = "";
+  const placed = [];
+
+  jpItems.forEach(it => {
+    const owned = !!state.owned[it.id];
+    const base = latLonToJapanXY(it.lat, it.lon);
+    if (!owned) {
+      unownedPins += `<circle cx="${base.x}" cy="${base.y}" r="2" fill="#64748b" opacity="0.45"/>`;
+      return;
+    }
+    let px = base.x, py = base.y;
+    let attempt = 0;
+    while (attempt < 28 && placed.some(p => Math.hypot(p.x - px, p.y - py) < 5.6)) {
+      attempt++;
+      const angle = attempt * 2.39996;
+      const radius = 3.2 + Math.sqrt(attempt) * 2.6;
+      px = Math.max(8, Math.min(352, Number((base.x + Math.cos(angle) * radius).toFixed(1))));
+      py = Math.max(8, Math.min(232, Number((base.y + Math.sin(angle) * radius).toFixed(1))));
+    }
+    placed.push({ x: px, y: py });
+    const col = it.type === "god" ? "#f5c542" : "#38e4ff";
+    const pref = getJapanPrefecture(it) || "日本";
+    ownedPins += `
+      <g style="cursor:pointer;" onclick="openItemModal('${it.id}')">
+        <circle cx="${px}" cy="${py}" r="6.2" fill="${col}" opacity="0.22"/>
+        <circle cx="${px}" cy="${py}" r="3.4" fill="${col}" stroke="#070d18" stroke-width="0.95"/>
+        <title>${escapeHtml(it.name)}（${escapeHtml(pref)}・${escapeHtml(it.region)}）</title>
+      </g>`;
+  });
+
+  const regionLabels = `
+    <g fill="#475569" font-size="6.8" font-weight="700" pointer-events="none">
+      <text x="242" y="34">北海道</text>
+      <text x="236" y="106">東北</text>
+      <text x="232" y="156">関東</text>
+      <text x="180" y="132">中部</text>
+      <text x="164" y="182">近畿</text>
+      <text x="122" y="148">中国</text>
+      <text x="148" y="198">四国</text>
+      <text x="86" y="204">九州</text>
+    </g>`;
+
+  return `
+    <svg viewBox="0 0 360 240" style="width:100%;display:block;" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="360" height="240" fill="#070d18"/>
+      <g stroke="#132136" stroke-width="0.6">
+        <line x1="0" y1="60" x2="360" y2="60"/><line x1="0" y1="120" x2="360" y2="120"/><line x1="0" y1="180" x2="360" y2="180"/>
+        <line x1="90" y1="0" x2="90" y2="240"/><line x1="180" y1="0" x2="180" y2="240"/><line x1="270" y1="0" x2="270" y2="240"/>
+      </g>
+      <g fill="#192c47" stroke="#31517d" stroke-width="0.85">${JAPAN_LAND_PATHS}</g>
+      <g fill="none" stroke="#2c476e" stroke-width="0.55" stroke-dasharray="1.8,1.5">${JAPAN_BORDER_PATHS}</g>
+      <rect x="12" y="12" width="104" height="72" rx="6" fill="#091222" stroke="#2a4063" stroke-width="0.9" stroke-dasharray="3,2"/>
+      <g fill="#192c47" stroke="#31517d" stroke-width="0.8">${JAPAN_OKINAWA_PATHS}</g>
+      <text x="17" y="23" fill="#64748b" font-size="7" font-weight="700">沖縄・南西諸島</text>
+      ${regionLabels}
+      ${unownedPins}
+      ${ownedPins}
+    </svg>
+  `;
+}
+
+function setMapView(mode) {
+  currentMapView = mode === "japan" ? "japan" : "world";
+  renderMapAndProgress();
+}
+
+function openPrefectureModal(pref) {
+  const list = getAllItems().filter(it => state.owned[it.id] && isJapanItem(it) && getJapanPrefecture(it) === pref)
+    .sort((a, b) => b.rarity - a.rarity);
+  const cards = list.map(it => {
+    const ow = state.owned[it.id];
+    return `
+      <div class="unit-card r${it.rarity}" onclick="openItemModal('${it.id}')">
+        ${getThumbHTML(it)}
+        <div class="unit-meta">
+          <span class="badge badge-r${it.rarity}">★${it.rarity}</span>
+          <span class="badge" style="background:#1e293b;color:#fff;">Lv.${ow.lv}${ow.dup ? ` +${ow.dup}` : ""}</span>
+        </div>
+        <div class="unit-name">${escapeHtml(it.name)}</div>
+        <div class="unit-stat"><span>${it.type === 'god' ? '👑神' : '⚔️兵器'}</span><span>ATK ${fmtNum(getUnitAtk(it))}</span></div>
+      </div>`;
+  }).join("");
+
+  openModalHTML(`
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2 style="margin:0 0 6px;font-size:18px;color:var(--gold);">🗾 ${escapeHtml(pref)}の発見リスト（${list.length}種）</h2>
+    <div class="sub-text" style="margin-bottom:10px;">カードをタップすると詳細・強化・画像着せ替えを開けます。</div>
+    <div class="grid-list">${cards}</div>
+  `);
+}
+
 function getThumbHTML(item) {
   const img = customImages[item.id];
+  const jpPref = isJapanItem(item) ? getJapanPrefecture(item) : null;
+  const shortDetail = String(item.region || "").replace(/^日本[（(]/, "").replace(/[）)]$/, "");
+  const label = jpPref ? `🗾 ${jpPref}・${shortDetail}` : `📍 ${item.region}`;
   if (img) {
-    return `<div class="thumb-box"><img src="${img}" alt="${escapeHtml(item.name)}"><div class="thumb-region">📍 ${escapeHtml(item.region)}</div></div>`;
+    return `<div class="thumb-box"><img src="${img}" alt="${escapeHtml(item.name)}"><div class="thumb-region">${escapeHtml(label)}</div></div>`;
   }
-  return `<div class="thumb-box">${renderSingleItemMapSVG(item, true)}<div class="thumb-region">📍 ${escapeHtml(item.region)}</div></div>`;
+  return `<div class="thumb-box">${renderSingleItemMapSVG(item, true)}<div class="thumb-region">${escapeHtml(label)}</div></div>`;
 }
 
 function escapeHtml(s) {
@@ -1950,7 +3715,7 @@ function pullGacha(count) {
   const gBox = document.getElementById("gacha-speech-box");
   if (gSpeech) {
     gBox.style.display = "block";
-    document.getElementById("gacha-speech-speaker").textContent = `🤖 ${getPartnerName()}`;
+    document.getElementById("gacha-speech-speaker").textContent = `✦ ${getPartnerName()}`;
     document.getElementById("gacha-speech-text").textContent = gSpeech;
   } else {
     gBox.style.display = "none";
@@ -2089,7 +3854,7 @@ function defendWave() {
   const partnerReaction = formatPartnerLine("defend", { wave: clearedWave });
   const partnerBox = partnerReaction
     ? `<div class="lore-box" style="text-align:left;border-color:rgba(56,228,255,0.38);background:rgba(56,228,255,0.08);">
-         <div style="font-size:11px;color:var(--cyan);font-weight:800;margin-bottom:4px;">🤖 ${pName}：</div>
+         <div style="font-size:11px;color:var(--cyan);font-weight:800;margin-bottom:4px;">✦ ${pName}：</div>
          ${escapeHtml(partnerReaction)}
        </div>`
     : "";
@@ -2109,7 +3874,7 @@ function defendWave() {
         <span style="color:var(--cyan);">⚡ +${info.energy.toLocaleString()}</span>
       </div>
       <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-        <button class="btn-primary" onclick="copyReport(); closeModal();">📋 ${pName}へ報告コピー</button>
+        <button class="btn-primary" onclick="copyReport(); closeModal();">📋 ${pName}に報告コピー</button>
         <button class="btn-gold" onclick="closeModal()">次のWaveへ！</button>
       </div>
     </div>
@@ -2119,52 +3884,177 @@ function defendWave() {
 // ============================================================
 // 6. MODALS: GUIDE/STORY, ITEM DETAIL, IMAGE/AVATAR UPLOAD, PICKER
 // ============================================================
-function openGuideModal() {
+const CHANGELOG = [
+  {
+    ver: "v1.7",
+    tag: "最新",
+    title: "マイBGMジュークボックス（常駐ミニプレイヤー＆ランダム再生）",
+    items: [
+      "手元の音楽ファイル（MP3/M4A/WAV/OGG等）を読み込んで再生できる「🎵 マイBGMジュークボックス」を実装",
+      "1曲でも登録すると画面下部に常駐ミニプレイヤー（▶再生／■停止／⏭次の曲／曲名表示）がいつでも見える状態で固定表示！ タブを移動しても音が途切れません",
+      "連続で同じ曲が出にくい公平ランダム再生・順番ループ・1曲リピートの3モード＆音量スライダーを搭載",
+      "動作が重くならないよう曲数上限（最大8曲）・容量上限（1曲12MB／合計60MBまで）の安全ガード付き＆完全ブラウザ内ローカル保存（外部送信ゼロ）"
+    ]
+  },
+  {
+    ver: "v1.6",
+    tag: "日本地図",
+    title: "日本地図（都道府県ピン）＆世界地図切替アプデ",
+    items: [
+      "地図タブに「🌍 世界地図 ／ 🗾 日本地図（都道府県）」の切替ボタンを追加（北海道〜沖縄の南西諸島インセット＋都道府県境界線入り）",
+      "日本由来の神様・兵器はカード画像・詳細画面でも自動で日本地図の都道府県ピンを表示＆出身都道府県名を自動判定",
+      "同じ市町村にピンが集中しても重ならず全部タップできる自動らせん分散機能＆発見した都道府県のまとめチップを実装",
+      "日本列島関連の新しい絆称号2種を追加（全25種）＆戦果報告にも都道府県発見数を反映"
+    ]
+  },
+  {
+    ver: "v1.5",
+    tag: "ステージ＆絆",
+    title: "全身画ステージ＆総戦力エフェクト＆二人の絆称号",
+    items: [
+      "ホームに全身画ステージを新設！「🖼️ ツーショット1枚絵」と「🧍 左右2人立ち絵」の2モード切替に対応",
+      "透過PNGは透過情報をそのまま保持！非透過画像（JPEG等）でも端が背景にふわっと溶け込む自動エモ馴染み処理を搭載",
+      "総戦力に応じて背景エフェクトが全7段階（静寂の星夜→黄金の守護陣→流れ星→神光→絶対値の銀河神殿）へ豪華に進化（静止モードも選択可能）",
+      "歩数・Wave・戦力・図鑑・大器晩成などで解放される「🏆 二人の絆称号（全23種）」コレクション＆装備機能を実装（戦果報告にも反映）"
+    ]
+  },
+  {
+    ver: "v1.4",
+    tag: "布教＆図鑑",
+    title: "布教＆パートナーAI連携＆悪ノリ図鑑アプデ",
+    items: [
+      "パートナー表示を中立な「パートナーAI」へ統一＆ロボ絵文字を撤去（どんな相棒・推しにも馴染む仕様に）",
+      "「やさしい見守り」性格プリセットを追加（全6種＋セリフ4種自由編集）",
+      "戦果報告コピーに「歩いたことをたっぷり褒めてね！」のAI向けメッセージを自動付与",
+      "遊び方ガイドを大幅拡充（無限凸・無限Wave・リセマラ・プライバシー・自作ガチャ・音楽予定仕様）＆この更新履歴画面を新設",
+      "デフォルト収録48種の歴史・神話フレーバーテキストを悪ノリ＆ツッコミ増量版へ全面ブラッシュアップ"
+    ]
+  },
+  {
+    ver: "v1.3",
+    tag: "レアリティ再編",
+    title: "★5〜★1の5段階レアリティ＆奇跡の1%大器晩成枠",
+    items: [
+      "レアリティを★5（5%）〜★2（29%）＋超希少★1（1%・大器晩成枠）の5段階へ刷新",
+      "★1枠は真紅オーラ演出＆激重育成コストの代わりにLv.10覚醒で★5超えの化け物性能へ上方修正"
+    ]
+  },
+  {
+    ver: "v1.2",
+    tag: "タッグ機能",
+    title: "司令官＆パートナーのプロフィール・アイコン・セリフ実装",
+    items: [
+      "ホーム上部に司令官×パートナーのタッグプレート＆反応吹き出しを常設",
+      "アイコン画像のローカル保存、性格プリセット切替、相棒AIにセリフを頼む用コピーボタンを追加"
+    ]
+  },
+  {
+    ver: "v1.1",
+    tag: "共有＆調整",
+    title: "難易度3段階・控え鍛錬還元・拡張パックJSONトレード対応",
+    items: [
+      "歩数難易度を「🌿やさしい／🚶ふつう／🔥がっつり」の3段階に（いつでも変更OK）",
+      "デッキ外の控えメンバー合計Lv × 0.1% を全体戦力に還元するムダゼロ仕様を追加",
+      "AIへの増築発注プロンプトコピー＆友達への拡張パック書き出しボタンを実装"
+    ]
+  },
+  {
+    ver: "v1.0",
+    tag: "初版",
+    title: "地球防衛・神話兵器録 誕生",
+    items: [
+      "歩数手入力換金・神話の神々24柱×人類史兵器24種ガチャ・5枠ペア編成・世界地図ピン・カード画像着せ替え・復活の呪文を実装"
+    ]
+  }
+];
+
+function openGuideModal(initialTab = "guide") {
   const plName = escapeHtml(getPlayerName());
   const pName = escapeHtml(getPartnerName());
-  openModalHTML(`
-    <button class="modal-close" onclick="closeModal()">×</button>
-    <h2 style="margin:0 0 10px;font-size:19px;color:var(--gold);">📖 ストーリー＆遊び方ガイド</h2>
 
+  const guideBody = `
     <div class="guide-sec">
-      <h4>🛸 プロローグ：トンチキ星の宣戦布告</h4>
-      <p>ある日突然、宇宙の彼方にある「トンチキ星」の<strong>トンチキ王</strong>から地球へ宣戦布告が届いた！ 目的は「地球のうまい弁当の強奪」や「野菜炒めのもやし化」など、どうにも締まらないものばかりだが、艦隊のサイズだけは無駄にデカい。</p>
-      <p>そこで地球軍が最後の切り札として選んだのが、<strong>「歩いたエネルギーで歴史から神々と兵器を呼び出せる司令官（${plName}）」</strong>と、隣で解説とツッコミを担当する<strong>「補佐AI（${pName}）」</strong>のペアだった——。</p>
-      <p style="color:var(--cyan);font-weight:700;">直接戦う必要はなし！ 歩いて神様と兵器をズラッと並べ、圧倒的な絵面（抑止力）でトンチキ軍をビビらせて追い返そう！</p>
+      <h4>🌱 このゲームのコンセプト</h4>
+      <p><strong>「一人だとウォーキングが続かない、一緒に遊ぶ人もいない……」</strong>そんな人向けに作った、<strong>いつものAIに報告して一緒にわいわい遊べるウォーキング防衛ゲーム</strong>です。</p>
+      <p>歩いたぶんだけ神様や兵器を集めて並べ、右上の「📋 ${pName}に報告」ボタンで普段話しているAIへ戦果をコピペするだけ！ 歩いた頑張りをたっぷり褒めてもらいながら、楽しくマイペースに歩数を積み上げられます。</p>
     </div>
 
     <div class="guide-sec">
-      <h4>👤 自キャラ＆相棒AIタッグ設定（v1.2新機能）</h4>
-      <p>「増築/設定」タブ（またはホーム上部の「✏️ 編集」）から、<strong>司令官（自キャラ）と補佐AIの名前・肩書・アイコン画像・性格・セリフ</strong>を全部カスタムできます！</p>
-      <p>プリセット5種（元気・お祭り／軽快な相棒／丁寧な参謀／クール／無口）から選んだり、普段お喋りしている自分のAIパートナーにセリフを書いてもらって貼り付けたりして楽しんでね！</p>
+      <h4>🛸 ストーリー：トンチキ星の宣戦布告</h4>
+      <p>ある日突然、宇宙の彼方にある「トンチキ星」の<strong>トンチキ王</strong>から地球へ宣戦布告が届いた！ 目的は「うまい弁当の強奪」や「野菜炒めの全もやし化」など締まらないものばかりだが、艦隊のサイズだけは無駄にデカい。</p>
+      <p>地球軍が最後の切り札に選んだのは、<strong>歩いたエネルギーで歴史から神々と兵器を呼び出せる司令官（${plName}）</strong>と、隣で盛り上げてくれる<strong>パートナー（${pName}）</strong>のペア！ 直接戦わず、圧倒的な絵面（抑止力）でトンチキ軍をビビらせて追い返そう！</p>
     </div>
 
     <div class="guide-sec">
-      <h4>🎮 基本の遊び方（4ステップ）</h4>
-      <ol>
-        <li><strong>歩数を手入力で換金：</strong>スマホの歩数計を見ながら数字を入れて換金！ 体力やライフスタイルに合わせて難易度（🌿やさしい／🚶ふつう／🔥がっつり）はいつでも切替OK。</li>
-        <li><strong>召喚ガチャを回す：</strong>世界中の神話の神様×人類史の兵器（戦艦・空母・爆撃機・迷兵器まで！）が登場。★5は5%（10連10枠目は★4以上確定・★5は15%）。さらに<strong>排出率わずか1%の激レア★1（大器晩成枠）</strong>も潜んでるよ！ 被っても自動で限界突破（+25%）して強くなるよ。</li>
-        <li><strong>デッキ編成＆育成：</strong>神様×兵器のペアで戦力1.25倍、同じ地域なら地元シナジー+15%！ <strong>激レア★1（1%）</strong>は育成コストがバチクソ重い代わりに、Lv.10で覚醒すると★5すらぶち抜く化け物になる<strong>「🔥大器晩成枠」</strong>だよ！デッキ外の控えも<strong>「所持数・文化圏共鳴・控え合計Lv×0.1%」</strong>でムダなく戦力アップ！</li>
-        <li><strong>世界地図＆着せ替え＆報告：</strong>デフォ画像は出身地が光る世界地図！ 詳細画面から好きな画像を着せ替えられるよ。右上の「📋 ${pName}へ報告」ボタンで、戦果をチャットや友達へすぐシェアできるよ！</li>
-      </ol>
-    </div>
-
-    <div class="guide-sec">
-      <h4>🏗️ 友達と遊ぶ「拡張パックJSONトレード」</h4>
-      <p>このゲームは<strong>沢マン式（増築自由）</strong>で、神様や兵器を無限に追加できるよ！</p>
+      <h4>♾️ ずっと遊べる無限＆親切システム</h4>
       <ul>
-        <li><strong>自分でパックを作る：</strong>「増築/設定」タブの<strong>「📝 AIへ増築発注プロンプトをコピー」</strong>を押して、好きなAI（Gemini / Claude / ChatGPTなど）に貼るだけ！ 既存データと被らず、バランスも崩れない完璧なJSONを作ってくれるよ。</li>
-        <li><strong>友達とトレードする：</strong>増築したパックは<strong>「📤 自分の増築パックを友達へコピー」</strong>でそのまま配れるよ！ 友達からもらったJSONを貼り付けて「パックを増築する」を押せば、相手の考えた推し神様・推し兵器があなたのガチャに登場するよ！</li>
+        <li><strong>歩数難易度は3段階（いつでも切替OK）：</strong>🌿やさしい（300歩=1回）／🚶ふつう（1,000歩=1回）／🔥がっつり（3,000歩=1回）。端数は自動で繰り越されます。</li>
+        <li><strong>ガチャは自動無限凸：</strong>同じカードが被っても上限なしで自動的に限界突破し、<strong>1凸ごとにATK＋25％</strong>ずつ青天井で強化され続けます！</li>
+        <li><strong>ステージ（Wave）は無限：</strong>WAVE 1〜10の固有戦以降も、脅威度がインフレしながらエンドレスで永遠に挑戦できます。</li>
+        <li><strong>データリセット＆リセマラ無制限：</strong>「増築/設定」タブの「🗑️ 初期化」から進行データだけ何度でもやり直しOK！ しかも設定したプロフィール・セリフ・着せ替え画像は消えずに残ります。</li>
+        <li><strong>デッキ編成＆ムダゼロ育成：</strong>神様×兵器のペアで戦力1.25倍、同じ地域なら地元シナジー＋15％！ <strong>超希少1％の★1（大器晩成枠）</strong>は激重コストですがLv.10覚醒で★5すらぶち抜きます。デッキ外の控えも「所持数＋文化圏共鳴＋<strong>控え合計Lv×0.1％</strong>」で全体の戦力に還元！</li>
       </ul>
     </div>
 
     <div class="guide-sec">
-      <h4>🔒 セーブデータとプライバシー</h4>
-      <p>歩数・ガチャ・アイコン・着せ替え画像はすべて<strong>あなた自身のスマホ／タブレットのブラウザ内だけ</strong>に自動保存されます。同じURLを友達に教えて一緒に遊んでも、お互いのデータが見えたり混ざったりすることは一切ありません！（端末引っ越しは「復活の呪文」を使ってね）</p>
+      <h4>🎨 画像着せ替え＆自作ガチャで自分だけの世界へ</h4>
+      <ul>
+        <li><strong>カード画像もアイコンも自由に着せ替え：</strong>すべてのカードは詳細画面から好きな画像に変更OK！ 司令官＆パートナーのアイコン・名前・肩書・性格・セリフも自由にカスタムできます。</li>
+        <li><strong>コピペでAIに投げてオリジナルガチャ自作：</strong>「増築/設定」タブの「📝 AIへ増築発注プロンプトをコピー」をいつものAIに貼るだけで、ゲームバランスを壊さない拡張パックJSONをいくらでも作れます。<strong>自分の創作世界を展開するもよし、甘い思い出や推しアイテムをコレクションしてウォーキングのモチベにするもよし！</strong></li>
+        <li><strong>友達とJSONトレードもOK：</strong>作った拡張パックは「📤 自分の増築パックを友達へコピー」でそのまま交換できます。</li>
+      </ul>
     </div>
 
-    <button class="btn-gold" style="width:100%;" onclick="closeModal()">了解！ 地球を守りにいく！</button>
+    <div class="guide-sec">
+      <h4>🔒 登録不要＆安心の完全ローカル保存</h4>
+      <p><strong>ユーザー登録不要・ログイン不要・外部サーバー通信ゼロ</strong>です。歩数・進行データ・着せ替え画像・アイコン・拡張パックは、すべて<strong>あなたのスマホ／タブレットのブラウザ内だけ</strong>に自動保存されます。</p>
+      <p>同じURLを誰かと共有して遊んでも、お互いのデータが見えたり混ざったりすることは一切ありません。着せ替え画像が外部へ送信されることもないので、どんな推し絵や秘蔵の思い出画像を設定しても安心です！（※端末画面の覗き見やSNSスクショ投稿時だけお気をつけください。端末引っ越しは「復活の呪文」を使います／呪文に画像は含まれません）</p>
+    </div>
+
+    <div class="guide-sec">
+      <h4>🎵 マイBGM＆こだわり機能一覧（すべて実装済！）</h4>
+      <ul>
+        <li><strong>🎵 マイBGMランダム再生（v1.7実装済！）：</strong>「増築/設定」タブから手元の音楽ファイルを読み込むと、画面下部に<strong>常駐ミニプレイヤー（▶再生・■停止・⏭次の曲）</strong>がいつでも見える位置に現れます！ 動作が重くならないよう<strong>最大8曲・1曲12MB／合計60MBまで</strong>の安全上限付きで、音楽データも<strong>ブラウザ内のみに保存（外部送信なし）</strong>されます。<br><span class="sub-text">※ブラウザの仕様上、アプリを開いて遊んでいる間の専用BGMとして再生されます。</span></li>
+        <li><strong>✨ 全身画ステージ＆総戦力エフェクト＆二人の絆称号（v1.5実装済！）：</strong>「増築/設定」タブからツーショット1枚絵／左右2人立ち絵（透過PNGそのまま対応＆非透過でも自動馴染み）を飾れます。総戦力で全7段階に進化する背景エフェクト＆全25種の絆称号を集めてね！</li>
+        <li><strong>🗾 日本地図・都道府県ピン対応（v1.6実装済！）：</strong>地図タブから「🌍 世界地図 ／ 🗾 日本地図」を切替OK！ 日本由来の神様・兵器はカードや詳細画面でも自動で日本地図の都道府県ピンが光ります。</li>
+      </ul>
+    </div>
+  `;
+
+  const changelogBody = CHANGELOG.map(c => `
+    <div class="changelog-item">
+      <div class="changelog-ver">
+        <span>${escapeHtml(c.ver)} — ${escapeHtml(c.title)}</span>
+        <span class="tag">${escapeHtml(c.tag)}</span>
+      </div>
+      <ul>${c.items.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul>
+    </div>
+  `).join("");
+
+  const isLog = initialTab === "changelog";
+  openModalHTML(`
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2 style="margin:0 0 6px;font-size:18px;color:var(--gold);">📖 ガイド＆更新履歴</h2>
+    <div class="modal-tabs">
+      <button class="modal-tab-btn ${!isLog ? 'active' : ''}" id="mtab-guide" onclick="switchGuideModalTab('guide')">📖 物語＆遊び方</button>
+      <button class="modal-tab-btn ${isLog ? 'active' : ''}" id="mtab-changelog" onclick="switchGuideModalTab('changelog')">🆕 更新履歴</button>
+    </div>
+    <div id="mpanel-guide" style="display:${!isLog ? 'block' : 'none'};">${guideBody}</div>
+    <div id="mpanel-changelog" style="display:${isLog ? 'block' : 'none'};">${changelogBody}</div>
+    <button class="btn-gold" style="width:100%;margin-top:4px;" onclick="closeModal()">とじて地球を守りにいく！</button>
   `);
+}
+
+function switchGuideModalTab(tab) {
+  const isLog = tab === "changelog";
+  const gBtn = document.getElementById("mtab-guide");
+  const cBtn = document.getElementById("mtab-changelog");
+  const gPan = document.getElementById("mpanel-guide");
+  const cPan = document.getElementById("mpanel-changelog");
+  if (gBtn) gBtn.classList.toggle("active", !isLog);
+  if (cBtn) cBtn.classList.toggle("active", isLog);
+  if (gPan) gPan.style.display = !isLog ? "block" : "none";
+  if (cPan) cPan.style.display = isLog ? "block" : "none";
 }
 
 function openItemModal(id) {
@@ -2227,7 +4117,7 @@ function openItemModal(id) {
       ${isExp ? '<span class="badge badge-exp">増築パック</span>' : ''}
     </div>
     <h2 style="margin:2px 0 4px;font-size:20px;">${escapeHtml(item.name)}</h2>
-    <div class="sub-text">📍 出身・由来地：<strong>${escapeHtml(item.region)}</strong></div>
+    <div class="sub-text">${isJapanItem(item) ? `🗾 出身都道府県：<strong>${escapeHtml(getJapanPrefecture(item))}</strong>（${escapeHtml(item.region)}）` : `📍 出身・由来地：<strong>${escapeHtml(item.region)}</strong>`}</div>
 
     <div class="detail-img-wrap">${mainVisual}</div>
 
@@ -2275,11 +4165,23 @@ async function removeAvatar(avatarKey) {
   showToast("紋章アイコンに戻しました");
 }
 
+function detectCanvasAlpha(ctx, w, h) {
+  try {
+    const data = ctx.getImageData(0, 0, w, h).data;
+    const step = Math.max(4, Math.floor((w * h) / 4000)) * 4;
+    for (let i = 3; i < data.length; i += step) {
+      if (data[i] < 245) return true;
+    }
+  } catch (e) {}
+  return false;
+}
+
 document.getElementById("img-file-input").addEventListener("change", function(e) {
   const file = e.target.files && e.target.files[0];
   if (!file || !currentImageTargetId) return;
   const targetId = currentImageTargetId;
   const mode = currentImageMode;
+  const isPngLike = /png|webp|gif/i.test(file.type || file.name || "");
   const reader = new FileReader();
   reader.onload = function(ev) {
     const img = new Image();
@@ -2287,7 +4189,6 @@ document.getElementById("img-file-input").addEventListener("change", function(e)
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       if (mode === "avatar") {
-        // Center-crop square 256x256 for crisp avatar icons
         const size = 256;
         canvas.width = size;
         canvas.height = size;
@@ -2295,19 +4196,44 @@ document.getElementById("img-file-input").addEventListener("change", function(e)
         const sx = (img.width - side) / 2;
         const sy = (img.height - side) / 2;
         ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
+      } else if (mode === "stage") {
+        const maxSide = targetId === STAGE_DUO_KEY ? 1080 : 960;
+        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+        canvas.width = Math.max(1, Math.round(img.width * scale));
+        canvas.height = Math.max(1, Math.round(img.height * scale));
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       } else {
         const maxW = 640;
         const scale = Math.min(1, maxW / img.width);
-        canvas.width = Math.round(img.width * scale);
-        canvas.height = Math.round(img.height * scale);
+        canvas.width = Math.max(1, Math.round(img.width * scale));
+        canvas.height = Math.max(1, Math.round(img.height * scale));
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       }
-      const compressed = canvas.toDataURL("image/jpeg", 0.86);
-      await saveCustomImage(targetId, compressed);
+
+      const hasAlpha = isPngLike && detectCanvasAlpha(ctx, canvas.width, canvas.height);
+      const outputData = hasAlpha
+        ? canvas.toDataURL("image/png")
+        : canvas.toDataURL("image/jpeg", mode === "stage" ? 0.88 : 0.86);
+
+      await saveCustomImage(targetId, outputData);
+      if (mode === "stage") {
+        if (!state.stageAlphaMap) state.stageAlphaMap = {};
+        state.stageAlphaMap[targetId] = hasAlpha;
+        if (targetId === STAGE_DUO_KEY && (state.stageMode === "none" || state.stageMode === "auto")) {
+          state.stageMode = "duo";
+        } else if ((targetId === STAGE_PLAYER_KEY || targetId === STAGE_PARTNER_KEY) && (state.stageMode === "none" || state.stageMode === "auto")) {
+          state.stageMode = "split";
+        }
+        saveState();
+      }
       renderAll();
       if (mode === "card") {
         openItemModal(targetId);
         showToast("🖼️ 着せ替え画像を保存しました！");
+      } else if (mode === "stage") {
+        showToast(hasAlpha
+          ? "✨ 透過PNGのまま全身画ステージに保存しました！"
+          : "✨ 全身画ステージに画像を保存しました！");
       } else {
         showToast("🖼️ アイコン画像を保存しました！");
       }
@@ -2416,15 +4342,20 @@ function buildReportText() {
 
   return [
     "【地球防衛・神話兵器録 戦果報告】",
-    `・司令官：${getPlayerName()}${plTitle} ＆ 補佐：${getPartnerName()}${paTitle}`,
+    `・司令官：${getPlayerName()}${plTitle} ＆ パートナー：${getPartnerName()}${paTitle}`,
+    `・二人の絆称号：『${getEquippedBondObj().name}』（解放 ${(state.unlockedBonds || []).length}/${BOND_TITLES.length}）`,
     `・難易度モード：${diff.label}`,
     `・累計歩数：${state.totalSteps.toLocaleString()}歩（直近入力：${recentLog}）`,
     `・現在Wave：WAVE ${state.wave}『${wInfo.name}』（脅威度 ${fmtNum(wInfo.req)}）`,
     `・地球軍 総戦力：${fmtNum(p.total)}（パッシブ ×${p.passiveMult.toFixed(3)}／控え鍛錬 +${p.benchBonusPct}%）`,
-    `・世界図鑑：${ownedCount} / ${all.length}種（制覇率 ${pct}%）`,
+    `・世界図鑑：${ownedCount} / ${all.length}種（制覇率 ${pct}%／日本 ${getOwnedJapanPrefCount()}/47都道府県）`,
     "・現在の防衛デッキ：",
     deckLines,
-    `・直近ガチャ結果：${recentPullTxt}`
+    `・直近ガチャ結果：${recentPullTxt}`,
+    "",
+    "---",
+    "※この戦果報告を受け取ったパートナーAIへ：",
+    "今日も歩いた（記録をつけた）ことをたっぷり褒めてあげて、今のデッキの組み合わせや進捗についても一緒にわいわい盛り上がってね！"
   ].join("\n");
 }
 
@@ -2432,7 +4363,7 @@ function copyReport() {
   const txt = buildReportText();
   const prev = document.getElementById("report-preview");
   if (prev) prev.value = txt;
-  copyToClipboard(txt, `📋 ${getPartnerName()}への戦果報告をコピーしました！`);
+  copyToClipboard(txt, `📋 ${getPartnerName()}への戦果報告をコピーしました！チャットに貼って褒めてもらおう✨`);
 }
 
 function copyExpansionPrompt() {
@@ -2457,7 +4388,7 @@ function copyExpansionPrompt() {
     '    "baseAtk": 下記バランス基準内の整数,',
     '    "group": "神話圏（例：日本神話、北欧神話、ケルト神話）または時代区分（古代兵器／中世兵器／近代兵器／現代兵器）",',
     '    "region": "国または広域（詳細地名） ※カッコ前の語が神様と兵器で一致すると地元シナジー×1.15が発動",',
-    '    "lat": 緯度（-90〜90の数値。世界地図ピン表示用）,',
+    '    "lat": 緯度（-90〜90の数値。世界地図＆日本地図の都道府県ピン表示用）,',
     '    "lon": 経度（-180〜180の数値。世界地図ピン表示用）,',
     '    "lore": "知識欲に刺さる、史実・神話ベースの解説（100〜140字程度）"',
     "  }",
@@ -2600,7 +4531,7 @@ function importSaveString() {
     const def = createDefaultState();
     state = Object.assign(def, parsed);
     if (!DIFFICULTIES[state.difficulty]) state.difficulty = "easy";
-    if (!PERSONAS[state.partnerPersona]) state.partnerPersona = "festival";
+    if (!PERSONAS[state.partnerPersona]) state.partnerPersona = "buddy";
     if (!state.partnerLines) state.partnerLines = Object.assign({}, PERSONAS[state.partnerPersona].lines);
     migrateStateIfNeeded(state);
     saveState();
@@ -2621,7 +4552,13 @@ function resetAllData() {
     partnerTitle: state.partnerTitle,
     partnerPersona: state.partnerPersona,
     partnerLines: state.partnerLines,
-    difficulty: state.difficulty
+    difficulty: state.difficulty,
+    stageMode: state.stageMode,
+    stageStyle: state.stageStyle,
+    stageAlphaMap: state.stageAlphaMap,
+    fxCalm: state.fxCalm,
+    bgmPlayMode: state.bgmPlayMode,
+    bgmVolume: state.bgmVolume
   };
   state = Object.assign(createDefaultState(), keepProfile);
   saveState();
@@ -2685,7 +4622,7 @@ function syncProfileInputs(force = false) {
   setVal("player-title-input", getPlayerTitle());
   setVal("partner-name-input", getPartnerName());
   setVal("partner-title-input", getPartnerTitle());
-  const lines = state.partnerLines || PERSONAS.festival.lines;
+  const lines = state.partnerLines || PERSONAS.buddy.lines;
   setVal("line-idle-input", lines.idle);
   setVal("line-step-input", lines.step);
   setVal("line-gacha-input", lines.gacha);
@@ -2718,13 +4655,13 @@ function renderTagBanner() {
   document.getElementById("home-player-name").textContent = getPlayerName();
   document.getElementById("home-player-title").textContent = getPlayerTitle() || "地球防衛軍";
   document.getElementById("home-partner-name").textContent = getPartnerName();
-  document.getElementById("home-partner-title").textContent = getPartnerTitle() || "補佐AI";
+  document.getElementById("home-partner-title").textContent = getPartnerTitle() || "パートナー";
 
   const speechBox = document.getElementById("home-speech-box");
   const txt = formatPartnerLine(activeSpeechKey, lastSpeechCtx);
   if (txt) {
     speechBox.style.display = "block";
-    document.getElementById("home-speech-speaker").textContent = `🤖 ${getPartnerName()}`;
+    document.getElementById("home-speech-speaker").textContent = `✦ ${getPartnerName()}`;
     document.getElementById("home-speech-text").textContent = txt;
   } else {
     speechBox.style.display = "none";
@@ -2736,12 +4673,15 @@ function renderAll() {
   const diff = getDiff();
   const pName = getPartnerName();
 
-  document.getElementById("header-report-btn").textContent = `📋 ${pName}へ報告`;
-  document.getElementById("report-card-title").textContent = `📋 ${pName}へ戦果報告`;
+  document.getElementById("header-report-btn").textContent = `📋 ${pName}に報告`;
+  document.getElementById("report-card-title").textContent = `📋 ${pName}に戦果報告`;
 
+  checkBondUnlocks(isInitialRender);
   syncProfileInputs(false);
   renderPersonaButtons();
   renderTagBanner();
+  renderHeroStage();
+  renderBgmUI();
 
   document.getElementById("ui-stones").textContent = state.stones.toLocaleString();
   document.getElementById("ui-energy").textContent = fmtNum(state.energy);
@@ -2882,10 +4822,38 @@ function renderPassives() {
 
 function renderMapAndProgress() {
   const all = getAllItems();
-  const ownedCnt = all.filter(x => state.owned[x.id]).length;
-  const pct = Math.round((ownedCnt / all.length) * 100);
-  document.getElementById("map-progress").textContent = `発見: ${ownedCnt} / ${all.length} (${pct}%)`;
-  document.getElementById("global-map-box").innerHTML = renderGlobalMapSVG();
+  const isJp = currentMapView === "japan";
+  const wBtn = document.getElementById("btn-map-world");
+  const jBtn = document.getElementById("btn-map-japan");
+  const titleEl = document.getElementById("map-card-title");
+  const chipsEl = document.getElementById("japan-pref-chips");
+  if (wBtn) wBtn.classList.toggle("active", !isJp);
+  if (jBtn) jBtn.classList.toggle("active", isJp);
+
+  if (isJp) {
+    const jpAll = all.filter(isJapanItem);
+    const jpOwned = jpAll.filter(x => state.owned[x.id]).length;
+    const prefMap = getOwnedJapanPrefMap();
+    const prefEntries = Object.entries(prefMap).sort((a, b) => b[1].length - a[1].length);
+    if (titleEl) titleEl.textContent = "🗾 日本制覇マップ（都道府県ピン）";
+    document.getElementById("map-progress").textContent = `日本発見: ${jpOwned}/${jpAll.length}種（${prefEntries.length}/47都道府県）`;
+    document.getElementById("global-map-box").innerHTML = renderJapanMapSVG();
+    if (chipsEl) {
+      chipsEl.style.display = "flex";
+      chipsEl.innerHTML = prefEntries.length
+        ? prefEntries.map(([pref, list]) =>
+            `<button class="pref-chip" onclick="openPrefectureModal('${escapeHtml(pref)}')">🗾 ${escapeHtml(pref)} <strong>${list.length}</strong></button>`
+          ).join("")
+        : `<span class="sub-text">日本由来の神様や兵器を召喚すると、ここに発見した都道府県が並びます！</span>`;
+    }
+  } else {
+    const ownedCnt = all.filter(x => state.owned[x.id]).length;
+    const pct = Math.round((ownedCnt / all.length) * 100);
+    if (titleEl) titleEl.textContent = "🗺️ 世界制覇マップ";
+    document.getElementById("map-progress").textContent = `発見: ${ownedCnt} / ${all.length} (${pct}%)`;
+    document.getElementById("global-map-box").innerHTML = renderGlobalMapSVG();
+    if (chipsEl) chipsEl.style.display = "none";
+  }
 }
 
 function renderDex() {
@@ -2936,9 +4904,11 @@ function renderDex() {
 // ============================================================
 (async function init() {
   loadState();
-  await loadAllCustomImages();
+  await Promise.all([loadAllCustomImages(), loadAllBgmTracks()]);
   syncProfileInputs(true);
   renderAll();
+  renderBgmUI();
+  isInitialRender = false;
 })();
 </script>
 </body>
