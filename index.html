@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0d111a">
-<title>地球防衛・神話兵器録 v2.4</title>
+<title>地球防衛・神話兵器録 v2.5</title>
 <style>
 :root {
   --bg: #0c1018;
@@ -1425,7 +1425,7 @@ textarea.code-area.drag-over {
 
 <header class="app-header">
   <div class="header-top">
-    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v2.4</span></div>
+    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v2.5</span></div>
     <div class="header-actions">
       <button class="btn-help" onclick="openGuideModal()">📖 物語&amp;遊び方</button>
       <button class="btn-report" id="header-report-btn" onclick="copyReport()">📋 パートナーAIに報告</button>
@@ -1629,7 +1629,7 @@ textarea.code-area.drag-over {
     <div class="card">
       <div class="card-title">
         <span id="map-card-title">🗺️ 世界制覇マップ</span>
-        <span class="sub-text" id="map-progress">発見: 0 / 48 (0%)</span>
+        <span class="sub-text" id="map-progress">発見: 0 / 68 (0%)</span>
       </div>
       <div class="map-mode-row">
         <button class="map-mode-btn active" id="btn-map-world" onclick="setMapView('world')">🌍 世界地図</button>
@@ -2252,6 +2252,61 @@ const BASE_ITEMS = [
     lore: "『死者の書』の挿絵に突如現れた、シーツを被って足だけ生えた謎の生物。名前は「打ち倒す者」と物騒で、目から怪光線を放って敵を撃つらしいが、現代ネット民からは完全にゆるキャラ扱いされているエジプト最大のミステリー。"
   },
 
+
+  // ---- GODS v2.5 追加（10柱） ----
+  {
+    id: "g_horus", type: "god", name: "ホルス", rarity: 5, baseAtk: 184,
+    group: "エジプト神話", region: "エジプト（エドフ）", lat: 24.97, lon: 32.87,
+    lore: "隼の頭を持つ天空と王権の守護神。父オシリスを殺した叔父セトとの王位継承バトルは実に80年もの超長期泥沼裁判へ発展し、激闘で奪われた左目は修復されて『ホルスの目（ウジャト）』となった。なお戦いの過程でレタスにまつわる非常にギリギリな奇策も披露している。"
+  },
+  {
+    id: "g_thoth", type: "god", name: "トト", rarity: 4, baseAtk: 114,
+    group: "エジプト神話", region: "エジプト（ヘルモポリス）", lat: 27.78, lon: 30.80,
+    lore: "トキの頭（またはヒヒの姿）を持つ知恵・書記・数学・魔術の神。ヒエログリフの発明者にして冥界裁判の書記官、さらに神々の喧嘩の仲裁まで全部押し付けられているエジプト神界の過労死寸前ホワイトカラー。賭け事で月から光を奪って1年を365日にした豪腕ギャンブラーな一面も。"
+  },
+  {
+    id: "g_takaokami", type: "god", name: "タカオカミ（高龗神）", rarity: 4, baseAtk: 116,
+    group: "日本神話", region: "日本（京都・貴船）", lat: 35.12, lon: 135.76,
+    lore: "イザナギが火神カグツチを十拳剣で斬り伏せた際、柄から滴り落ちた血から誕生した山の水と雨を司る龍神。京都の貴船神社などに祀られ、干ばつには黒馬、長雨には白馬を奉納すれば天気予報より確実に水量を調整してくれる。絵馬のルーツを生んだ偉大な水インフラ管理神。"
+  },
+  {
+    id: "g_bes", type: "god", name: "ベス", rarity: 3, baseAtk: 74,
+    group: "エジプト神話", region: "エジプト（メンフィス）", lat: 29.85, lon: 31.25,
+    lore: "小柄な体格に太鼓腹、モジャモジャの髭面で舌をベロッと出し、太鼓や竪琴を鳴らしながら踊り狂う陽気なおじさん神。見た目は完全に酔っ払いだが、その迫力ある変顔と爆音ビートで悪霊や毒蛇をビビらせて追い払う、古代エジプトの家庭・安産・魔除け界のスーパーアイドル。"
+  },
+  {
+    id: "g_khepri", type: "god", name: "ケプリ", rarity: 3, baseAtk: 76,
+    group: "エジプト神話", region: "エジプト（ヘリオポリス東方）", lat: 30.15, lon: 31.42,
+    lore: "人間の首から上が丸ごと巨大なフンコロガシ（スカラベ）になっている、ビジュアルインパクト部門ぶっちぎり優勝の朝の太陽神。フンコロガシが丸い糞を転がす姿に『太陽を空へ押し上げる神秘』を見出した古代エジプト人の連想力が眩しすぎる。再生と創造の象徴。"
+  },
+  {
+    id: "g_amenouzume", type: "god", name: "アメノウズメ", rarity: 3, baseAtk: 72,
+    group: "日本神話", region: "日本（三重・鈴鹿）", lat: 34.96, lon: 136.45,
+    lore: "天照大御神が天岩戸に引きこもった絶体絶命の危機に、伏せた桶をドンドン踏み鳴らし、ノリノリで胸をはだけて踊り狂い八百万の神を爆笑させた日本最古の芸能＆パリピ神。理屈が通じない膠着状態を『祭り』の熱量とグルーヴで一発突破した現場力の鬼。"
+  },
+  {
+    id: "g_pazuzu", type: "god", name: "パズズ", rarity: 3, baseAtk: 78,
+    group: "メソポタミア神話", region: "イラク（アッシュール）", lat: 35.45, lon: 43.26,
+    lore: "ライオンめいた凶悪な顔に4枚の翼、サソリの尻尾と蛇の股間を備えた南西風と熱病の悪霊王。どう見てもラスボス級のビジュアルだが、『もっとタチの悪い悪霊ラマシュトゥを追い払ってくれるから』という毒を以て毒を制す理由で古代の妊婦たちからお守りとして愛用された不憫な強面。"
+  },
+  {
+    id: "g_kamapuaa", type: "god", name: "カマプアア", rarity: 2, baseAtk: 44,
+    group: "ポリネシア神話", region: "ハワイ（オアフ島）", lat: 21.44, lon: -158.00,
+    lore: "イケメン青年と巨大な剛毛イノシシの姿を行き来するハワイの半神。火山の女神ペレにケンカを売って溶岩で丸焼きにされかけるも、霧雨と豪雨で反撃して引き分け、そのまま流れで結婚→大喧嘩→離婚→島を半分こするという壮大な泥沼ラブコメを繰り広げた。"
+  },
+  {
+    id: "g_robigus", type: "god", name: "ロビグス", rarity: 2, baseAtk: 41,
+    group: "ローマ神話", region: "イタリア（ローマ郊外）", lat: 41.97, lon: 12.48,
+    lore: "なんと『麦の赤さび病（カビ）』だけを担当する、神話界トップクラスに業務範囲がピンポイントすぎる古代ローマの農業神。農民たちは『お願いだからウチの小麦にカビを生やさないで！』と毎年4月に赤毛の犬を捧げて必死にゴマをすり続けた。ニッチ産業の極み。"
+  },
+  {
+    id: "g_orochinchin", type: "god", name: "ヤマタノオロチンチン", rarity: 1, baseAtk: 3, lateBloomer: true,
+    awakeSkill: "god_count_mult", awakeTitle: "煩悩百八・八岐大膨張",
+    awakeDesc: "【Lv.10覚醒】所持している神様の種類数 × 32% をこの神の乗算火力に加算！（神々が集まるほど御立派さが天を貫く）",
+    group: "インド神話", region: "インド（ブッダガヤ・自称出雲）", lat: 24.69, lon: 84.99,
+    lore: "『どうも、出雲から来たヤマタノオロチです』と強引に名乗っているが、よく見ると首も尾も八本ではなく、どう見ても緑色の黄金戦車に乗ってブッダガヤから不法入国してきた某・御立派な煩悩の魔王マーラ様である。釈迦の悟りを邪魔し損ねた腹いせに地球防衛戦へ混入。普段はシモネタ全開のポンコツだが、Lv.10で覚醒すると八百万の神の煩悩を吸って天を貫く謎の規格外へ大膨張する。"
+  },
+
   // ---- WEAPONS ★5 ----
   {
     id: "w_yamato", type: "weapon", name: "戦艦大和", rarity: 5, baseAtk: 192,
@@ -2382,6 +2437,60 @@ const BASE_ITEMS = [
     id: "w_tsartank", type: "weapon", name: "ツァーリ・タンク", rarity: 2, baseAtk: 42,
     group: "近代兵器", region: "ロシア（ドミトロフ）", lat: 56.34, lon: 37.52,
     lore: "「車輪を直径9mにすればどんな塹壕も余裕で越えられるはず！」という小学生並みの豪快理論でロシア帝国が試作した巨大三輪戦車。いざ走らせたら小さい後輪が泥にズブッと嵌まって1ミリも動けず、そのまま森で錆びて終了した愛すべき迷作。"
+  },
+
+  // ---- WEAPONS v2.5 追加（10種） ----
+  {
+    id: "w_gungnir", type: "weapon", name: "グングニル", rarity: 5, baseAtk: 194,
+    group: "神話兵器", region: "北欧（スカンジナビア）", lat: 62.0, lon: 15.0,
+    lore: "ドワーフの職人兄弟イーヴァルディの子らが鍛え上げ、主神オーディンが愛用する北欧神話最強の魔槍。投げれば物理法則を無視して必ず標的を貫き、しかも自動で手元に戻ってくる完全オートエイム＆ブーメラン仕様。この槍に向けて誓った約束は絶対に破れないという法務機能まで完備。"
+  },
+  {
+    id: "w_excalibur", type: "weapon", name: "エクスカリバー", rarity: 5, baseAtk: 195,
+    group: "神話兵器", region: "イギリス（コーンウォール）", lat: 50.66, lon: -4.76,
+    lore: "アーサー王が湖の乙女から授かった、太陽30個分とも称される眩い光を放つ伝説の聖剣。ちなみに『岩から引き抜いた剣（カリバーン）』とは本来別物という説が濃厚で、しかも真のチート本体は剣より『持っているだけで一切出血しなくなる鞘』の方だったという実務的なオチがある。"
+  },
+  {
+    id: "w_gaebolg", type: "weapon", name: "ゲイボルグ", rarity: 4, baseAtk: 120,
+    group: "神話兵器", region: "アイルランド（アルスター）", lat: 54.59, lon: -5.93,
+    lore: "ケルトの大英雄クー・フーリンが影の国で師匠スカアハから授かった海獣の骨製魔槍。なんと『川の水流に乗せて足の指で挟んで蹴り出す』というクセが強すぎる発射手順を踏むと、着弾と同時に体内で30本もの逆棘が爆裂する。撃ったあとに肉を切り裂いて回収する後処理までえげつない。"
+  },
+  {
+    id: "w_caladbolg", type: "weapon", name: "カラドボルグ", rarity: 4, baseAtk: 118,
+    group: "神話兵器", region: "アイルランド（コノート）", lat: 53.72, lon: -8.50,
+    lore: "ケルト神話の猛将フェルグスが振るう、抜刀すれば虹のように輝く超スケールの魔剣。本気で一振りしただけで遥か彼方の丘の頂を3つまとめて吹き飛ばし、地形そのものを書き換えてしまった。エクスカリバーの原型とも噂される、神話界きっての地形破壊系チートウェポン。"
+  },
+  {
+    id: "w_habakkuk", type: "weapon", name: "氷山空母ハバクック", rarity: 4, baseAtk: 115,
+    group: "近代兵器", region: "カナダ（アルバータ・パトリシア湖）", lat: 52.90, lon: -118.09,
+    lore: "『鉄が足りないなら氷におがくずを混ぜて全長600mの不沈空母を凍らせればよくね？』というチャーチル肝いりの狂気プロジェクト。この特殊氷パイクリートは本当に銃弾を弾くほど頑丈で、カナダの湖に作った試作品は実験終了後も溶け切るまで3年かかったが、冷静に考えて冷凍コストがヤバすぎて没になった。"
+  },
+  {
+    id: "w_archimedes", type: "weapon", name: "アルキメデスの熱光線", rarity: 3, baseAtk: 77,
+    group: "古代兵器", region: "イタリア（シラクサ）", lat: 37.07, lon: 15.29,
+    lore: "古代ギリシャの天才科学者アルキメデスが考案したとされる、磨いた青銅の鏡をずらっと並べて太陽光を集め、敵のローマ軍艦を虫眼鏡の要領でジュッと焼き払うロマン光学兵器。現代の科学番組が何度も再現実験に挑んでは『いや、船が動いたら無理じゃね？』と毎回首を傾げている。"
+  },
+  {
+    id: "w_urumi", type: "weapon", name: "ウルミ（鋼鉄の鞭剣）", rarity: 3, baseAtk: 75,
+    group: "中世兵器", region: "インド（ケーララ）", lat: 10.85, lon: 76.27,
+    lore: "インド南部の古武術カラリパヤットに伝わる、ベルトのように腰に巻いて持ち運ぶペラペラの鋼鉄製・鞭型ソード。熟練者がぐるぐる振り回すと全方位の敵を切り刻む殺人ミキサーと化すが、ちょっとでも集中が切れると真っ先に自分の首や顔面を斬ってしまう超絶ピーキーな自爆上等ウェポン。"
+  },
+  {
+    id: "w_batbomb", type: "weapon", name: "コウモリ爆弾", rarity: 2, baseAtk: 43,
+    group: "近代兵器", region: "アメリカ（ニューメキシコ）", lat: 32.42, lon: -104.23,
+    lore: "『大量のコウモリに極小の焼夷弾をくくりつけて空から放せば、敵の家の屋根裏に潜り込んで大火災になるはず！』と米軍が大真面目に開発。ところがテスト飛行で放たれたコウモリたちがこともあろうに自軍基地の格納庫と将軍の愛車に潜り込んで盛大に全焼させ、即クビになったコント兵器。"
+  },
+  {
+    id: "w_bobsemple", type: "weapon", name: "ボブ・センプル戦車", rarity: 2, baseAtk: 41,
+    group: "近代兵器", region: "ニュージーランド（クライストチャーチ）", lat: -43.53, lon: 172.63,
+    lore: "『敵が来たらヤバいけどウチに戦車がない！ よし、トラクターに屋根用のトタン板を貼り付けて軽機関銃を6挺ぶっ刺そう！』とニュージーランドの建設大臣が気合で急造した伝説のDIY戦車。ギアを変えるたびにいちいち完全停車が必要で、乗員はマットレスの上で寝そべって撃つ愛すべき珍作。"
+  },
+  {
+    id: "w_barlike", type: "weapon", name: "バールのようなもの", rarity: 1, baseAtk: 4, lateBloomer: true,
+    awakeSkill: "all_dex_mult", awakeTitle: "報道規制の物理突破",
+    awakeDesc: "【Lv.10覚醒】図鑑の全発見数（神様＋兵器）× 18% をこの武器の乗算火力に加算！（あらゆる概念と鍵をこじ開ける）",
+    group: "現代兵器", region: "日本（現場付近）", lat: 35.69, lon: 139.69,
+    lore: "日本の報道番組でなぜか必ず『バール』と言い切られず、絶妙な曖昧さをまとって登場する謎の物理ツール。一見ただのホームセンター工具（鉄の棒）だが、テコの原理という宇宙の絶対物理を体現しており、Lv.10で覚醒すると鍵も城門も宇宙戦艦のハッチも片っ端からこじ開ける最強の概念兵器へ変貌する。"
   }
 ];
 
@@ -2447,7 +2556,7 @@ const STAGE_PARTNER_KEY = "__stage_partner__";
 
 function createDefaultState() {
   return {
-    version: 2.4,
+    version: 2.5,
     difficulty: "easy",
     playerName: "地球防衛司令官",
     playerTitle: "歴史召喚士",
@@ -2586,6 +2695,10 @@ function migrateStateIfNeeded(st) {
   }
   if (ver < 2.4) {
     st.version = 2.4;
+    changed = true;
+  }
+  if (ver < 2.5) {
+    st.version = 2.5;
     changed = true;
   }
   return changed;
@@ -3556,6 +3669,10 @@ function getOwnedWeaponCount() {
   return getAllItems().filter(x => x.type === "weapon" && state.owned[x.id]).length;
 }
 
+function getOwnedGodCount() {
+  return getAllItems().filter(x => x.type === "god" && state.owned[x.id]).length;
+}
+
 function getDeckIdSet() {
   const s = new Set();
   state.deck.forEach(slot => {
@@ -3583,6 +3700,12 @@ function getUnitAtk(item) {
     } else if (item.awakeSkill === "weapon_count_mult") {
       const wCount = getOwnedWeaponCount();
       atk = (atk + 280) * (1 + wCount * 0.30);
+    } else if (item.awakeSkill === "god_count_mult") {
+      const gCount = getOwnedGodCount();
+      atk = (atk + 280) * (1 + gCount * 0.32);
+    } else if (item.awakeSkill === "all_dex_mult") {
+      const allCount = Object.keys(state.owned).length;
+      atk = (atk + 240) * (1 + allCount * 0.18);
     } else if (item.awakeSkill === "team_mult" || item.awakeSkill === "pair_boost") {
       atk += 240 * dupMult;
     }
@@ -3874,7 +3997,7 @@ const JP_PREF_KEYWORDS = [
   ["岐阜県",["岐阜","飛騨","関ヶ原","美濃"]],
   ["静岡県",["静岡","浜松","伊豆","駿河"]],
   ["愛知県",["愛知","名古屋","尾張","三河","熱田"]],
-  ["三重県",["三重","伊勢","桑名","志摩","高天原"]],
+  ["三重県",["三重","伊勢","桑名","志摩","高天原","鈴鹿"]],
   ["滋賀県",["滋賀","大津","琵琶湖","近江"]],
   ["京都府",["京都","貴船","伏見","平安","家屋の隅"]],
   ["大阪府",["大阪","難波","住吉","堺"]],
@@ -5044,6 +5167,8 @@ function defendWave() {
   const gName = sample && sample.god ? getItemById(sample.god)?.name : "謎の神霊";
   const wName = sample && sample.weapon ? getItemById(sample.weapon)?.name : "得体の知れない兵器";
   const hasPanja = state.deck.some(s => s.weapon === "w_panjandrum");
+  const hasOrochin = state.deck.some(s => s.god === "g_orochinchin");
+  const hasBarlike = state.deck.some(s => s.weapon === "w_barlike");
   const plName = escapeHtml(getPlayerName());
 
   const lines = [
@@ -5052,8 +5177,18 @@ function defendWave() {
     `「バカな……${plName}、歴史からそんな規格外を引っ張り出すとは！ <strong>${escapeHtml(gName)}</strong>が<strong>${escapeHtml(wName)}</strong>を構えただけでウチの艦隊が戦意喪失したぞ！ 覚えてろよ地球人どもーッ！！」`
   ];
   let speech = lines[state.wave % lines.length];
+  const specials = [];
+  if (hasOrochin) {
+    specials.push(`「うわああああ！！ 画面にモザイクをかけろ！！ <strong>ヤマタノオロチンチン</strong>が緑の黄金戦車でこっちへ突っ込んでくるぞ！！ 放送コード違反だ！！ 全艦、直ちに目を逸らして撤退ーッ！！」`);
+  }
+  if (hasBarlike) {
+    specials.push(`「おい待て！！ <strong>${escapeHtml(gName)}</strong>が<strong>バールのようなもの</strong>でウチの最新宇宙戦艦のハッチを普通にこじ開けようとしているぞ！！ 物理のテコに勝てるわけないだろ！！ 撤退だ撤退ーッ！！」`);
+  }
   if (hasPanja) {
-    speech = `「やめろおおお！！ <strong>${escapeHtml(gName)}</strong>が<strong>パンジャンドラム</strong>に火をつけたぞ！！ どこに飛んでくるか計算できなくて逆に一番怖いんだわ！！ 逃げるぞーッ！！」`;
+    specials.push(`「やめろおおお！！ <strong>${escapeHtml(gName)}</strong>が<strong>パンジャンドラム</strong>に火をつけたぞ！！ どこに飛んでくるか計算できなくて逆に一番怖いんだわ！！ 逃げるぞーッ！！」`);
+  }
+  if (specials.length) {
+    speech = specials[state.wave % specials.length];
   }
 
   state.stones += info.stones;
@@ -5100,8 +5235,18 @@ function defendWave() {
 // ============================================================
 const CHANGELOG = [
   {
-    ver: "v2.4",
+    ver: "v2.5",
     tag: "最新",
+    title: "ガチャ大幅増量アプデ！（神々10柱＆神話・珍兵器10種の計20種を追加・全68種へ）",
+    items: [
+      "神話の神々10柱を追加：ホルス(★5)、トト(★4)、タカオカミ(★4)、ベス(★3)、ケプリ(★3)、アメノウズメ(★3)、パズズ(★3)、カマプアア(★2)、ロビグス(★2)、そして謎の★1大器晩成ネタ枠『ヤマタノオロチンチン』！",
+      "神話兵器＆珍兵器10種を追加：グングニル(★5)、エクスカリバー(★5)、ゲイボルグ(★4)、カラドボルグ(★4)、氷山空母ハバクック(★4)、アルキメデスの熱光線(★3)、ウルミ(★3)、コウモリ爆弾(★2)、ボブ・センプル戦車(★2)、そして★1大器晩成ネタ枠『バールのようなもの』！",
+      "新グループ『神話兵器』の文化圏共鳴＆新大器晩成スキル2種（所持神様数乗算／図鑑全発見数乗算）、さらに新★1枠を編成してWave撃退した際のトンチキ王専用パニック台詞も実装！"
+    ]
+  },
+  {
+    ver: "v2.4",
+    tag: "育成導線",
     title: "育成導線の改善（編成から直接強化・育成/図鑑タブ・⚡歩数エネタップ導線）",
     items: [
       "デッキ編成の各枠に「⬆️ 強化OK／強化/詳細」ボタンを追加！ 編成画面から直接強化モーダルを開いてLvアップできるようになりました（強化可能な枠はゴールドに点灯）",
@@ -5965,7 +6110,7 @@ function copyExpansionPrompt() {
     '    "name": "表示名",',
     '    "rarity": 1〜5の整数（※★1は大器晩成枠専用・通常は★2〜★5）,',
     '    "baseAtk": 下記バランス基準内の整数,',
-    '    "group": "神話圏（例：日本神話、北欧神話、ケルト神話）または時代区分（古代兵器／中世兵器／近代兵器／現代兵器）",',
+    '    "group": "神話圏（例：日本神話、北欧神話、ケルト神話）または兵器区分（神話兵器／古代兵器／中世兵器／近代兵器／現代兵器）",',
     '    "region": "国または広域（詳細地名） ※カッコ前の語が神様と兵器で一致すると地元シナジー×1.15が発動",',
     '    "lat": 緯度（-90〜90の数値。世界地図＆日本地図の都道府県ピン表示用）,',
     '    "lon": 経度（-180〜180の数値。世界地図ピン表示用）,',
@@ -5979,7 +6124,7 @@ function copyExpansionPrompt() {
     "- ★3（職能神・歴史武器）：66〜82",
     "- ★2（トリックスター・先史/珍兵器）：40〜46",
     "- ★1（超希少1%・大器晩成枠専用）：baseAtkを 3〜4 にし、必ず以下4項目を追加：",
-    '  "lateBloomer": true, "awakeSkill": "step_atk" または "weapon_count_mult" または "pair_boost"（兵器専用）または "team_mult"（神様専用）,',
+    '  "lateBloomer": true, "awakeSkill": "step_atk" または "god_count_mult" または "weapon_count_mult" または "all_dex_mult" または "pair_boost"（兵器専用）または "team_mult"（神様専用）,',
     '  "awakeTitle": "スキル名", "awakeDesc": "【Lv.10覚醒】効果説明"',
     "",
     "■ 重複禁止（すでに収録済みのID・名前）",
