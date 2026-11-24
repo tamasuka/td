@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0d111a">
-<title>地球防衛・神話兵器録 v2.2</title>
+<title>地球防衛・神話兵器録 v2.3</title>
 <style>
 :root {
   --bg: #0c1018;
@@ -1020,15 +1020,349 @@ textarea.code-area.drag-over {
   display: grid; grid-template-columns: 1fr 1.6fr; gap: 8px;
 }
 
-/* Toast */
+/* Toast (v2.3: 15s gacha toast + tap-to-close + countdown bar) */
 .toast {
-  position: fixed; top: 68px; left: 50%; transform: translateX(-50%) translateY(-10px);
+  position: fixed; top: 64px; left: 50%; transform: translateX(-50%) translateY(-10px);
   background: #10b981; color: #052e16; font-weight: 800; font-size: 13px;
   padding: 9px 16px; border-radius: 99px; z-index: 200; opacity: 0; pointer-events: none;
-  transition: opacity 0.2s, transform 0.2s; box-shadow: 0 6px 20px rgba(0,0,0,0.45);
-  max-width: 90vw; text-align: center;
+  transition: opacity 0.2s, transform 0.2s; box-shadow: 0 6px 22px rgba(0,0,0,0.52);
+  max-width: 92vw; text-align: center; overflow: hidden;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.gacha-toast {
+  pointer-events: auto; cursor: pointer;
+  border-radius: 14px; padding: 11px 16px 13px;
+  font-size: 13px; line-height: 1.45;
+  border: 1.5px solid rgba(56, 228, 255, 0.55);
+  background: linear-gradient(135deg, rgba(14, 24, 44, 0.96), rgba(24, 34, 62, 0.96));
+  color: #eef6ff;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.65), 0 0 18px rgba(56,228,255,0.28);
+}
+.toast.gacha-toast.t-gold {
+  border-color: #fde047;
+  background: linear-gradient(135deg, rgba(48, 34, 8, 0.97), rgba(26, 22, 46, 0.97));
+  color: #fef9c3;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.7), 0 0 24px rgba(245,197,66,0.55);
+}
+.toast.gacha-toast.t-crimson {
+  border-color: #ff4d6d;
+  background: linear-gradient(135deg, rgba(54, 10, 22, 0.97), rgba(32, 14, 32, 0.97));
+  color: #ffe4e6;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.75), 0 0 26px rgba(255,77,109,0.65);
+}
+.toast-sub-hint {
+  display: block; font-size: 10px; opacity: 0.72; margin-top: 2px; font-weight: 700;
+}
+.toast-bar {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+  background: linear-gradient(90deg, var(--cyan), var(--gold));
+  transform-origin: left center;
+}
+.toast.t-gold .toast-bar { background: linear-gradient(90deg, #fde047, #f59e0b, #fff); }
+.toast.t-crimson .toast-bar { background: linear-gradient(90deg, #ff4d6d, #fb923c, #fde047); }
+@keyframes toastDrain { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+
+/* Gacha Banner Option Toggles & Result Summary (v2.3) */
+.gacha-opt-row {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-top: 10px;
+}
+.gacha-opt-btn {
+  background: rgba(10, 16, 30, 0.72); border: 1px solid var(--border);
+  color: var(--muted); font-size: 11px; padding: 5px 10px; border-radius: 99px;
+}
+.gacha-opt-btn.on {
+  background: rgba(245, 197, 66, 0.16); border-color: var(--gold); color: #fef08a;
+}
+.gacha-opt-btn.sfx-on {
+  background: rgba(56, 228, 255, 0.16); border-color: var(--cyan); color: #bae6fd;
+}
+.gacha-summary-strip {
+  display: flex; flex-wrap: wrap; gap: 5px; align-items: center;
+  margin-bottom: 10px; padding: 8px 10px;
+  background: rgba(12, 18, 32, 0.8); border: 1px solid var(--border);
+  border-radius: 10px; font-size: 11.5px; font-weight: 800;
+}
+
+/* ============================================================
+   FULLSCREEN SOCIAL-GAME GACHA STAGE OVERLAY (v2.3)
+   z-index: 90 -> covers header(50) & nav(60), sits cleanly under modal(100) & toast(200)
+   ============================================================ */
+.gacha-overlay {
+  position: fixed; inset: 0; z-index: 90;
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 50% 45%, #121c38 0%, #050812 72%, #020308 100%);
+  overflow: hidden;
+  padding: 14px 12px calc(18px + var(--safe-bottom));
+}
+.gacha-overlay.open { display: flex; }
+.gacha-overlay.shake { animation: gsShake 0.48s cubic-bezier(.36,.07,.19,.97) both; }
+.gacha-overlay.shake-hard { animation: gsShakeHard 0.62s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes gsShake {
+  10%, 90% { transform: translate3d(-2px, 1px, 0); }
+  20%, 80% { transform: translate3d(4px, -2px, 0); }
+  30%, 50%, 70% { transform: translate3d(-6px, 3px, 0); }
+  40%, 60% { transform: translate3d(6px, -3px, 0); }
+}
+@keyframes gsShakeHard {
+  10%, 90% { transform: translate3d(-5px, 3px, 0); }
+  20%, 80% { transform: translate3d(8px, -5px, 0); }
+  30%, 50%, 70% { transform: translate3d(-11px, 6px, 0); }
+  40%, 60% { transform: translate3d(11px, -6px, 0); }
+}
+
+.gs-skip-btn {
+  position: absolute; top: 14px; right: 14px; z-index: 20;
+  background: rgba(12, 18, 34, 0.78); backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.28); color: #eef2f9;
+  font-size: 12px; padding: 7px 13px; border-radius: 99px;
+}
+.gs-flash {
+  position: absolute; inset: 0; z-index: 18; pointer-events: none;
+  opacity: 0; background: #fff;
+}
+.gs-flash.burst-white { animation: gsFlashBurst 0.65s ease-out forwards; }
+.gs-flash.burst-gold {
+  background: radial-gradient(circle, #fff 0%, #fef08a 45%, #f59e0b 85%, transparent 100%);
+  animation: gsFlashBurst 0.85s ease-out forwards;
+}
+.gs-flash.burst-crimson {
+  background: radial-gradient(circle, #fff 0%, #fda4af 35%, #e11d48 75%, #4c0519 100%);
+  animation: gsFlashBurst 0.95s ease-out forwards;
+}
+.gs-flash.burst-purple {
+  background: radial-gradient(circle, #fff 0%, #e9d5ff 40%, #9333ea 85%, transparent 100%);
+  animation: gsFlashBurst 0.72s ease-out forwards;
+}
+@keyframes gsFlashBurst {
+  0% { opacity: 0; }
+  18% { opacity: 0.96; }
+  100% { opacity: 0; }
+}
+
+/* Confetti & Sparks Layer */
+.gs-particles {
+  position: absolute; inset: 0; z-index: 12; pointer-events: none; overflow: hidden;
+}
+.gs-conf {
+  position: absolute; top: -18px;
+  border-radius: 2px;
+  animation: gsConfFall var(--cdur, 3.2s) linear var(--cdel, 0s) infinite;
+}
+@keyframes gsConfFall {
+  0% { transform: translate3d(0, -10px, 0) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 0.95; }
+  100% { transform: translate3d(var(--cdx, 30px), 108vh, 0) rotate(var(--crot, 540deg)); opacity: 0; }
+}
+.gs-burst-spark {
+  position: absolute; left: 50%; top: 50%;
+  width: var(--bsz, 8px); height: var(--bsz, 8px); border-radius: 50%;
+  background: var(--bcol, #fde047); box-shadow: 0 0 12px var(--bcol, #fde047);
+  animation: gsBurstFly 0.85s cubic-bezier(.12,.72,.28,1) forwards;
+}
+@keyframes gsBurstFly {
+  0% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--bx, 120px)), calc(-50% + var(--by, -120px))) scale(0.1); opacity: 0; }
+}
+
+/* Phase A: Charge Gate */
+.gs-charge-wrap {
+  position: relative; width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; user-select: none;
+}
+.gs-bg-rays {
+  position: absolute; width: 170vmax; height: 170vmax;
+  left: 50%; top: 50%; transform: translate(-50%, -50%);
+  border-radius: 50%; pointer-events: none; opacity: 0.55;
+  background: repeating-conic-gradient(from 0deg, var(--gs-col, #38e4ff) 0deg 6deg, transparent 6deg 20deg);
+  animation: gsRaySpin 9s linear infinite;
+}
+.gs-bg-rays.rainbow {
+  background: repeating-conic-gradient(from 0deg,
+    rgba(253,224,71,0.42) 0deg 8deg, rgba(56,228,255,0.34) 8deg 16deg,
+    rgba(192,132,252,0.36) 16deg 24deg, rgba(244,114,182,0.36) 24deg 32deg, transparent 32deg 40deg);
+  opacity: 0.88;
+  animation: gsRaySpin 5.5s linear infinite;
+}
+.gs-bg-rays.crimson {
+  background: repeating-conic-gradient(from 0deg,
+    rgba(255,77,109,0.52) 0deg 7deg, rgba(251,146,60,0.42) 7deg 14deg, transparent 14deg 24deg);
+  opacity: 0.92;
+  animation: gsRaySpin 4.2s linear infinite;
+}
+@keyframes gsRaySpin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.gs-gate-box {
+  position: relative; width: 280px; height: 280px;
+  display: flex; align-items: center; justify-content: center;
+}
+.gs-gate-svg {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  filter: drop-shadow(0 0 18px var(--gs-col, #38e4ff));
+}
+.gs-ring-a { transform-origin: 120px 120px; animation: fxSpin 5.5s linear infinite; }
+.gs-ring-b { transform-origin: 120px 120px; animation: fxSpinRev 3.8s linear infinite; }
+
+.gs-orb {
+  position: relative; z-index: 4;
+  width: 92px; height: 92px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 32%, #ffffff 0%, var(--gs-col, #38e4ff) 48%, rgba(10,16,36,0.92) 100%);
+  box-shadow: 0 0 36px var(--gs-col, #38e4ff), 0 0 80px var(--gs-col, #38e4ff), inset 0 0 18px #fff;
+  animation: gsOrbPulse 0.65s ease-in-out infinite alternate;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.gs-orb.rainbow {
+  background: conic-gradient(from 0deg, #fde047, #38e4ff, #c084fc, #f472b6, #4ade80, #fde047);
+  box-shadow: 0 0 42px #fde047, 0 0 95px #38e4ff, 0 0 120px #e879f9, inset 0 0 24px #fff;
+  animation: gsOrbRainbow 1.1s linear infinite;
+}
+.gs-orb.crimson {
+  background: radial-gradient(circle at 35% 30%, #fff7ed 0%, #ff4d6d 42%, #991b1b 78%, #1f040b 100%);
+  box-shadow: 0 0 46px #ff4d6d, 0 0 100px #fb923c, inset 0 0 24px #fef08a;
+  animation: gsOrbPulse 0.28s ease-in-out infinite alternate;
+}
+@keyframes gsOrbPulse {
+  from { transform: scale(0.92); }
+  to { transform: scale(1.16); }
+}
+@keyframes gsOrbRainbow {
+  0% { transform: scale(1.0) rotate(0deg); }
+  50% { transform: scale(1.22) rotate(180deg); }
+  100% { transform: scale(1.0) rotate(360deg); }
+}
+
+.gs-shockwave {
+  position: absolute; left: 50%; top: 50%;
+  width: 90px; height: 90px; border-radius: 50%;
+  border: 4px solid var(--gs-col, #fde047);
+  transform: translate(-50%, -50%) scale(0.4); opacity: 0; pointer-events: none;
+}
+.gs-shockwave.fire { animation: gsShockExpand 0.78s cubic-bezier(.16,.84,.44,1) forwards; }
+@keyframes gsShockExpand {
+  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 1; border-width: 7px; }
+  100% { transform: translate(-50%, -50%) scale(4.8); opacity: 0; border-width: 1px; }
+}
+
+.gs-charge-text {
+  position: relative; z-index: 6; margin-top: 26px; text-align: center;
+  font-size: 18px; font-weight: 900; letter-spacing: 0.08em;
+  color: #fff; text-shadow: 0 0 18px var(--gs-col, #38e4ff), 0 2px 6px rgba(0,0,0,0.9);
+  animation: gsTextPop 0.35s ease;
+}
+.gs-charge-sub {
+  position: relative; z-index: 6; margin-top: 8px;
+  font-size: 11px; color: rgba(255,255,255,0.68);
+}
+@keyframes gsTextPop {
+  from { opacity: 0; transform: scale(0.78); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Phase B: Spotlight Reveal (Single Pull or ★5/★1 Pickup Cut-in) */
+.gs-spot-wrap {
+  position: relative; z-index: 8; width: 100%; max-width: 440px;
+  max-height: 92vh; overflow-y: auto;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  animation: gsSpotIn 0.42s cubic-bezier(.2,1.15,.35,1) both;
+}
+@keyframes gsSpotIn {
+  0% { opacity: 0; transform: scale(0.55) translateY(24px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.gs-spot-ribbon {
+  display: inline-block; padding: 5px 16px; border-radius: 99px;
+  font-size: 13px; font-weight: 900; letter-spacing: 0.06em; margin-bottom: 10px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+.gs-spot-ribbon.tier-r5 {
+  background: linear-gradient(90deg, #fde047, #f59e0b, #fff7d6, #38e4ff, #fde047);
+  background-size: 200% auto; color: #1e1202;
+  animation: gsRibbonShimmer 2s linear infinite;
+}
+.gs-spot-ribbon.tier-r1 {
+  background: linear-gradient(90deg, #ff2a55, #fb923c, #fde047, #ff2a55);
+  background-size: 200% auto; color: #fff;
+  box-shadow: 0 0 24px rgba(255,42,85,0.8);
+  animation: gsRibbonShimmer 1.4s linear infinite;
+}
+.gs-spot-ribbon.tier-r4 { background: linear-gradient(90deg, #9333ea, #c084fc); color: #fff; }
+.gs-spot-ribbon.tier-r3 { background: linear-gradient(90deg, #0284c7, #38e4ff); color: #051829; }
+.gs-spot-ribbon.tier-r2 { background: linear-gradient(90deg, #16a34a, #4ade80); color: #052e16; }
+@keyframes gsRibbonShimmer { to { background-position: 200% center; } }
+
+.gs-spot-card {
+  width: 100%; background: rgba(16, 22, 38, 0.94);
+  border: 2.5px solid var(--gold); border-radius: 18px; padding: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.75);
+}
+.gs-spot-card.r5 { border-color: #fde047; box-shadow: 0 0 36px rgba(245,197,66,0.58), 0 14px 40px rgba(0,0,0,0.8); }
+.gs-spot-card.r1 { border-color: #ff4d6d; box-shadow: 0 0 40px rgba(255,77,109,0.68), 0 14px 40px rgba(0,0,0,0.85); }
+.gs-spot-card.r4 { border-color: #c084fc; box-shadow: 0 0 26px rgba(184,125,255,0.45); }
+.gs-spot-card.r3 { border-color: #38bdf8; }
+.gs-spot-card.r2 { border-color: #4ade80; }
+
+.gs-spot-art {
+  width: 100%; aspect-ratio: 16 / 10; border-radius: 12px; overflow: hidden;
+  background: #070b14; border: 1px solid rgba(255,255,255,0.16);
+  margin-bottom: 10px; position: relative;
+}
+.gs-spot-art img, .gs-spot-art svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gs-spot-stars {
+  font-size: 16px; letter-spacing: 2px; font-weight: 900; margin-bottom: 2px;
+}
+.gs-spot-name {
+  font-size: 22px; font-weight: 900; color: #fff; margin: 2px 0 6px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+}
+.gs-spot-lore {
+  text-align: left; font-size: 12px; color: #dce4f4; line-height: 1.58;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 8px 10px; margin-top: 8px;
+}
+.gs-spot-actions {
+  display: flex; gap: 8px; width: 100%; margin-top: 12px; flex-wrap: wrap;
+}
+.gs-spot-actions button { flex: 1; min-width: 110px; padding: 11px 10px; font-size: 13px; }
+
+/* Phase C: 10-Pull Showcase Board */
+.gs-board-wrap {
+  position: relative; z-index: 8; width: 100%; max-width: 720px;
+  max-height: 94vh; overflow-y: auto;
+  background: rgba(12, 18, 32, 0.92); backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(245,197,66,0.45); border-radius: 18px;
+  padding: 14px 12px; box-shadow: 0 16px 50px rgba(0,0,0,0.82);
+}
+.gs-board-head {
+  text-align: center; margin-bottom: 10px;
+}
+.gs-board-title {
+  font-size: 17px; font-weight: 900; color: var(--gold); margin-bottom: 4px;
+}
+.gs-board-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+}
+@media (min-width: 560px) {
+  .gs-board-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+}
+.gs-card-drop {
+  opacity: 0;
+  animation: gsCardPop 0.44s cubic-bezier(.18,1.25,.38,1) var(--cdelay, 0s) forwards;
+}
+@keyframes gsCardPop {
+  0% { opacity: 0; transform: scale(0.45) translateY(-22px) rotateY(70deg); filter: brightness(2.4); }
+  70% { opacity: 1; filter: brightness(1.3); }
+  100% { opacity: 1; transform: scale(1) translateY(0) rotateY(0deg); filter: brightness(1); }
+}
+.gs-card-drop.instant {
+  animation: none; opacity: 1;
+}
+.gs-board-actions {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;
+}
 
 /* Pulse animation for map pins */
 @keyframes ping {
@@ -1080,7 +1414,7 @@ textarea.code-area.drag-over {
 
 <header class="app-header">
   <div class="header-top">
-    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v2.2</span></div>
+    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v2.3</span></div>
     <div class="header-actions">
       <button class="btn-help" onclick="openGuideModal()">📖 物語&amp;遊び方</button>
       <button class="btn-report" id="header-report-btn" onclick="copyReport()">📋 パートナーAIに報告</button>
@@ -1227,6 +1561,10 @@ textarea.code-area.drag-over {
         通常排出率：★5 <strong>5%</strong> / ★4 22% / ★3 43% / ★2 29% / <strong style="color:#ff8aa0;">★1(大器晩成) 1%</strong><br>
         10連の10枠目は★4以上確定（★5 <strong>15%</strong> / ★4 85%）！
       </div>
+      <div class="gacha-opt-row">
+        <button class="gacha-opt-btn on" id="btn-gacha-anim-toggle" onclick="toggleGachaAnimSkip()">✨ 演出：ド派手ON</button>
+        <button class="gacha-opt-btn" id="btn-gacha-sfx-toggle" onclick="toggleGachaSfx()">🔇 効果音：OFF</button>
+      </div>
       <div class="gacha-actions">
         <button class="btn-primary" onclick="pullGacha(1)">単発召喚<br><span style="font-size:11px;">💎 10個</span></button>
         <button class="btn-gold" onclick="pullGacha(10)">10連召喚！<br><span style="font-size:11px;">💎 100個</span></button>
@@ -1241,6 +1579,7 @@ textarea.code-area.drag-over {
         <span>✨ 召喚結果</span>
         <span class="sub-text">カードタップで解説＆着せ替え</span>
       </div>
+      <div class="gacha-summary-strip" id="gacha-result-summary" style="display:none;"></div>
       <div class="gacha-results" id="gacha-results"></div>
     </div>
   </section>
@@ -1654,7 +1993,15 @@ textarea.code-area.drag-over {
 <input type="file" id="bgm-file-input" accept="audio/*,.mp3,.m4a,.aac,.ogg,.wav,.flac,.webm,.opus" multiple style="display:none;">
 <input type="file" id="exp-file-input" multiple style="display:none;">
 
-<div class="toast" id="toast"></div>
+<!-- Fullscreen Social-Game Gacha Stage Overlay (v2.3) -->
+<div class="gacha-overlay" id="gacha-stage-overlay" aria-live="polite">
+  <div class="gs-flash" id="gs-flash"></div>
+  <div class="gs-particles" id="gs-particles"></div>
+  <button class="gs-skip-btn" id="gs-skip-btn" onclick="skipGachaStage()">⏭ スキップ</button>
+  <div id="gs-stage-body" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"></div>
+</div>
+
+<div class="toast" id="toast" onclick="dismissToast()"></div>
 
 <script>
 // ============================================================
@@ -2086,7 +2433,7 @@ const STAGE_PARTNER_KEY = "__stage_partner__";
 
 function createDefaultState() {
   return {
-    version: 2.2,
+    version: 2.3,
     difficulty: "easy",
     playerName: "地球防衛司令官",
     playerTitle: "歴史召喚士",
@@ -2100,6 +2447,8 @@ function createDefaultState() {
     fxCalm: false,
     bgmPlayMode: "shuffle",
     bgmVolume: 65,
+    gachaAnimSkip: false,
+    gachaSfx: false,
     equippedBond: "b_first",
     unlockedBonds: ["b_first"],
     totalSteps: 0,
@@ -2213,6 +2562,12 @@ function migrateStateIfNeeded(st) {
   }
   if (ver < 2.2) {
     st.version = 2.2;
+    changed = true;
+  }
+  if (ver < 2.3) {
+    if (typeof st.gachaAnimSkip !== "boolean") st.gachaAnimSkip = false;
+    if (typeof st.gachaSfx !== "boolean") st.gachaSfx = false;
+    st.version = 2.3;
     changed = true;
   }
   return changed;
@@ -3864,6 +4219,19 @@ function updateGachaBannerUI() {
   const expTabBtn = document.getElementById("gacha-tab-exp");
   if (expTabBtn) expTabBtn.textContent = expCnt > 0 ? `🏗️ 増築限定 (${expCnt})` : "🏗️ 増築パック限定";
 
+  const animBtn = document.getElementById("btn-gacha-anim-toggle");
+  if (animBtn) {
+    const isSkip = !!state.gachaAnimSkip;
+    animBtn.textContent = isSkip ? "⚡ 演出：爆速スキップ" : "✨ 演出：ド派手ON";
+    animBtn.classList.toggle("on", !isSkip);
+  }
+  const sfxBtn = document.getElementById("btn-gacha-sfx-toggle");
+  if (sfxBtn) {
+    const isSfx = !!state.gachaSfx;
+    sfxBtn.textContent = isSfx ? "🔊 効果音：ON" : "🔇 効果音：OFF";
+    sfxBtn.classList.toggle("sfx-on", isSfx);
+  }
+
   const titles = {
     mix: ["🌌 歴史ミックス召喚", "世界中の神話の神様＆人類史の兵器（増築分も含む）がすべて出現！被ると自動で無限凸(+25%強化)！"],
     god: ["👑 神話の神々ピックアップ", "世界中の神話の神様だけが出現！新たな主神や大器晩成の道祖神を狙おう！"],
@@ -3882,12 +4250,105 @@ function updateGachaBannerUI() {
   if (dEl) dEl.textContent = info[1];
 }
 
+function toggleGachaAnimSkip() {
+  state.gachaAnimSkip = !state.gachaAnimSkip;
+  saveState();
+  updateGachaBannerUI();
+  showToast(state.gachaAnimSkip
+    ? "⚡ 爆速スキップモードにしました（結果通知は15秒間しっかり表示されます！）"
+    : "✨ ド派手ガチャ演出をONにしました！");
+}
+
+function toggleGachaSfx() {
+  state.gachaSfx = !state.gachaSfx;
+  saveState();
+  updateGachaBannerUI();
+  if (state.gachaSfx) {
+    GachaSfx.unlock();
+    GachaSfx.playPop(5);
+    showToast("🔊 ガチャ効果音をONにしました！（合成サウンド・BGM併用OK）");
+  } else {
+    showToast("🔇 ガチャ効果音をOFFにしました");
+  }
+}
+
 function setGachaPool(pool, btn) {
   currentGachaPool = pool;
   document.querySelectorAll(".gacha-tab").forEach(b => b.classList.remove("active"));
   if (btn) btn.classList.add("active");
   updateGachaBannerUI();
 }
+
+// v2.3 Pure Web Audio Synthesized Gacha SFX (Zero external files)
+const GachaSfx = {
+  ctx: null,
+  unlock() {
+    try {
+      if (!this.ctx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) this.ctx = new AC();
+      }
+      if (this.ctx && this.ctx.state === "suspended") this.ctx.resume();
+    } catch (e) {}
+  },
+  _note(freq, start, dur, type = "sine", vol = 0.12, endFreq = null) {
+    if (!state.gachaSfx || !this.ctx) return;
+    try {
+      const t0 = this.ctx.currentTime + start;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, t0);
+      if (endFreq) osc.frequency.exponentialRampToValueAtTime(endFreq, t0 + dur);
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.linearRampToValueAtTime(vol, t0 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t0);
+      osc.stop(t0 + dur + 0.02);
+    } catch (e) {}
+  },
+  playCharge(tier) {
+    if (!state.gachaSfx) return;
+    this.unlock();
+    const top = tier === "r1" ? 980 : (tier === "r5" ? 880 : 660);
+    this._note(180, 0, 0.9, "triangle", 0.11, top);
+    this._note(270, 0.15, 0.85, "sine", 0.09, top * 1.25);
+  },
+  playCrack() {
+    if (!state.gachaSfx) return;
+    this.unlock();
+    this._note(110, 0, 0.42, "sawtooth", 0.18, 42);
+    this._note(1240, 0.02, 0.16, "square", 0.10, 320);
+    this._note(1760, 0.08, 0.22, "sine", 0.13, 2637);
+  },
+  playReveal(tier) {
+    if (!state.gachaSfx) return;
+    this.unlock();
+    if (tier === "r1") {
+      // Dramatic Crimson Miracle Chord + Shimmer
+      [146.8, 220, 293.7, 440, 587.3, 880, 1174.7].forEach((f, i) => {
+        this._note(f, i * 0.045, 0.85, i < 3 ? "sawtooth" : "triangle", i < 3 ? 0.08 : 0.12);
+      });
+    } else if (tier === "r5") {
+      // Grand Golden Fanfare
+      [261.6, 329.6, 392.0, 523.3, 659.3, 784.0, 1046.5, 1318.5].forEach((f, i) => {
+        this._note(f, i * 0.05, 0.92, i % 2 === 0 ? "triangle" : "sine", 0.12);
+      });
+    } else if (tier === "r4") {
+      [329.6, 440, 554.4, 659.3].forEach((f, i) => this._note(f, i * 0.055, 0.55, "triangle", 0.11));
+    } else {
+      [392.0, 523.3, 659.3].forEach((f, i) => this._note(f, i * 0.05, 0.4, "sine", 0.10));
+    }
+  },
+  playPop(rarity) {
+    if (!state.gachaSfx) return;
+    this.unlock();
+    const base = rarity === 1 ? 1046.5 : (rarity === 5 ? 987.8 : (rarity === 4 ? 784.0 : 587.3));
+    this._note(base, 0, 0.18, "triangle", 0.09, base * 1.15);
+  }
+};
 
 // v1.8 Weighted rarity roll (dynamically re-normalizes if an expansion pool omits certain rarities)
 function rollRarityForPool(poolItems, guarantee4Plus = false) {
@@ -3913,6 +4374,40 @@ function rollRarityForPool(poolItems, guarantee4Plus = false) {
   return active[active.length - 1][0];
 }
 
+function getPullStats(results) {
+  let r1 = 0, r5 = 0, r4 = 0, r3 = 0, r2 = 0, newCnt = 0;
+  results.forEach(res => {
+    const it = getItemById(res.id);
+    if (!it) return;
+    if (res.isNew) newCnt++;
+    if (it.rarity === 1) r1++;
+    else if (it.rarity === 5) r5++;
+    else if (it.rarity === 4) r4++;
+    else if (it.rarity === 3) r3++;
+    else r2++;
+  });
+  let topTier = "r2";
+  if (r1 > 0) topTier = "r1";
+  else if (r5 > 0) topTier = "r5";
+  else if (r4 > 0) topTier = "r4";
+  else if (r3 > 0) topTier = "r3";
+  return { r1, r5, r4, r3, r2, newCnt, topTier };
+}
+
+function buildPullToastMessage(results, count) {
+  const st = getPullStats(results);
+  const parts = [];
+  if (st.r1 > 0) parts.push(`🔥 奇跡の1%大器晩成 ×${st.r1}`);
+  if (st.r5 > 0) parts.push(`🌟 ★5 ×${st.r5}`);
+  if (st.r4 > 0) parts.push(`💜 ★4 ×${st.r4}`);
+  parts.push(`✨ NEW ${st.newCnt}件`);
+  const variant = st.r1 > 0 ? "t-crimson" : (st.r5 > 0 ? "t-gold" : "t-gacha");
+  const head = st.r1 > 0
+    ? `🔥 奇跡の1%降臨！！（${count}連）`
+    : (st.r5 > 0 ? `🌟 ★5 降臨！！（${count}連）` : `✨ ${count}連召喚完了！`);
+  return { text: `${head} ${parts.join(" ／ ")}`, variant };
+}
+
 function pullGacha(count) {
   const all = getPoolItems(currentGachaPool);
   if (!all.length) {
@@ -3927,6 +4422,7 @@ function pullGacha(count) {
     return;
   }
 
+  if (state.gachaSfx) GachaSfx.unlock();
   state.stones -= cost;
   const results = [];
 
@@ -3961,22 +4457,480 @@ function pullGacha(count) {
     gBox.style.display = "none";
   }
 
-  const newCnt = results.filter(x => x.isNew).length;
-  const r5Cnt = results.filter(x => (getItemById(x.id)?.rarity || 0) === 5).length;
-  const r1Cnt = results.filter(x => (getItemById(x.id)?.rarity || 0) === 1).length;
-  if (r1Cnt > 0) {
-    showToast(`🔥 奇跡の1%！ ★1大器晩成降臨 ×${r1Cnt}！！（NEW ${newCnt}件）`);
-  } else if (r5Cnt > 0) {
-    showToast(`🌟 ★5降臨 ×${r5Cnt}！！ ${count}連召喚完了（NEW ${newCnt}件）`);
+  const toastInfo = buildPullToastMessage(results, count);
+  if (state.gachaAnimSkip) {
+    closeGachaStage();
+    const st = getPullStats(results);
+    if (state.gachaSfx) GachaSfx.playReveal(st.topTier);
+    showToast(toastInfo.text, 15000, toastInfo.variant);
   } else {
-    showToast(`✨ ${count}連召喚完了！ 新規 ${newCnt}件！`);
+    launchGachaStage(results, count, toastInfo);
   }
+}
+
+// ============================================================
+// 5.5 FULLSCREEN SOCIAL-GAME GACHA STAGE ENGINE (v2.3)
+// ============================================================
+let gachaStageCtx = null;
+
+function clearGachaTimers() {
+  if (!gachaStageCtx) return;
+  (gachaStageCtx.timers || []).forEach(t => clearTimeout(t));
+  gachaStageCtx.timers = [];
+}
+
+function scheduleGacha(fn, ms) {
+  if (!gachaStageCtx) return;
+  const id = setTimeout(fn, ms);
+  gachaStageCtx.timers.push(id);
+  return id;
+}
+
+function triggerGsFlash(cls) {
+  const fl = document.getElementById("gs-flash");
+  if (!fl) return;
+  fl.className = "gs-flash";
+  void fl.offsetWidth;
+  fl.classList.add(cls);
+}
+
+function triggerGsShake(hard = false) {
+  const ov = document.getElementById("gacha-stage-overlay");
+  if (!ov) return;
+  ov.classList.remove("shake", "shake-hard");
+  void ov.offsetWidth;
+  ov.classList.add(hard ? "shake-hard" : "shake");
+}
+
+function spawnGsBurst(colorList, count = 26) {
+  const box = document.getElementById("gs-particles");
+  if (!box) return;
+  let html = "";
+  for (let i = 0; i < count; i++) {
+    const ang = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.25;
+    const dist = 95 + Math.random() * 190;
+    const bx = Math.round(Math.cos(ang) * dist) + "px";
+    const by = Math.round(Math.sin(ang) * dist) + "px";
+    const bsz = (5 + Math.random() * 7).toFixed(1) + "px";
+    const bcol = colorList[i % colorList.length];
+    html += `<span class="gs-burst-spark" style="--bx:${bx};--by:${by};--bsz:${bsz};--bcol:${bcol};"></span>`;
+  }
+  box.insertAdjacentHTML("beforeend", html);
+}
+
+function setGsConfetti(tier) {
+  const box = document.getElementById("gs-particles");
+  if (!box) return;
+  if (tier !== "r5" && tier !== "r1") {
+    box.innerHTML = "";
+    return;
+  }
+  const cols = tier === "r1"
+    ? ["#ff4d6d", "#fb923c", "#fde047", "#ffffff", "#f43f5e"]
+    : ["#fde047", "#38e4ff", "#c084fc", "#f472b6", "#4ade80", "#ffffff"];
+  const n = tier === "r1" ? 34 : 30;
+  let html = "";
+  for (let i = 0; i < n; i++) {
+    const left = (Math.random() * 98).toFixed(1);
+    const w = (5 + Math.random() * 6).toFixed(1);
+    const h = (8 + Math.random() * 10).toFixed(1);
+    const dur = (2.4 + Math.random() * 2.2).toFixed(2);
+    const del = (Math.random() * 2.0).toFixed(2);
+    const dx = Math.round((Math.random() - 0.5) * 90) + "px";
+    const rot = Math.round(360 + Math.random() * 540) + "deg";
+    const col = cols[i % cols.length];
+    html += `<span class="gs-conf" style="left:${left}%;width:${w}px;height:${h}px;background:${col};--cdur:${dur}s;--cdel:${del}s;--cdx:${dx};--crot:${rot};"></span>`;
+  }
+  box.innerHTML = html;
+}
+
+function launchGachaStage(results, count, toastInfo) {
+  clearGachaTimers();
+  const st = getPullStats(results);
+  // Spotlights: 1-pull always spotlight; 10-pull spotlights each ★1 & ★5 (rarest first)
+  const spotlights = count === 1
+    ? results.slice(0, 1)
+    : results.filter(res => {
+        const it = getItemById(res.id);
+        return it && (it.rarity === 1 || it.rarity === 5);
+      }).sort((a, b) => {
+        const ra = getItemById(a.id)?.rarity || 3;
+        const rb = getItemById(b.id)?.rarity || 3;
+        const pa = ra === 1 ? 10 : ra;
+        const pb = rb === 1 ? 10 : rb;
+        return pb - pa;
+      });
+
+  gachaStageCtx = {
+    results,
+    count,
+    stats: st,
+    toastInfo,
+    spotlights,
+    spotIdx: 0,
+    phase: "charge",
+    toastShown: false,
+    timers: []
+  };
+
+  const ov = document.getElementById("gacha-stage-overlay");
+  const pt = document.getElementById("gs-particles");
+  if (pt) pt.innerHTML = "";
+  ov.classList.remove("shake", "shake-hard");
+  ov.classList.add("open");
+
+  runGachaChargePhase();
+}
+
+function runGachaChargePhase() {
+  if (!gachaStageCtx) return;
+  const { stats } = gachaStageCtx;
+  const tier = stats.topTier;
+  const skipBtn = document.getElementById("gs-skip-btn");
+  if (skipBtn) {
+    skipBtn.style.display = "inline-block";
+    skipBtn.textContent = "⏭ スキップ";
+  }
+
+  // Determine fake-out upgrade (昇格演出!)
+  const willFakeout =
+    tier === "r1" ||
+    (tier === "r5" && Math.random() < 0.48) ||
+    (tier === "r4" && Math.random() < 0.28);
+
+  const initialColor = willFakeout
+    ? (tier === "r1" ? "#4ade80" : (tier === "r5" ? "#b87dff" : "#38e4ff"))
+    : (tier === "r5" ? "#fde047" : (tier === "r4" ? "#c084fc" : (tier === "r3" ? "#38e4ff" : "#4ade80")));
+
+  const initialRaysClass = (!willFakeout && tier === "r5") ? "rainbow" : "";
+  const initialOrbClass = (!willFakeout && tier === "r5") ? "rainbow" : "";
+  const initialMsg = (!willFakeout && tier === "r5")
+    ? "🌈 虹色の高次元ゲートが共鳴している…！！"
+    : "✨ 歴史の召喚門が開かれる…";
+
+  const body = document.getElementById("gs-stage-body");
+  body.innerHTML = `
+    <div class="gs-charge-wrap" id="gs-charge-wrap" style="--gs-col:${initialColor};" onclick="skipGachaStage()">
+      <div class="gs-bg-rays ${initialRaysClass}" id="gs-bg-rays"></div>
+      <div class="gs-gate-box">
+        <svg class="gs-gate-svg" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+          <g class="gs-ring-a" fill="none" stroke="currentColor" style="color:var(--gs-col);">
+            <circle cx="120" cy="120" r="106" stroke-width="2" stroke-dasharray="10,6"/>
+            <circle cx="120" cy="120" r="90" stroke-width="1.4" opacity="0.8"/>
+            <polygon points="120,16 210,172 30,172" stroke-width="1.3" opacity="0.65"/>
+            <polygon points="120,224 210,68 30,68" stroke-width="1.3" opacity="0.65"/>
+          </g>
+          <g class="gs-ring-b" fill="none" stroke="currentColor" style="color:var(--gs-col);">
+            <circle cx="120" cy="120" r="70" stroke-width="2" stroke-dasharray="3,7"/>
+            <rect x="68" y="68" width="104" height="104" transform="rotate(45 120 120)" stroke-width="1.3" opacity="0.75"/>
+          </g>
+        </svg>
+        <div class="gs-shockwave" id="gs-shockwave"></div>
+        <div class="gs-orb ${initialOrbClass}" id="gs-orb"></div>
+      </div>
+      <div class="gs-charge-text" id="gs-charge-text">${initialMsg}</div>
+      <div class="gs-charge-sub">タップで結果へスキップ</div>
+    </div>
+  `;
+
+  GachaSfx.playCharge(willFakeout ? "r3" : tier);
+
+  if (willFakeout) {
+    scheduleGacha(() => {
+      if (!gachaStageCtx || gachaStageCtx.phase !== "charge") return;
+      const wrap = document.getElementById("gs-charge-wrap");
+      const rays = document.getElementById("gs-bg-rays");
+      const orb = document.getElementById("gs-orb");
+      const sw = document.getElementById("gs-shockwave");
+      const txt = document.getElementById("gs-charge-text");
+      if (!wrap) return;
+
+      GachaSfx.playCrack();
+      if (tier === "r1") {
+        wrap.style.setProperty("--gs-col", "#ff4d6d");
+        rays.className = "gs-bg-rays crimson";
+        orb.className = "gs-orb crimson";
+        txt.textContent = "⚠️ 警告：規格外・奇跡の1%検知！！";
+        triggerGsFlash("burst-crimson");
+        triggerGsShake(true);
+        spawnGsBurst(["#ff4d6d", "#fb923c", "#fde047", "#ffffff"], 32);
+      } else if (tier === "r5") {
+        wrap.style.setProperty("--gs-col", "#fde047");
+        rays.className = "gs-bg-rays rainbow";
+        orb.className = "gs-orb rainbow";
+        txt.textContent = "🌈 因果律突破――虹色昇格！！";
+        triggerGsFlash("burst-gold");
+        triggerGsShake(true);
+        spawnGsBurst(["#fde047", "#38e4ff", "#c084fc", "#f472b6", "#ffffff"], 32);
+      } else {
+        wrap.style.setProperty("--gs-col", "#c084fc");
+        txt.textContent = "💜 エネルギー増幅――昇格確定！";
+        triggerGsFlash("burst-purple");
+        triggerGsShake(false);
+        spawnGsBurst(["#c084fc", "#e9d5ff", "#38e4ff"], 20);
+      }
+      if (sw) { sw.classList.remove("fire"); void sw.offsetWidth; sw.classList.add("fire"); }
+    }, 820);
+
+    scheduleGacha(() => proceedAfterCharge(), 1820);
+  } else {
+    const dur = tier === "r5" ? 1350 : (tier === "r4" ? 1100 : 900);
+    if (tier === "r5") {
+      scheduleGacha(() => {
+        if (!gachaStageCtx || gachaStageCtx.phase !== "charge") return;
+        const sw = document.getElementById("gs-shockwave");
+        if (sw) { sw.classList.remove("fire"); void sw.offsetWidth; sw.classList.add("fire"); }
+        triggerGsShake(false);
+        spawnGsBurst(["#fde047", "#38e4ff", "#ffffff"], 22);
+      }, 650);
+    }
+    scheduleGacha(() => proceedAfterCharge(), dur);
+  }
+}
+
+function proceedAfterCharge() {
+  if (!gachaStageCtx || gachaStageCtx.phase !== "charge") return;
+  const { stats, spotlights } = gachaStageCtx;
+  const flashCls = stats.topTier === "r1" ? "burst-crimson"
+    : (stats.topTier === "r5" ? "burst-gold" : (stats.topTier === "r4" ? "burst-purple" : "burst-white"));
+  triggerGsFlash(flashCls);
+  if (stats.topTier === "r1" || stats.topTier === "r5") triggerGsShake(true);
+
+  if (spotlights.length > 0) {
+    gachaStageCtx.phase = "spotlight";
+    gachaStageCtx.spotIdx = 0;
+    renderGachaSpotlight();
+  } else {
+    showGachaFinalBoard(false);
+  }
+}
+
+function renderGachaSpotlight() {
+  if (!gachaStageCtx) return;
+  const { spotlights, spotIdx, count } = gachaStageCtx;
+  const res = spotlights[spotIdx];
+  const it = res ? getItemById(res.id) : null;
+  if (!it) {
+    showGachaFinalBoard(false);
+    return;
+  }
+
+  const tier = it.rarity === 1 ? "r1" : (it.rarity === 5 ? "r5" : (it.rarity === 4 ? "r4" : (it.rarity === 3 ? "r3" : "r2")));
+  GachaSfx.playReveal(tier);
+  setGsConfetti(tier);
+  if (tier === "r1") spawnGsBurst(["#ff4d6d", "#fb923c", "#fde047", "#ffffff"], 30);
+  else if (tier === "r5") spawnGsBurst(["#fde047", "#38e4ff", "#c084fc", "#ffffff"], 28);
+
+  const skipBtn = document.getElementById("gs-skip-btn");
+  if (skipBtn) {
+    if (count === 1) {
+      skipBtn.style.display = "none";
+    } else {
+      skipBtn.style.display = "inline-block";
+      skipBtn.textContent = "⏭ まとめて一覧へ";
+    }
+  }
+
+  const ribbonMap = {
+    r1: "🔥 奇跡の1%・大器晩成 降臨！！",
+    r5: "🌟 最高レア ★5 降臨！！",
+    r4: "💜 有力英霊 ★4 顕現！",
+    r3: "💠 ★3 召喚成功！",
+    r2: "🌿 ★2 召喚成功！"
+  };
+  const starsTxt = it.rarity === 1
+    ? `<span style="color:#ff6b8b;">★1【大器晩成】</span>`
+    : `<span style="color:${it.rarity===5?'#fde047':(it.rarity===4?'#d8b4fe':(it.rarity===3?'#7dd3fc':'#86efac'))};">${"★".repeat(it.rarity)}</span>`;
+
+  const hasCustom = !!customImages[it.id];
+  const artHTML = hasCustom
+    ? `<img src="${customImages[it.id]}" alt="${escapeHtml(it.name)}">`
+    : renderSingleItemMapSVG(it, false);
+  const raysCls = tier === "r1" ? "crimson" : (tier === "r5" ? "rainbow" : "");
+  const raysCol = tier === "r4" ? "#c084fc" : (tier === "r3" ? "#38e4ff" : "#4ade80");
+
+  let actionBtns = "";
+  if (count === 1) {
+    const canAgain = state.stones >= 10;
+    actionBtns = `
+      <button class="btn-primary" ${canAgain ? "" : "disabled"} onclick="pullGacha(1)">✨ もう1回 (💎10)</button>
+      <button class="btn-secondary" onclick="openItemModal('${it.id}')">📖 詳細・強化</button>
+      <button class="btn-gold" onclick="closeGachaStage()">✓ とじる</button>
+    `;
+    notifyGachaToastOnce();
+  } else {
+    const hasMore = spotIdx + 1 < spotlights.length;
+    actionBtns = hasMore
+      ? `<button class="btn-gold" onclick="nextGachaSpotlight()">✨ 次の目玉へ (${spotIdx + 1}/${spotlights.length}) ›</button>`
+      : `<button class="btn-gold" onclick="showGachaFinalBoard(false)">🎊 10連結果をすべて見る！</button>`;
+  }
+
+  const body = document.getElementById("gs-stage-body");
+  body.innerHTML = `
+    <div class="gs-bg-rays ${raysCls}" style="--gs-col:${raysCol};opacity:${(tier==='r5'||tier==='r1')?0.68:0.32};"></div>
+    <div class="gs-spot-wrap">
+      <div class="gs-spot-ribbon tier-${tier}">${ribbonMap[tier]}</div>
+      <div class="gs-spot-card r${it.rarity}">
+        <div class="gs-spot-art">${artHTML}</div>
+        <div class="gs-spot-stars">${starsTxt}</div>
+        <div class="unit-meta" style="justify-content:center;margin-bottom:4px;">
+          ${res.isNew ? '<span class="badge badge-new" style="font-size:11px;padding:3px 8px;">NEW!!</span>' : `<span class="badge badge-dup" style="font-size:11px;padding:3px 8px;">💥 限界突破 +${res.dup}</span>`}
+          <span class="badge ${it.type === 'god' ? 'badge-type-god' : 'badge-type-weapon'}">${it.type === 'god' ? '👑 神話の神' : '⚔️ 人類史兵器'}</span>
+          <span class="badge" style="background:#1e293b;color:#cbd5e1;">${escapeHtml(it.group)}</span>
+        </div>
+        <div class="gs-spot-name">${escapeHtml(it.name)}</div>
+        <div class="sub-text">📍 ${escapeHtml(it.region)} ／ <strong style="color:var(--cyan);">ATK ${fmtNum(getUnitAtk(it))}</strong></div>
+        ${it.lateBloomer ? `<div class="skill-box" style="text-align:left;margin-top:8px;"><strong>🔥 ${escapeHtml(it.awakeTitle)}</strong><br>${escapeHtml(it.awakeDesc)}</div>` : ""}
+        <div class="gs-spot-lore">${escapeHtml(it.lore)}</div>
+      </div>
+      <div class="gs-spot-actions">${actionBtns}</div>
+    </div>
+  `;
+}
+
+function nextGachaSpotlight() {
+  if (!gachaStageCtx) return;
+  gachaStageCtx.spotIdx++;
+  if (gachaStageCtx.spotIdx < gachaStageCtx.spotlights.length) {
+    const nextIt = getItemById(gachaStageCtx.spotlights[gachaStageCtx.spotIdx].id);
+    triggerGsFlash(nextIt && nextIt.rarity === 1 ? "burst-crimson" : "burst-gold");
+    triggerGsShake(false);
+    renderGachaSpotlight();
+  } else {
+    showGachaFinalBoard(false);
+  }
+}
+
+function showGachaFinalBoard(instant = false) {
+  if (!gachaStageCtx) return;
+  clearGachaTimers();
+  gachaStageCtx.phase = "board";
+  const { results, count, stats } = gachaStageCtx;
+
+  const skipBtn = document.getElementById("gs-skip-btn");
+  if (skipBtn) skipBtn.style.display = "none";
+
+  setGsConfetti(stats.topTier);
+  if (!instant) {
+    GachaSfx.playReveal(stats.topTier);
+  }
+
+  const badges = [];
+  if (stats.r1 > 0) badges.push(`<span class="badge badge-r1">🔥 大器晩成 ×${stats.r1}</span>`);
+  if (stats.r5 > 0) badges.push(`<span class="badge badge-r5">🌟 ★5 ×${stats.r5}</span>`);
+  if (stats.r4 > 0) badges.push(`<span class="badge badge-r4">💜 ★4 ×${stats.r4}</span>`);
+  if (stats.r3 > 0) badges.push(`<span class="badge badge-r3">💠 ★3 ×${stats.r3}</span>`);
+  if (stats.r2 > 0) badges.push(`<span class="badge badge-r2">🌿 ★2 ×${stats.r2}</span>`);
+  badges.push(`<span class="badge badge-new">NEW ${stats.newCnt}</span>`);
+
+  const cardsHtml = results.map((res, i) => {
+    const it = getItemById(res.id);
+    if (!it) return "";
+    const shineClass = it.rarity === 5 ? "r5-shine" : (it.rarity === 1 ? "r1-shine" : "");
+    const delay = (i * 0.075).toFixed(3);
+    if (!instant && state.gachaSfx) {
+      scheduleGacha(() => GachaSfx.playPop(it.rarity), Math.round(i * 75));
+    }
+    return `
+      <div class="unit-card r${it.rarity} ${shineClass} gs-card-drop ${instant ? 'instant' : ''}"
+           style="--cdelay:${delay}s;" onclick="openItemModal('${it.id}')">
+        ${getThumbHTML(it)}
+        <div class="unit-meta">
+          <span class="badge badge-r${it.rarity}">★${it.rarity}</span>
+          ${res.isNew ? '<span class="badge badge-new">NEW!</span>' : `<span class="badge badge-dup">凸+${res.dup}</span>`}
+          ${it.lateBloomer ? '<span class="badge badge-late">大器晩成</span>' : ''}
+        </div>
+        <div class="unit-name">${escapeHtml(it.name)}</div>
+        <div class="unit-stat">
+          <span>${it.type === 'god' ? '👑神' : '⚔️兵器'}</span>
+          <span>ATK ${fmtNum(getUnitAtk(it))}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  const gSpeech = formatPartnerLine("gacha");
+  const speechHtml = gSpeech
+    ? `<div class="speech-bubble" style="margin-top:10px;cursor:default;">
+         <div class="speech-speaker"><span>✦ ${escapeHtml(getPartnerName())}</span></div>
+         <div>${escapeHtml(gSpeech)}</div>
+       </div>`
+    : "";
+
+  const cost = count * 10;
+  const canAgain = state.stones >= cost;
+  const raysCls = stats.topTier === "r1" ? "crimson" : (stats.topTier === "r5" ? "rainbow" : "");
+
+  const body = document.getElementById("gs-stage-body");
+  body.innerHTML = `
+    <div class="gs-bg-rays ${raysCls}" style="--gs-col:${stats.topTier==='r4'?'#c084fc':'#38e4ff'};opacity:${(stats.topTier==='r5'||stats.topTier==='r1')?0.45:0.2};"></div>
+    <div class="gs-board-wrap">
+      <div class="gs-board-head">
+        <div class="gs-board-title">${stats.topTier==='r1'?'🔥 奇跡の1%降臨！！':(stats.topTier==='r5'?'🌟 最高レア降臨！！':'✨ 召喚結果一覧')}</div>
+        <div class="unit-meta" style="justify-content:center;gap:5px;margin-bottom:4px;">${badges.join("")}</div>
+        <div class="sub-text" style="font-size:11px;">カードタップで詳細・強化・着せ替え ／ 残り召喚石：<strong style="color:var(--gold);">💎 ${state.stones.toLocaleString()}</strong></div>
+      </div>
+      <div class="gs-board-grid">${cardsHtml}</div>
+      ${speechHtml}
+      <div class="gs-board-actions">
+        <button class="btn-primary" ${canAgain ? "" : "disabled"} onclick="pullGacha(${count})">✨ もう1回 ${count}連！(💎${cost})</button>
+        <button class="btn-gold" onclick="closeGachaStage()">✓ 結果を確認して閉じる</button>
+      </div>
+    </div>
+  `;
+
+  notifyGachaToastOnce();
+}
+
+function notifyGachaToastOnce() {
+  if (!gachaStageCtx || gachaStageCtx.toastShown) return;
+  gachaStageCtx.toastShown = true;
+  const { text, variant } = gachaStageCtx.toastInfo;
+  showToast(text, 15000, variant);
+}
+
+function skipGachaStage() {
+  if (!gachaStageCtx) return;
+  clearGachaTimers();
+  if (gachaStageCtx.count === 1 && gachaStageCtx.phase === "charge") {
+    gachaStageCtx.phase = "spotlight";
+    gachaStageCtx.spotIdx = 0;
+    renderGachaSpotlight();
+    return;
+  }
+  showGachaFinalBoard(true);
+}
+
+function closeGachaStage() {
+  clearGachaTimers();
+  const ov = document.getElementById("gacha-stage-overlay");
+  if (ov) {
+    ov.classList.remove("open", "shake", "shake-hard");
+  }
+  const pt = document.getElementById("gs-particles");
+  if (pt) pt.innerHTML = "";
+  gachaStageCtx = null;
 }
 
 function renderGachaResults(results) {
   const card = document.getElementById("gacha-result-card");
   const box = document.getElementById("gacha-results");
+  const sumEl = document.getElementById("gacha-result-summary");
   card.style.display = "block";
+
+  if (sumEl) {
+    const st = getPullStats(results);
+    const pills = [];
+    if (st.r1 > 0) pills.push(`<span class="badge badge-r1">🔥 大器晩成 ×${st.r1}</span>`);
+    if (st.r5 > 0) pills.push(`<span class="badge badge-r5">🌟 ★5 ×${st.r5}</span>`);
+    if (st.r4 > 0) pills.push(`<span class="badge badge-r4">💜 ★4 ×${st.r4}</span>`);
+    if (st.r3 > 0) pills.push(`<span class="badge badge-r3">💠 ★3 ×${st.r3}</span>`);
+    if (st.r2 > 0) pills.push(`<span class="badge badge-r2">🌿 ★2 ×${st.r2}</span>`);
+    pills.push(`<span class="badge badge-new">NEW ${st.newCnt}件</span>`);
+    sumEl.innerHTML = `<span style="color:var(--muted);font-size:11px;">直近の召喚：</span>` + pills.join("");
+    sumEl.style.display = "flex";
+  }
+
   box.innerHTML = results.map(res => {
     const it = getItemById(res.id);
     if (!it) return "";
@@ -3997,7 +4951,9 @@ function renderGachaResults(results) {
       </div>
     `;
   }).join("");
-  card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  if (state.gachaAnimSkip) {
+    card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
 }
 
 function autoBuildDeck() {
@@ -4126,8 +5082,19 @@ function defendWave() {
 // ============================================================
 const CHANGELOG = [
   {
-    ver: "v2.2",
+    ver: "v2.3",
     tag: "最新",
+    title: "ソシャゲ風ド派手ガチャ演出＆目玉カットイン＆15秒ロング通知",
+    items: [
+      "召喚時にフルスクリーンの魔法陣チャージ・虹色／真紅の昇格（格上げ）確定演出・画面シェイク＆フラッシュ・紙吹雪が炸裂するド派手ガチャ演出を実装！",
+      "単発召喚および10連時の★5・★1（大器晩成）は、タップするまで消えない「目玉降臨スポットライト」でじっくり鑑賞＆スクショ可能！ 10連結果も連続ポップ演出＆その場で続けて回せるショーケース画面に進化",
+      "ガチャ結果のポップアップ通知を15秒間しっかり表示（タップで即閉じ＆残り時間バー付き）へ延長し、結果カード上部の常設サマリーも追加",
+      "「✨ 演出：ド派手ON / ⚡ 爆速スキップ」トグルと、ゼロ素材Web Audio合成の「🔊 ガチャ効果音ON/OFF（デフォルトOFF）」を搭載"
+    ]
+  },
+  {
+    ver: "v2.2",
+    tag: "選択配布",
     title: "拡張パックの選択書き出し（配布用 .json 作成・プライベート保護）",
     items: [
       "増築パックから友達に渡したいアイテムだけをチェックして書き出せる「🎁 選んで配布パック（.json保存 / コピー）」機能を実装！",
@@ -4309,6 +5276,7 @@ function openGuideModal(initialTab = "guide") {
       <ul>
         <li><strong>🎵 マイBGMランダム再生（v1.7実装済！）：</strong>「増築/設定」タブから手元の音楽ファイルを読み込むと、画面下部に<strong>常駐ミニプレイヤー（▶再生・■停止・⏭次の曲）</strong>がいつでも見える位置に現れます！ 動作が重くならないよう<strong>最大8曲・1曲12MB／合計60MBまで</strong>の安全上限付きで、音楽データも<strong>ブラウザ内のみに保存（外部送信なし）</strong>されます。<br><span class="sub-text">※ブラウザの仕様上、アプリを開いて遊んでいる間の専用BGMとして再生されます。</span></li>
         <li><strong>✨ 全身画ステージ＆総戦力エフェクト＆二人の絆称号（v1.5実装済！）：</strong>「増築/設定」タブからツーショット1枚絵／左右2人立ち絵（透過PNGそのまま対応＆非透過でも自動馴染み）を飾れます。総戦力で全7段階に進化する背景エフェクト＆全25種の絆称号を集めてね！</li>
+        <li><strong>🌟 ド派手ソシャゲ風ガチャ演出＆15秒ロング通知（v2.3実装済！）：</strong>魔法陣チャージ・虹色／真紅の昇格演出・目玉降臨スポットライト・紙吹雪・連続ドロップショーケースを搭載！ ガチャ画面から「爆速スキップ」や「効果音ON/OFF」もワンタップで切り替えられます。</li>
         <li><strong>🗾 日本地図・都道府県ピン対応（v1.6実装済！）：</strong>地図タブから「🌍 世界地図 ／ 🗾 日本地図」を切替OK！ 日本由来の神様・兵器はカードや詳細画面でも自動で日本地図の都道府県ピンが光ります。</li>
       </ul>
     </div>
@@ -5560,7 +6528,9 @@ function resetAllData() {
     stageAlphaMap: state.stageAlphaMap,
     fxCalm: state.fxCalm,
     bgmPlayMode: state.bgmPlayMode,
-    bgmVolume: state.bgmVolume
+    bgmVolume: state.bgmVolume,
+    gachaAnimSkip: state.gachaAnimSkip,
+    gachaSfx: state.gachaSfx
   };
   state = Object.assign(createDefaultState(), keepProfile);
   saveState();
@@ -5587,12 +6557,27 @@ function fallbackCopy(text, msg) {
 }
 
 let toastTimer = null;
-function showToast(msg) {
+function dismissToast() {
   const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.classList.add("show");
+  if (!t) return;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("show"), 2700);
+  t.classList.remove("show");
+}
+function showToast(msg, durationMs = 2700, variant = "") {
+  const t = document.getElementById("toast");
+  if (!t) return;
+  clearTimeout(toastTimer);
+  t.className = "toast";
+  if (variant) {
+    t.classList.add("gacha-toast", variant);
+    const sec = Math.round(durationMs / 1000);
+    t.innerHTML = `${escapeHtml(msg)}<span class="toast-sub-hint">タップで閉じる（${sec}秒表示）</span><span class="toast-bar" style="animation:toastDrain ${durationMs}ms linear forwards;"></span>`;
+  } else {
+    t.textContent = msg;
+  }
+  void t.offsetWidth;
+  t.classList.add("show");
+  toastTimer = setTimeout(() => t.classList.remove("show"), durationMs);
 }
 
 // ============================================================
