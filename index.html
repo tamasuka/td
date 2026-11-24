@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0d111a">
-<title>地球防衛・神話兵器録 v2.0</title>
+<title>地球防衛・神話兵器録 v2.1</title>
 <style>
 :root {
   --bg: #0c1018;
@@ -900,6 +900,11 @@ textarea.code-area {
 .exp-chip button {
   background: transparent; color: #ff8aa0; padding: 0 3px; font-size: 12px;
 }
+textarea.code-area.drag-over {
+  border-color: var(--gold);
+  background: rgba(245, 197, 66, 0.12);
+  box-shadow: 0 0 14px rgba(245, 197, 66, 0.28);
+}
 
 /* Image Adjuster / Cropper Modal (v1.8) */
 .crop-backdrop {
@@ -1025,7 +1030,7 @@ textarea.code-area {
 
 <header class="app-header">
   <div class="header-top">
-    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v2.0</span></div>
+    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v2.1</span></div>
     <div class="header-actions">
       <button class="btn-help" onclick="openGuideModal()">📖 物語&amp;遊び方</button>
       <button class="btn-report" id="header-report-btn" onclick="copyReport()">📋 パートナーAIに報告</button>
@@ -1497,15 +1502,19 @@ textarea.code-area {
       <div class="rate-note" style="margin-bottom:10px;">
         <strong>🤝 友達と拡張パックをトレードして遊べるよ！</strong><br>
         ① 下の「📝 増築発注プロンプトをコピー」を押して好きなAIに貼ると、既存データと被らずバランスも完璧な新神様・新兵器JSONを作ってくれます。<br>
-        ② 増築したパックは「📤 自分の増築パックをコピー」で友達へそのまま配布OK！ 友達からもらったJSONを下の欄に貼れば即ガチャに追加されます！
+        ② <strong>.json / .txt / .md ファイル</strong>をぽんと読み込むだけで即増築OK！（AIの返事をそのまま保存したMarkdownやテキストからも自動抽出します）
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
         <button class="btn-primary" style="font-size:12px;padding:10px 8px;" onclick="copyExpansionPrompt()">📝 AIへ増築発注<br>プロンプトをコピー</button>
         <button class="btn-secondary" style="font-size:12px;padding:10px 8px;" onclick="exportMyExpansions()">📤 自分の増築パックを<br>友達へコピー</button>
       </div>
-      <textarea id="expansion-input" class="code-area" placeholder='AIや友達からもらった拡張パックJSONをここに貼り付け...'></textarea>
+      <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:8px;margin-bottom:10px;">
+        <button class="btn-gold" style="font-size:12px;padding:10px 8px;" onclick="triggerExpansionFileUpload()">📂 ファイルからぽんと増築<br><span style="font-size:10px;font-weight:700;">.json / .txt / .md（複数OK）</span></button>
+        <button class="btn-secondary" style="font-size:12px;padding:10px 8px;" onclick="downloadMyExpansionsFile()">⬇️ 増築パックを<br>JSON保存</button>
+      </div>
+      <textarea id="expansion-input" class="code-area" placeholder='ここにJSONやAIの返事(.md/.txtの中身)を貼り付け、またはファイルをドラッグ＆ドロップ...'></textarea>
       <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
-        <button class="btn-gold" style="flex:1;" onclick="installExpansion()">🏗️ パックを増築する</button>
+        <button class="btn-gold" style="flex:1;" onclick="installExpansion()">🏗️ 貼り付けた内容を増築</button>
         <button class="btn-secondary" onclick="loadSampleExpansion()">🧪 お試しミニパック読込</button>
       </div>
       <div class="sub-text" style="margin-top:8px;" id="expansion-status">現在の増築済みアイテム数: 0件</div>
@@ -1593,6 +1602,7 @@ textarea.code-area {
 <!-- Hidden file input for custom image / avatar -->
 <input type="file" id="img-file-input" accept="image/*" style="display:none;">
 <input type="file" id="bgm-file-input" accept="audio/*,.mp3,.m4a,.aac,.ogg,.wav,.flac,.webm,.opus" multiple style="display:none;">
+<input type="file" id="exp-file-input" multiple style="display:none;">
 
 <div class="toast" id="toast"></div>
 
@@ -2026,7 +2036,7 @@ const STAGE_PARTNER_KEY = "__stage_partner__";
 
 function createDefaultState() {
   return {
-    version: 2.0,
+    version: 2.1,
     difficulty: "easy",
     playerName: "地球防衛司令官",
     playerTitle: "歴史召喚士",
@@ -2145,6 +2155,10 @@ function migrateStateIfNeeded(st) {
   }
   if (ver < 2.0) {
     st.version = 2.0;
+    changed = true;
+  }
+  if (ver < 2.1) {
+    st.version = 2.1;
     changed = true;
   }
   return changed;
@@ -4058,8 +4072,18 @@ function defendWave() {
 // ============================================================
 const CHANGELOG = [
   {
-    ver: "v2.0",
+    ver: "v2.1",
     tag: "最新",
+    title: "拡張パックのファイル読込対応（.json / .txt / .md）＆JSON保存",
+    items: [
+      "沢マン式・拡張パック増築に「📂 ファイルからぽんと増築（.json / .txt / .md・複数ファイル同時OK）」ボタン＆ドラッグ＆ドロップ対応を追加！",
+      "AIの返事をそのまま保存したMarkdown（.md）やテキスト（.txt）でも、前後の解説文を自動スキップしてコードブロックやJSON部分だけを賢く抽出して増築します（複数コードブロック・軽微な末尾カンマにも対応）",
+      "自分の増築パックをそのままファイルで友達に渡せる「⬇️ 増築パックをJSON保存」ボタンを追加"
+    ]
+  },
+  {
+    ver: "v2.0",
+    tag: "日本地図刷新",
     title: "超高精細・日本地図SVGブラッシュアップ（世界＆日本マップ完全統一）",
     items: [
       "日本地図を実測の緯度・経度座標ベースで全面再構築！ 知床・根室・積丹・下北・男鹿・房総・伊豆・渥美/知多・能登・紀伊・佐田岬・島原・薩摩/大隅などの半島＆湾をくっきり精密描画",
@@ -4206,7 +4230,7 @@ function openGuideModal(initialTab = "guide") {
       <ul>
         <li><strong>カード画像もアイコンも自由に着せ替え（拡大縮小・位置調整つき）：</strong>すべてのカード・アイコン・全身画ステージは登録前にドラッグ＆スライダーでちょうどいい位置とサイズに調整OK！ 名前・肩書・性格・セリフも自由にカスタムできます。</li>
         <li><strong>コピペでAIに投げてオリジナルガチャ自作＆増築限定ガチャ：</strong>「増築/設定」タブの「📝 AIへ増築発注プロンプトをコピー」をいつものAIに貼るだけで拡張パックJSONをいくらでも自作でき、<strong>「🏗️ 増築パック限定」ガチャで自分の追加分だけを回せます！</strong> <strong>自分の創作世界を展開するもよし、甘い思い出や推しアイテムをコレクションしてウォーキングのモチベにするもよし！</strong></li>
-        <li><strong>友達とJSONトレードもOK：</strong>作った拡張パックは「📤 自分の増築パックを友達へコピー」でそのまま交換できます。</li>
+        <li><strong>ファイル読込＆友達トレードもOK：</strong>拡張パックはコピペのほか<strong>.json / .txt / .md ファイルからぽんと一発読み込み</strong>対応！ 作ったパックはテキストコピーまたはJSONファイル保存で友達とそのまま交換できます。</li>
       </ul>
     </div>
 
@@ -4936,52 +4960,228 @@ function loadSampleExpansion() {
   showToast("🧪 お試しミニパックを読み込みました！「パックを増築する」を押してね");
 }
 
+function tryParseJsonLenient(text) {
+  const s = String(text || "").replace(/^\uFEFF/, "").trim();
+  if (!s) return null;
+  try {
+    return JSON.parse(s);
+  } catch (e1) {
+    // Retry after stripping trailing commas before ] or }
+    try {
+      const fixed = s.replace(/,\s*([\]}])/g, "$1");
+      return JSON.parse(fixed);
+    } catch (e2) {
+      return null;
+    }
+  }
+}
+
+function unwrapExpansionCandidates(parsed) {
+  if (!parsed) return [];
+  if (Array.isArray(parsed)) return parsed;
+  if (typeof parsed === "object") {
+    if (Array.isArray(parsed.items)) return parsed.items;
+    if (Array.isArray(parsed.expansions)) return parsed.expansions;
+    if (Array.isArray(parsed.data)) return parsed.data;
+    if (parsed.id && parsed.name && (parsed.type === "god" || parsed.type === "weapon")) return [parsed];
+  }
+  return [];
+}
+
+function extractExpansionItemsFromText(rawText) {
+  const text = String(rawText || "").replace(/^\uFEFF/, "").trim();
+  if (!text) return [];
+
+  // 1. Direct full-text JSON parse (.json or pure JSON .txt)
+  const direct = tryParseJsonLenient(text);
+  if (direct) {
+    const list = unwrapExpansionCandidates(direct);
+    if (list.length) return list;
+  }
+
+  // 2. Markdown / text fenced code blocks (supports multiple ```json ... ``` blocks in .md / .txt!)
+  const collected = [];
+  const fenceRe = /```(?:json|jsonc|txt|text)?\s*([\s\S]*?)```/gi;
+  let m;
+  while ((m = fenceRe.exec(text)) !== null) {
+    const parsed = tryParseJsonLenient(m[1]);
+    if (parsed) collected.push(...unwrapExpansionCandidates(parsed));
+  }
+  if (collected.length) return collected;
+
+  // 3. Fallback: extract outermost [...] or {...} slice from prose text (.txt / .md without code fences)
+  const candidates = [];
+  const firstArr = text.indexOf("["), lastArr = text.lastIndexOf("]");
+  if (firstArr >= 0 && lastArr > firstArr) candidates.push(text.slice(firstArr, lastArr + 1));
+  const firstObj = text.indexOf("{"), lastObj = text.lastIndexOf("}");
+  if (firstObj >= 0 && lastObj > firstObj) candidates.push(text.slice(firstObj, lastObj + 1));
+
+  for (let i = 0; i < candidates.length; i++) {
+    const parsed = tryParseJsonLenient(candidates[i]);
+    if (parsed) {
+      const list = unwrapExpansionCandidates(parsed);
+      if (list.length) return list;
+    }
+  }
+  return [];
+}
+
+function mergeExpansionItems(arr) {
+  let added = 0;
+  let updated = 0;
+  arr.forEach(it => {
+    if (!it || !it.id || !it.name || (it.type !== "god" && it.type !== "weapon")) return;
+    const clean = {
+      id: String(it.id),
+      type: it.type,
+      name: String(it.name),
+      rarity: Math.max(1, Math.min(5, Number(it.rarity) || 3)),
+      baseAtk: Math.max(1, Math.min(300, Number(it.baseAtk) || 70)),
+      group: String(it.group || "増築パック"),
+      region: String(it.region || "地球のどこか"),
+      lat: Number(it.lat) || 0,
+      lon: Number(it.lon) || 0,
+      lore: String(it.lore || "沢マン式増築パックにより歴史の彼方から顕現。"),
+      lateBloomer: !!it.lateBloomer,
+      awakeSkill: it.awakeSkill || undefined,
+      awakeTitle: it.awakeTitle || undefined,
+      awakeDesc: it.awakeDesc || undefined
+    };
+    const idx = state.expansions.findIndex(x => x.id === clean.id);
+    if (idx >= 0) {
+      state.expansions[idx] = clean;
+      updated++;
+    } else {
+      state.expansions.push(clean);
+      added++;
+    }
+  });
+  return { added, updated, total: added + updated };
+}
+
 function installExpansion() {
   const raw = document.getElementById("expansion-input").value.trim();
   if (!raw) {
-    showToast("JSONデータを貼り付けてね！");
+    showToast("JSON・テキストを貼り付けるか、📂ファイルから読み込んでね！");
     return;
   }
-  try {
-    const cleanedRaw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
-    const parsed = JSON.parse(cleanedRaw);
-    const arr = Array.isArray(parsed) ? parsed : [parsed];
-    let added = 0;
-    arr.forEach(it => {
-      if (!it.id || !it.name || (it.type !== "god" && it.type !== "weapon")) return;
-      const clean = {
-        id: String(it.id),
-        type: it.type,
-        name: String(it.name),
-        rarity: Math.max(1, Math.min(5, Number(it.rarity) || 3)),
-        baseAtk: Math.max(1, Math.min(300, Number(it.baseAtk) || 70)),
-        group: String(it.group || "増築パック"),
-        region: String(it.region || "地球のどこか"),
-        lat: Number(it.lat) || 0,
-        lon: Number(it.lon) || 0,
-        lore: String(it.lore || "沢マン式増築パックにより歴史の彼方から顕現。"),
-        lateBloomer: !!it.lateBloomer,
-        awakeSkill: it.awakeSkill || undefined,
-        awakeTitle: it.awakeTitle || undefined,
-        awakeDesc: it.awakeDesc || undefined
-      };
-      const idx = state.expansions.findIndex(x => x.id === clean.id);
-      if (idx >= 0) state.expansions[idx] = clean;
-      else state.expansions.push(clean);
-      added++;
-    });
-    if (added === 0) {
-      showToast("⚠️ 有効な神様・兵器データが見つかりませんでした");
-      return;
+  const items = extractExpansionItemsFromText(raw);
+  if (!items.length) {
+    showToast("⚠️ 有効な拡張パックJSONが見つかりませんでした。カッコの欠け等を確認してね");
+    return;
+  }
+  const res = mergeExpansionItems(items);
+  if (res.total === 0) {
+    showToast("⚠️ 有効な神様・兵器データ（id/name/type）が見つかりませんでした");
+    return;
+  }
+  saveState();
+  renderAll();
+  document.getElementById("expansion-input").value = "";
+  const detail = res.updated > 0 ? `（新規${res.added}・更新${res.updated}）` : "";
+  showToast(`🏗️ 沢マン増築完了！ ${res.total}件${detail}をガチャ＆図鑑に追加しました！`);
+}
+
+function triggerExpansionFileUpload() {
+  const inp = document.getElementById("exp-file-input");
+  inp.value = "";
+  inp.click();
+}
+
+function downloadMyExpansionsFile() {
+  const exps = state.expansions || [];
+  if (!exps.length) {
+    showToast("まだ増築パックが入っていません！（お試しパック等を追加してね）");
+    return;
+  }
+  const blob = new Blob([JSON.stringify(exps, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const d = new Date();
+  a.href = url;
+  a.download = `tonchiki_expansion_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`⬇️ 増築パック（${exps.length}件）をJSONファイル保存しました！`);
+}
+
+function readFileAsTextAsync(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("read error"));
+    reader.readAsText(file, "UTF-8");
+  });
+}
+
+async function handleExpansionFiles(fileList) {
+  const files = Array.from(fileList || []);
+  if (!files.length) return;
+
+  let totalAdded = 0;
+  let totalUpdated = 0;
+  let okFiles = 0;
+  const failedFiles = [];
+
+  for (const file of files) {
+    const fname = file.name || "ファイル";
+    if (file.size > 5 * 1024 * 1024) {
+      failedFiles.push(`${fname}（サイズ過大）`);
+      continue;
     }
+    const isBinaryExt = /\.(png|jpe?g|gif|webp|bmp|mp3|m4a|wav|ogg|mp4|mov|zip|pdf)$/i.test(fname);
+    if (isBinaryExt) {
+      failedFiles.push(`${fname}（.json/.txt/.mdを選んでね）`);
+      continue;
+    }
+    try {
+      const txt = await readFileAsTextAsync(file);
+      const items = extractExpansionItemsFromText(txt);
+      const res = mergeExpansionItems(items);
+      if (res.total > 0) {
+        totalAdded += res.added;
+        totalUpdated += res.updated;
+        okFiles++;
+      } else {
+        failedFiles.push(`${fname}（有効データなし）`);
+      }
+    } catch (e) {
+      failedFiles.push(`${fname}（読込失敗）`);
+    }
+  }
+
+  const grandTotal = totalAdded + totalUpdated;
+  if (grandTotal > 0) {
     saveState();
     renderAll();
-    document.getElementById("expansion-input").value = "";
-    showToast(`🏗️ 沢マン増築完了！ ${added}件をガチャ＆図鑑に追加しました！`);
-  } catch (e) {
-    showToast("⚠️ JSONの形式エラーです。カッコの欠け等を確認してね");
+    const detail = totalUpdated > 0 ? `（新規${totalAdded}・更新${totalUpdated}）` : "";
+    const skipNote = failedFiles.length ? `／${failedFiles.length}件スキップ` : "";
+    showToast(`📂 ${okFiles}ファイルから ${grandTotal}件${detail}をぽんと増築しました！${skipNote}`);
+  } else {
+    showToast(`⚠️ 読み込めませんでした：${failedFiles[0] || ".json / .txt / .md ファイルを確認してね"}`);
   }
 }
+
+document.getElementById("exp-file-input").addEventListener("change", function(e) {
+  handleExpansionFiles(e.target.files);
+});
+
+(function bindExpansionDropZone() {
+  const ta = document.getElementById("expansion-input");
+  if (!ta) return;
+  ta.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    ta.classList.add("drag-over");
+  });
+  ta.addEventListener("dragleave", () => ta.classList.remove("drag-over"));
+  ta.addEventListener("drop", (e) => {
+    e.preventDefault();
+    ta.classList.remove("drag-over");
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+      handleExpansionFiles(e.dataTransfer.files);
+    }
+  });
+})();
 
 function exportSaveString() {
   try {
