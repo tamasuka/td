@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0d111a">
-<title>地球防衛・神話兵器録 v2.3</title>
+<title>地球防衛・神話兵器録 v2.4</title>
 <style>
 :root {
   --bg: #0c1018;
@@ -83,7 +83,10 @@ button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: 10px; padding: 5px 8px;
   display: flex; flex-direction: column; align-items: center;
+  cursor: pointer; transition: border-color 0.15s ease, transform 0.08s ease;
 }
+.res-pill:active { transform: scale(0.96); }
+.res-pill.energy-pill { border-color: rgba(56, 228, 255, 0.35); }
 .res-label { font-size: 10px; color: var(--muted); }
 .res-val { font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .res-val.gold { color: var(--gold); }
@@ -662,6 +665,14 @@ button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 }
 .slot-picker.filled { border-style: solid; }
 .slot-empty { text-align: center; font-size: 12px; color: var(--muted); }
+.slot-up-btn {
+  margin-top: 4px; width: 100%; padding: 4px 6px; font-size: 11px; border-radius: 7px;
+  background: rgba(56, 228, 255, 0.12); border: 1px solid rgba(56, 228, 255, 0.38); color: #bae6fd;
+}
+.slot-up-btn.can-up {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.32), rgba(245, 197, 66, 0.28));
+  border-color: var(--gold); color: #fef08a;
+}
 
 /* Map */
 .world-map-wrap {
@@ -1414,23 +1425,23 @@ textarea.code-area.drag-over {
 
 <header class="app-header">
   <div class="header-top">
-    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v2.3</span></div>
+    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v2.4</span></div>
     <div class="header-actions">
       <button class="btn-help" onclick="openGuideModal()">📖 物語&amp;遊び方</button>
       <button class="btn-report" id="header-report-btn" onclick="copyReport()">📋 パートナーAIに報告</button>
     </div>
   </div>
   <div class="resource-bar">
-    <div class="res-pill">
-      <span class="res-label">💎 召喚石</span>
+    <div class="res-pill" onclick="switchTab('gacha')" title="タップで召喚ガチャへ">
+      <span class="res-label">💎 召喚石 ›</span>
       <span class="res-val gold" id="ui-stones">0</span>
     </div>
-    <div class="res-pill">
-      <span class="res-label">⚡ 歩数エネ</span>
+    <div class="res-pill energy-pill" onclick="goTrainScreen()" title="タップで育成・強化画面へ">
+      <span class="res-label">⚡ 歩数エネ(育成) ›</span>
       <span class="res-val cyan" id="ui-energy">0</span>
     </div>
-    <div class="res-pill">
-      <span class="res-label">🛡️ 総戦力</span>
+    <div class="res-pill" onclick="switchTab('deck')" title="タップでデッキ編成へ">
+      <span class="res-label">🛡️ 総戦力 ›</span>
       <span class="res-val green" id="ui-power">0</span>
     </div>
   </div>
@@ -1588,12 +1599,12 @@ textarea.code-area.drag-over {
   <section id="tab-deck" class="tab-panel">
     <div class="card">
       <div class="card-title">
-        <span>🛡️ 防衛デッキ編成（5枠）</span>
+        <span>🛡️ 防衛デッキ編成＆強化（5枠）</span>
         <button class="btn-gold" style="padding:6px 10px;font-size:12px;" onclick="autoBuildDeck()">⚡ 最強自動編成</button>
       </div>
       <div class="sub-text" style="margin-bottom:10px;">
-        神様1柱 × 人類史兵器1種でペアを組みます。ペアが揃うと戦力<strong>1.25倍</strong>！<br>
-        同じ地域・文化圏のペアなら「地元シナジー」でさらに<strong>+15%</strong>！
+        枠タップで<strong>入れ替え</strong>、枠内の<strong>「⬆️ 強化」</strong>ボタンから⚡歩数エネでそのままLvアップ！<br>
+        ペア共鳴<strong>×1.25</strong> ／ 同じ地域のペアなら地元シナジー<strong>+15%</strong>！
       </div>
       <div id="deck-slots"></div>
     </div>
@@ -1605,6 +1616,9 @@ textarea.code-area.drag-over {
       </div>
       <div class="sub-text" style="margin-bottom:8px;">
         デッキ外の控えメンバーも、<strong>所持ボーナス＋文化圏共鳴＋「控え合計Lv × 0.1%」</strong>で全体の総戦力をじわじわ底上げします（ムダゼロ仕様）！
+        <div style="margin-top:6px;">
+          <button class="btn-secondary" style="font-size:11px;padding:5px 10px;color:var(--cyan);" onclick="goDexTraining()">⬆️ 控えメンバーを育成/図鑑で強化する →</button>
+        </div>
       </div>
       <div class="passive-grid" id="passive-list"></div>
     </div>
@@ -1629,8 +1643,8 @@ textarea.code-area.drag-over {
       <div class="pref-chip-wrap" id="japan-pref-chips" style="display:none;"></div>
     </div>
 
-    <div class="card">
-      <div class="card-title"><span>📖 歴史図鑑（タップで解説・強化・画像着せ替え）</span></div>
+    <div class="card" id="dex-card">
+      <div class="card-title"><span>⬆️ 育成＆歴史図鑑（タップでLv強化・解説・着せ替え）</span></div>
       <div class="filter-row">
         <button class="chip active" onclick="setDexFilter('all', this)">すべて</button>
         <button class="chip" onclick="setDexFilter('god', this)">👑 神様</button>
@@ -1944,8 +1958,8 @@ textarea.code-area.drag-over {
   <nav class="bottom-nav">
     <button class="nav-btn active" data-tab="home" onclick="switchTab('home')"><span class="ico">🚀</span>防衛/歩数</button>
     <button class="nav-btn" data-tab="gacha" onclick="switchTab('gacha')"><span class="ico">✨</span>召喚ガチャ</button>
-    <button class="nav-btn" data-tab="deck" onclick="switchTab('deck')"><span class="ico">🛡️</span>デッキ編成</button>
-    <button class="nav-btn" data-tab="map" onclick="switchTab('map')"><span class="ico">🗺️</span>地図&amp;図鑑</button>
+    <button class="nav-btn" data-tab="deck" onclick="switchTab('deck')"><span class="ico">🛡️</span>編成/強化</button>
+    <button class="nav-btn" data-tab="map" onclick="switchTab('map')"><span class="ico">🗺️</span>育成/図鑑</button>
     <button class="nav-btn" data-tab="system" onclick="switchTab('system')"><span class="ico">🏗️</span>増築/設定</button>
   </nav>
 </div>
@@ -2433,7 +2447,7 @@ const STAGE_PARTNER_KEY = "__stage_partner__";
 
 function createDefaultState() {
   return {
-    version: 2.3,
+    version: 2.4,
     difficulty: "easy",
     playerName: "地球防衛司令官",
     playerTitle: "歴史召喚士",
@@ -2568,6 +2582,10 @@ function migrateStateIfNeeded(st) {
     if (typeof st.gachaAnimSkip !== "boolean") st.gachaAnimSkip = false;
     if (typeof st.gachaSfx !== "boolean") st.gachaSfx = false;
     st.version = 2.3;
+    changed = true;
+  }
+  if (ver < 2.4) {
+    st.version = 2.4;
     changed = true;
   }
   return changed;
@@ -5082,8 +5100,18 @@ function defendWave() {
 // ============================================================
 const CHANGELOG = [
   {
-    ver: "v2.3",
+    ver: "v2.4",
     tag: "最新",
+    title: "育成導線の改善（編成から直接強化・育成/図鑑タブ・⚡歩数エネタップ導線）",
+    items: [
+      "デッキ編成の各枠に「⬆️ 強化OK／強化/詳細」ボタンを追加！ 編成画面から直接強化モーダルを開いてLvアップできるようになりました（強化可能な枠はゴールドに点灯）",
+      "下部タブ名を「🛡️ 編成/強化」「🗺️ 育成/図鑑」へ改名し、図鑑の見出しや控え育成へのジャンプボタンも追加",
+      "ヘッダーの「⚡ 歩数エネ(育成)」「💎 召喚石」「🛡️ 総戦力」をタップ可能にし、歩数エネの使い道（育成画面）へ一発移動できるようになりました"
+    ]
+  },
+  {
+    ver: "v2.3",
+    tag: "ガチャ演出",
     title: "ソシャゲ風ド派手ガチャ演出＆目玉カットイン＆15秒ロング通知",
     items: [
       "召喚時にフルスクリーンの魔法陣チャージ・虹色／真紅の昇格（格上げ）確定演出・画面シェイク＆フラッシュ・紙吹雪が炸裂するド派手ガチャ演出を実装！",
@@ -6593,6 +6621,26 @@ function switchTab(name) {
   renderAll();
 }
 
+function goDexTraining() {
+  switchTab("map");
+  setTimeout(() => {
+    const el = document.getElementById("dex-card");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 40);
+}
+
+function goTrainScreen() {
+  const onDeck = document.getElementById("tab-deck").classList.contains("active");
+  const hasDeckUnit = state.deck.some(s => (s.god && state.owned[s.god]) || (s.weapon && state.owned[s.weapon]));
+  if (hasDeckUnit && !onDeck) {
+    switchTab("deck");
+    showToast("⚡ 各枠の「⬆️ 強化」ボタンで歩数エネを使ってLvアップできます！");
+  } else {
+    goDexTraining();
+    showToast("⚡ カードをタップして歩数エネでLv強化できます！");
+  }
+}
+
 function setDexFilter(f, btn) {
   currentDexFilter = f;
   document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
@@ -6763,6 +6811,7 @@ function renderDeck() {
         return `<div class="slot-picker" onclick="openDeckPicker(${idx}, '${kind}')"><div class="slot-empty">+ ${kind === 'god' ? '👑 神様を選ぶ' : '⚔️ 兵器を選ぶ'}</div></div>`;
       }
       const ow = state.owned[item.id];
+      const canUp = state.energy >= getUpgradeCost(item, ow.lv);
       return `
         <div class="slot-picker filled r${item.rarity}" onclick="openDeckPicker(${idx}, '${kind}')">
           <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -6771,6 +6820,7 @@ function renderDeck() {
           </div>
           <div style="font-size:13px;font-weight:800;margin-top:2px;">${escapeHtml(item.name)}</div>
           <div style="font-size:11px;color:var(--cyan);font-weight:700;">ATK ${fmtNum(getUnitAtk(item))}</div>
+          <button class="slot-up-btn ${canUp ? 'can-up' : ''}" onclick="event.stopPropagation(); openItemModal('${item.id}')">${canUp ? '⬆️ 強化OK' : '⬆️ 強化/詳細'}</button>
         </div>
       `;
     };
