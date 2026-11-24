@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0d111a">
-<title>地球防衛・神話兵器録 v2.1</title>
+<title>地球防衛・神話兵器録 v2.2</title>
 <style>
 :root {
   --bg: #0c1018;
@@ -906,6 +906,56 @@ textarea.code-area.drag-over {
   box-shadow: 0 0 14px rgba(245, 197, 66, 0.28);
 }
 
+/* Selective Expansion Export Modal (v2.2) */
+.exp-pick-toolbar {
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 8px;
+}
+.exp-pick-list {
+  display: flex; flex-direction: column; gap: 6px;
+  max-height: 44vh; overflow-y: auto;
+  padding-right: 2px; margin: 8px 0 10px;
+}
+.exp-pick-row {
+  display: flex; align-items: center; gap: 9px;
+  background: var(--bg-card2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 8px 10px; cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+.exp-pick-row.selected {
+  border-color: var(--gold);
+  background: rgba(245, 197, 66, 0.12);
+}
+.exp-pick-check {
+  width: 20px; height: 20px; border-radius: 6px; flex-shrink: 0;
+  border: 1.5px solid var(--muted); background: #0a0e16;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 900; color: #111827;
+}
+.exp-pick-row.selected .exp-pick-check {
+  background: var(--gold); border-color: var(--gold);
+}
+.exp-pick-info {
+  flex: 1; min-width: 0;
+}
+.exp-pick-name {
+  font-size: 13px; font-weight: 800; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.exp-pick-sub {
+  font-size: 10.5px; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.exp-grp-chips {
+  display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0 8px;
+}
+.exp-grp-chip {
+  background: rgba(56, 228, 255, 0.08); border: 1px solid rgba(56, 228, 255, 0.30);
+  color: #bae6fd; border-radius: 99px; padding: 3px 9px; font-size: 10.5px; font-weight: 700;
+}
+.exp-grp-chip.all-on {
+  background: rgba(245, 197, 66, 0.22); border-color: var(--gold); color: #fef08a;
+}
+
 /* Image Adjuster / Cropper Modal (v1.8) */
 .crop-backdrop {
   position: fixed; inset: 0; z-index: 150;
@@ -1030,7 +1080,7 @@ textarea.code-area.drag-over {
 
 <header class="app-header">
   <div class="header-top">
-    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v2.1</span></div>
+    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v2.2</span></div>
     <div class="header-actions">
       <button class="btn-help" onclick="openGuideModal()">📖 物語&amp;遊び方</button>
       <button class="btn-report" id="header-report-btn" onclick="copyReport()">📋 パートナーAIに報告</button>
@@ -1501,16 +1551,16 @@ textarea.code-area.drag-over {
       <div class="card-title"><span>🏗️ 沢マン式・拡張パック増築＆友達トレード</span></div>
       <div class="rate-note" style="margin-bottom:10px;">
         <strong>🤝 友達と拡張パックをトレードして遊べるよ！</strong><br>
-        ① 下の「📝 増築発注プロンプトをコピー」を押して好きなAIに貼ると、既存データと被らずバランスも完璧な新神様・新兵器JSONを作ってくれます。<br>
-        ② <strong>.json / .txt / .md ファイル</strong>をぽんと読み込むだけで即増築OK！（AIの返事をそのまま保存したMarkdownやテキストからも自動抽出します）
+        ① 「📝 増築発注プロンプト」を好きなAIに貼ると、既存と被らない新神様・新兵器JSONを作ってくれます。<br>
+        ② <strong>.json / .txt / .md ファイル</strong>をぽんと読み込むだけで即増築OK！ 渡したいときは<strong>「🎁 選んで配布パック作成」</strong>でプライベートな項目を除いて安全に書き出せます。
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
         <button class="btn-primary" style="font-size:12px;padding:10px 8px;" onclick="copyExpansionPrompt()">📝 AIへ増築発注<br>プロンプトをコピー</button>
-        <button class="btn-secondary" style="font-size:12px;padding:10px 8px;" onclick="exportMyExpansions()">📤 自分の増築パックを<br>友達へコピー</button>
+        <button class="btn-gold" style="font-size:12px;padding:10px 8px;" onclick="openExpansionExportModal()">🎁 選んで配布パック<br><span style="font-size:10px;font-weight:700;">.json保存 / コピー</span></button>
       </div>
       <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:8px;margin-bottom:10px;">
-        <button class="btn-gold" style="font-size:12px;padding:10px 8px;" onclick="triggerExpansionFileUpload()">📂 ファイルからぽんと増築<br><span style="font-size:10px;font-weight:700;">.json / .txt / .md（複数OK）</span></button>
-        <button class="btn-secondary" style="font-size:12px;padding:10px 8px;" onclick="downloadMyExpansionsFile()">⬇️ 増築パックを<br>JSON保存</button>
+        <button class="btn-primary" style="font-size:12px;padding:10px 8px;" onclick="triggerExpansionFileUpload()">📂 ファイルからぽんと増築<br><span style="font-size:10px;font-weight:700;">.json / .txt / .md（複数OK）</span></button>
+        <button class="btn-secondary" style="font-size:12px;padding:10px 8px;" onclick="downloadMyExpansionsFile()">💾 全増築を丸ごと<br>バックアップ(.json)</button>
       </div>
       <textarea id="expansion-input" class="code-area" placeholder='ここにJSONやAIの返事(.md/.txtの中身)を貼り付け、またはファイルをドラッグ＆ドロップ...'></textarea>
       <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
@@ -2036,7 +2086,7 @@ const STAGE_PARTNER_KEY = "__stage_partner__";
 
 function createDefaultState() {
   return {
-    version: 2.1,
+    version: 2.2,
     difficulty: "easy",
     playerName: "地球防衛司令官",
     playerTitle: "歴史召喚士",
@@ -2159,6 +2209,10 @@ function migrateStateIfNeeded(st) {
   }
   if (ver < 2.1) {
     st.version = 2.1;
+    changed = true;
+  }
+  if (ver < 2.2) {
+    st.version = 2.2;
     changed = true;
   }
   return changed;
@@ -4072,8 +4126,18 @@ function defendWave() {
 // ============================================================
 const CHANGELOG = [
   {
-    ver: "v2.1",
+    ver: "v2.2",
     tag: "最新",
+    title: "拡張パックの選択書き出し（配布用 .json 作成・プライベート保護）",
+    items: [
+      "増築パックから友達に渡したいアイテムだけをチェックして書き出せる「🎁 選んで配布パック（.json保存 / コピー）」機能を実装！",
+      "プライベートな項目や友達からもらったパックがうっかり混ざらないよう、初期状態はすべて未選択（セーフティ設計）",
+      "グループ単位のワンタップ選択／解除、神様・兵器フィルタ、検索絞り込み、保存ファイル名の自由指定に対応"
+    ]
+  },
+  {
+    ver: "v2.1",
+    tag: "ファイル読込",
     title: "拡張パックのファイル読込対応（.json / .txt / .md）＆JSON保存",
     items: [
       "沢マン式・拡張パック増築に「📂 ファイルからぽんと増築（.json / .txt / .md・複数ファイル同時OK）」ボタン＆ドラッグ＆ドロップ対応を追加！",
@@ -4230,7 +4294,7 @@ function openGuideModal(initialTab = "guide") {
       <ul>
         <li><strong>カード画像もアイコンも自由に着せ替え（拡大縮小・位置調整つき）：</strong>すべてのカード・アイコン・全身画ステージは登録前にドラッグ＆スライダーでちょうどいい位置とサイズに調整OK！ 名前・肩書・性格・セリフも自由にカスタムできます。</li>
         <li><strong>コピペでAIに投げてオリジナルガチャ自作＆増築限定ガチャ：</strong>「増築/設定」タブの「📝 AIへ増築発注プロンプトをコピー」をいつものAIに貼るだけで拡張パックJSONをいくらでも自作でき、<strong>「🏗️ 増築パック限定」ガチャで自分の追加分だけを回せます！</strong> <strong>自分の創作世界を展開するもよし、甘い思い出や推しアイテムをコレクションしてウォーキングのモチベにするもよし！</strong></li>
-        <li><strong>ファイル読込＆友達トレードもOK：</strong>拡張パックはコピペのほか<strong>.json / .txt / .md ファイルからぽんと一発読み込み</strong>対応！ 作ったパックはテキストコピーまたはJSONファイル保存で友達とそのまま交換できます。</li>
+        <li><strong>ファイル読込＆選んで安全トレードもOK：</strong>拡張パックはコピペのほか<strong>.json / .txt / .md ファイルからぽんと一発読み込み</strong>対応！ 友達へ渡すときは<strong>「🎁 選んで配布パック」</strong>から渡したいアイテムだけを選んで .json 保存・コピーできるので、プライベートな項目が混ざる心配もありません。</li>
       </ul>
     </div>
 
@@ -5103,6 +5167,249 @@ function downloadMyExpansionsFile() {
   a.click();
   URL.revokeObjectURL(url);
   showToast(`⬇️ 増築パック（${exps.length}件）をJSONファイル保存しました！`);
+}
+
+// ============================================================
+// 7.5 SELECTIVE EXPANSION PACK EXPORTER (v2.2)
+// ============================================================
+let expExportState = {
+  selectedIds: new Set(),
+  typeFilter: "all", // "all" | "god" | "weapon"
+  search: "",
+  fileName: ""
+};
+
+function makeDefaultShareFilename() {
+  const d = new Date();
+  return `share_pack_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function openExpansionExportModal() {
+  const exps = state.expansions || [];
+  if (!exps.length) {
+    showToast("まだ増築パックが入っていません！（お試しパック等を追加してね）");
+    return;
+  }
+  // Safety-first: always start with 0 selected so private items are never leaked accidentally
+  expExportState = {
+    selectedIds: new Set(),
+    typeFilter: "all",
+    search: "",
+    fileName: makeDefaultShareFilename()
+  };
+  renderExpansionExportModal();
+}
+
+function getFilteredExportExpansions() {
+  const exps = state.expansions || [];
+  const q = (expExportState.search || "").trim().toLowerCase();
+  return exps.filter(it => {
+    if (expExportState.typeFilter !== "all" && it.type !== expExportState.typeFilter) return false;
+    if (!q) return true;
+    return String(it.name || "").toLowerCase().includes(q)
+      || String(it.group || "").toLowerCase().includes(q)
+      || String(it.region || "").toLowerCase().includes(q)
+      || String(it.id || "").toLowerCase().includes(q);
+  });
+}
+
+function renderExpansionExportModal() {
+  const exps = state.expansions || [];
+  const groups = Array.from(new Set(exps.map(it => it.group || "増築パック")));
+
+  openModalHTML(`
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2 style="margin:0 0 4px;font-size:17px;color:var(--gold);">🎁 配布用パックを選んで書き出し</h2>
+    <div class="sub-text" style="margin-bottom:8px;font-size:11.5px;">
+      友達に渡したいアイテムだけをチェックして <strong>.json 保存／コピー</strong>できます。<br>
+      🔒 初期状態は<strong>すべて未選択</strong>なので、プライベートな項目や人からもらったパックがうっかり混ざる心配がありません！
+    </div>
+
+    <input type="text" id="exp-export-search" class="small-input" style="margin-bottom:8px;"
+      placeholder="🔍 名前・グループ・地域で絞り込み..." value="${escapeHtml(expExportState.search)}"
+      oninput="onExpExportSearch(this.value)">
+
+    <div class="exp-pick-toolbar">
+      <button class="chip ${expExportState.typeFilter==='all'?'active':''}" id="exp-flt-all" onclick="setExpExportFilter('all')">すべて</button>
+      <button class="chip ${expExportState.typeFilter==='god'?'active':''}" id="exp-flt-god" onclick="setExpExportFilter('god')">👑 神様</button>
+      <button class="chip ${expExportState.typeFilter==='weapon'?'active':''}" id="exp-flt-weapon" onclick="setExpExportFilter('weapon')">⚔️ 兵器</button>
+      <span style="flex:1;"></span>
+      <button class="btn-secondary" style="font-size:11px;padding:5px 8px;" onclick="selectAllFilteredExp(true)">表示分を全選択</button>
+      <button class="btn-secondary" style="font-size:11px;padding:5px 8px;" onclick="selectAllFilteredExp(false)">全解除</button>
+    </div>
+
+    ${groups.length > 1 ? `
+      <div class="sub-text" style="font-size:10.5px;">🏷️ グループ単位でまとめて選択／解除：</div>
+      <div class="exp-grp-chips" id="exp-export-grp-chips"></div>
+    ` : ""}
+
+    <div class="exp-pick-list" id="exp-export-list"></div>
+
+    <div style="margin-bottom:10px;">
+      <label class="field-label">📄 保存ファイル名（.json は自動で付きます）</label>
+      <input type="text" id="exp-export-filename" class="small-input" maxlength="48"
+        value="${escapeHtml(expExportState.fileName)}"
+        oninput="expExportState.fileName = this.value">
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:8px;">
+      <button class="btn-gold" id="btn-exp-export-dl" onclick="runSelectedExpansionExport('download')">⬇️ 0件を .json保存</button>
+      <button class="btn-primary" id="btn-exp-export-cp" onclick="runSelectedExpansionExport('copy')">📋 JSONをコピー</button>
+    </div>
+  `);
+  updateExpansionExportListUI();
+}
+
+function updateExpansionExportListUI() {
+  const exps = state.expansions || [];
+  const filtered = getFilteredExportExpansions();
+  const sel = expExportState.selectedIds;
+
+  // Update filter chips
+  ["all", "god", "weapon"].forEach(k => {
+    const b = document.getElementById("exp-flt-" + k);
+    if (b) b.classList.toggle("active", expExportState.typeFilter === k);
+  });
+
+  // Update group chips
+  const grpBox = document.getElementById("exp-export-grp-chips");
+  if (grpBox) {
+    const grpMap = new Map();
+    exps.forEach(it => {
+      const g = it.group || "増築パック";
+      if (!grpMap.has(g)) grpMap.set(g, []);
+      grpMap.get(g).push(it.id);
+    });
+    const entries = Array.from(grpMap.entries());
+    expExportState.groupEntries = entries;
+    grpBox.innerHTML = entries.map(([grp, ids], idx) => {
+      const onCnt = ids.filter(id => sel.has(id)).length;
+      const allOn = onCnt === ids.length && ids.length > 0;
+      return `<button class="exp-grp-chip ${allOn ? 'all-on' : ''}" onclick="toggleExpExportGroup(${idx})">${allOn ? '✓ ' : ''}${escapeHtml(grp)} (${onCnt}/${ids.length})</button>`;
+    }).join("");
+  }
+
+  // Update item checklist
+  const listEl = document.getElementById("exp-export-list");
+  if (listEl) {
+    if (!filtered.length) {
+      listEl.innerHTML = `<div class="sub-text" style="text-align:center;padding:16px;">条件に一致する増築アイテムがありません</div>`;
+    } else {
+      listEl.innerHTML = filtered.map(it => {
+        const isSel = sel.has(it.id);
+        return `
+          <div class="exp-pick-row ${isSel ? 'selected' : ''}" onclick="toggleExpExportItem('${escapeHtml(it.id)}')">
+            <span class="exp-pick-check">${isSel ? '✓' : ''}</span>
+            <div class="exp-pick-info">
+              <div class="exp-pick-name">${it.type === 'god' ? '👑' : '⚔️'} ${escapeHtml(it.name)}</div>
+              <div class="exp-pick-sub">★${it.rarity} ・ ${escapeHtml(it.group || '増築パック')} ・ ${escapeHtml(it.region || '')}</div>
+            </div>
+            <span class="badge badge-r${it.rarity}">★${it.rarity}</span>
+          </div>
+        `;
+      }).join("");
+    }
+  }
+
+  // Update export buttons
+  const cnt = sel.size;
+  const dlBtn = document.getElementById("btn-exp-export-dl");
+  const cpBtn = document.getElementById("btn-exp-export-cp");
+  if (dlBtn) {
+    dlBtn.disabled = cnt === 0;
+    dlBtn.textContent = cnt > 0 ? `⬇️ 選んだ${cnt}件を .json保存` : "⬇️ アイテムを選んでね";
+  }
+  if (cpBtn) {
+    cpBtn.disabled = cnt === 0;
+    cpBtn.textContent = cnt > 0 ? `📋 ${cnt}件をコピー` : "📋 コピー";
+  }
+}
+
+function onExpExportSearch(val) {
+  expExportState.search = val || "";
+  updateExpansionExportListUI();
+}
+
+function setExpExportFilter(f) {
+  expExportState.typeFilter = f;
+  updateExpansionExportListUI();
+}
+
+function toggleExpExportItem(id) {
+  if (expExportState.selectedIds.has(id)) expExportState.selectedIds.delete(id);
+  else expExportState.selectedIds.add(id);
+  updateExpansionExportListUI();
+}
+
+function toggleExpExportGroup(idx) {
+  const entry = expExportState.groupEntries && expExportState.groupEntries[idx];
+  if (!entry) return;
+  const ids = entry[1] || [];
+  const allSelected = ids.length > 0 && ids.every(id => expExportState.selectedIds.has(id));
+  ids.forEach(id => {
+    if (allSelected) expExportState.selectedIds.delete(id);
+    else expExportState.selectedIds.add(id);
+  });
+  updateExpansionExportListUI();
+}
+
+function selectAllFilteredExp(selectOn) {
+  if (!selectOn) {
+    expExportState.selectedIds.clear();
+  } else {
+    getFilteredExportExpansions().forEach(it => expExportState.selectedIds.add(it.id));
+  }
+  updateExpansionExportListUI();
+}
+
+function runSelectedExpansionExport(mode) {
+  const sel = expExportState.selectedIds;
+  const picked = (state.expansions || []).filter(it => sel.has(it.id));
+  if (!picked.length) {
+    showToast("書き出したいアイテムを1つ以上選んでね！");
+    return;
+  }
+  const cleanList = picked.map(it => {
+    const obj = {
+      id: it.id,
+      type: it.type,
+      name: it.name,
+      rarity: it.rarity,
+      baseAtk: it.baseAtk,
+      group: it.group,
+      region: it.region,
+      lat: it.lat,
+      lon: it.lon,
+      lore: it.lore
+    };
+    if (it.lateBloomer) {
+      obj.lateBloomer = true;
+      if (it.awakeSkill) obj.awakeSkill = it.awakeSkill;
+      if (it.awakeTitle) obj.awakeTitle = it.awakeTitle;
+      if (it.awakeDesc) obj.awakeDesc = it.awakeDesc;
+    }
+    return obj;
+  });
+
+  const json = JSON.stringify(cleanList, null, 2);
+  if (mode === "copy") {
+    document.getElementById("expansion-input").value = json;
+    copyToClipboard(json, `📋 選んだ${cleanList.length}件の配布用JSONをコピーしました！`);
+    closeModal();
+    return;
+  }
+
+  let rawName = (expExportState.fileName || makeDefaultShareFilename()).trim();
+  rawName = rawName.replace(/\.json$/i, "").replace(/[\\\/:*?"<>|]+/g, "_").trim() || makeDefaultShareFilename();
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${rawName}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  closeModal();
+  showToast(`🎁 選んだ${cleanList.length}件を「${rawName}.json」で書き出しました！`);
 }
 
 function readFileAsTextAsync(file) {
