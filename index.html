@@ -6,7 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0d111a">
-<title>地球防衛・神話兵器録 v2.5.1</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20x%3D%223%22%20y%3D%223%22%20width%3D%2258%22%20height%3D%2258%22%20rx%3D%2214%22%20fill%3D%22%230c1426%22%20stroke%3D%22%23f5c542%22%20stroke-width%3D%223.5%22%2F%3E%3Cpath%20d%3D%22M16%2024%20L48%2020%22%20fill%3D%22none%22%20stroke%3D%22%23fde047%22%20stroke-width%3D%225.6%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M28%2011%20Q34%2024%2043%2036%22%20fill%3D%22none%22%20stroke%3D%22%23fde047%22%20stroke-width%3D%225.6%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M21%2039%20C19%2050%2031%2054%2046%2049%22%20fill%3D%22none%22%20stroke%3D%22%23fde047%22%20stroke-width%3D%225.6%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+<title>おさんぽ神話録 v2.6</title>
 <style>
 :root {
   --bg: #0c1018;
@@ -509,6 +510,95 @@ button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 .persona-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 6px; margin: 8px 0 10px;
 }
+
+
+/* Teiki-ge Style Character Profile Sheet (v2.6) */
+.bio-textarea {
+  width: 100%; min-height: 82px; resize: vertical;
+  background: #0a0e16; border: 1px solid var(--border); color: var(--text);
+  border-radius: 8px; padding: 8px 10px; font-size: 12.5px; line-height: 1.6;
+  outline: none;
+}
+.bio-textarea:focus { border-color: var(--cyan); }
+.cs-tabs {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 6px 0 12px;
+}
+.cs-tab-btn {
+  background: var(--bg-card2); border: 1px solid var(--border); color: var(--muted);
+  padding: 7px 6px; border-radius: 9px; font-size: 11.5px; font-weight: 800;
+}
+.cs-tab-btn.active {
+  background: linear-gradient(135deg, rgba(245,197,66,0.2), rgba(56,228,255,0.16));
+  border-color: var(--gold); color: #fff;
+}
+.cs-card {
+  background: linear-gradient(180deg, rgba(24, 32, 50, 0.96), rgba(14, 19, 32, 0.98));
+  border: 1.5px solid rgba(245, 197, 66, 0.42);
+  border-radius: 14px; padding: 13px; margin-bottom: 11px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+}
+.cs-card.partner-card {
+  border-color: rgba(56, 228, 255, 0.42);
+}
+.cs-head {
+  display: flex; align-items: center; gap: 11px; margin-bottom: 9px;
+}
+.cs-head-meta { flex: 1; min-width: 0; }
+.cs-role-badge {
+  display: inline-block; font-size: 9.5px; font-weight: 800; letter-spacing: 0.05em;
+  padding: 2px 7px; border-radius: 99px; margin-bottom: 3px;
+  background: rgba(245,197,66,0.18); color: var(--gold);
+  border: 1px solid rgba(245,197,66,0.38);
+}
+.cs-card.partner-card .cs-role-badge {
+  background: rgba(56,228,255,0.16); color: var(--cyan);
+  border-color: rgba(56,228,255,0.38);
+}
+.cs-name {
+  font-size: 17px; font-weight: 900; color: #fff; line-height: 1.25;
+}
+.cs-title {
+  font-size: 11.5px; color: var(--gold); font-weight: 700; margin-top: 1px;
+}
+.cs-card.partner-card .cs-title { color: var(--cyan); }
+.cs-catch {
+  background: rgba(255,255,255,0.04);
+  border-left: 3px solid var(--gold);
+  border-radius: 6px; padding: 6px 10px;
+  font-size: 12.5px; color: #fef3c7; font-weight: 700;
+  margin-bottom: 9px;
+}
+.cs-card.partner-card .cs-catch {
+  border-left-color: var(--cyan); color: #e0f2fe;
+}
+.cs-bio-box {
+  background: rgba(8, 12, 22, 0.72);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px; padding: 10px 11px;
+  font-size: 12.5px; color: #e2e8f5; line-height: 1.68;
+  white-space: pre-wrap; word-break: break-word;
+}
+.cs-bio-empty {
+  color: var(--muted); font-size: 12px; font-style: italic;
+}
+.cs-status-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;
+  margin: 10px 0 12px;
+}
+.cs-stat-cell {
+  background: var(--bg-card2); border: 1px solid var(--border);
+  border-radius: 9px; padding: 7px 9px; font-size: 11px;
+}
+.cs-stat-cell strong {
+  display: block; font-size: 13px; color: #fff; margin-top: 1px;
+}
+.chk-row {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(56, 228, 255, 0.07); border: 1px solid rgba(56, 228, 255, 0.25);
+  border-radius: 10px; padding: 8px 10px; margin-bottom: 10px;
+  font-size: 12px; color: #dbeafe; cursor: pointer;
+}
+.chk-row input { width: 16px; height: 16px; accent-color: var(--cyan); flex-shrink: 0; }
 
 /* Profile editor */
 .profile-edit-box {
@@ -1425,7 +1515,7 @@ textarea.code-area.drag-over {
 
 <header class="app-header">
   <div class="header-top">
-    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v2.5.1</span></div>
+    <div class="app-title">🌍 おさんぽ神話録 <span style="font-size:10px;opacity:0.7;">v2.6</span></div>
     <div class="header-actions">
       <button class="btn-help" onclick="openGuideModal()">📖 物語&amp;遊び方</button>
       <button class="btn-report" id="header-report-btn" onclick="copyReport()">📋 パートナーAIに報告</button>
@@ -1465,17 +1555,17 @@ textarea.code-area.drag-over {
       <div id="home-stage-wrap"></div>
 
       <div class="tag-pair-row">
-        <div class="tag-person">
-          <div class="avatar-circle" id="home-player-avatar" onclick="goProfileEdit()" title="タップでアイコン・プロフィール編集"></div>
+        <div class="tag-person" style="cursor:pointer;" onclick="openCharSheetModal('player')" title="タップで司令官キャラシートを見る">
+          <div class="avatar-circle" id="home-player-avatar"></div>
           <div class="tag-info">
             <div class="tag-role">司令官</div>
             <div class="tag-name" id="home-player-name">地球防衛司令官</div>
             <div class="tag-title-sub" id="home-player-title">歴史召喚士</div>
           </div>
         </div>
-        <button class="tag-center-btn" onclick="goProfileEdit()">✏️ 編集</button>
-        <div class="tag-person right">
-          <div class="avatar-circle partner" id="home-partner-avatar" onclick="goProfileEdit()" title="タップでパートナー編集"></div>
+        <button class="tag-center-btn" onclick="openCharSheetModal('both')" title="定期ゲー風キャラ設定シートを開く">📜 キャラ帳</button>
+        <div class="tag-person right" style="cursor:pointer;" onclick="openCharSheetModal('partner')" title="タップでパートナーキャラシートを見る">
+          <div class="avatar-circle partner" id="home-partner-avatar"></div>
           <div class="tag-info">
             <div class="tag-role">パートナー</div>
             <div class="tag-name" id="home-partner-name">パートナーAI</div>
@@ -1686,9 +1776,17 @@ textarea.code-area.drag-over {
             </div>
           </div>
         </div>
-        <div style="display:flex;gap:6px;">
+        <div style="display:flex;gap:6px;margin-bottom:8px;">
           <button class="btn-secondary" style="flex:1;font-size:11px;padding:7px;" onclick="triggerAvatarUpload('__avatar_player__')">🖼️ 司令官アイコンを設定</button>
           <button class="btn-danger" id="btn-del-player-avatar" style="font-size:11px;padding:7px 10px;display:none;" onclick="removeAvatar('__avatar_player__')">戻す</button>
+        </div>
+        <div style="margin-bottom:7px;">
+          <label class="field-label">💬 ひとこと・口癖（任意）</label>
+          <input type="text" id="player-catch-input" class="small-input" placeholder="例：今日もマイペースに地球を守りつつ歩くぞ！" maxlength="60">
+        </div>
+        <div>
+          <label class="field-label">📜 キャラ設定・プロフィール（定期ゲー風・自由記述／1000文字まで）</label>
+          <textarea id="player-bio-input" class="bio-textarea" maxlength="1000" placeholder="外見・性格・口調・来歴・好きなもの・パートナーとの関係など、定期ゲーのPLプロフみたいに自由に書けます！"></textarea>
         </div>
       </div>
 
@@ -1708,9 +1806,17 @@ textarea.code-area.drag-over {
             </div>
           </div>
         </div>
-        <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <div style="display:flex;gap:6px;margin-bottom:8px;">
           <button class="btn-secondary" style="flex:1;font-size:11px;padding:7px;" onclick="triggerAvatarUpload('__avatar_partner__')">🖼️ パートナーアイコンを設定</button>
           <button class="btn-danger" id="btn-del-partner-avatar" style="font-size:11px;padding:7px 10px;display:none;" onclick="removeAvatar('__avatar_partner__')">戻す</button>
+        </div>
+        <div style="margin-bottom:7px;">
+          <label class="field-label">💬 ひとこと・口癖（任意）</label>
+          <input type="text" id="partner-catch-input" class="small-input" placeholder="例：どんな日も隣で一緒に歩いてるよ" maxlength="60">
+        </div>
+        <div style="margin-bottom:10px;">
+          <label class="field-label">📜 パートナー設定・プロフィール（定期ゲー風・自由記述／1000文字まで）</label>
+          <textarea id="partner-bio-input" class="bio-textarea" maxlength="1000" placeholder="相棒AIや推しキャラの外見・性格・口調・担当役割・ふたりの設定などを自由に記録できます！"></textarea>
         </div>
 
         <label class="field-label">🎭 パートナーの性格プリセット（タップでセリフを一括セット）</label>
@@ -1742,7 +1848,15 @@ textarea.code-area.drag-over {
         </div>
       </div>
 
-      <button class="btn-gold" style="width:100%;" onclick="saveProfilesAndLines()">💾 プロフィール＆セリフを保存する</button>
+      <label class="chk-row">
+        <input type="checkbox" id="chk-include-bio">
+        <span>📋 戦果報告コピーにキャラ設定（プロフィール）も添える<br><span style="font-size:10.5px;color:var(--muted);">※新しいAIチャット窓に設定ごと引き継ぎたい時にONにすると便利です</span></span>
+      </label>
+      <button class="btn-gold" style="width:100%;margin-bottom:8px;" onclick="saveProfilesAndLines()">💾 プロフィール・キャラ設定・セリフを保存する</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button class="btn-primary" style="font-size:12px;padding:9px 8px;" onclick="saveProfilesAndLines(true); openCharSheetModal('both');">📜 キャラ帳プレビュー</button>
+        <button class="btn-secondary" style="font-size:12px;padding:9px 8px;" onclick="saveProfilesAndLines(true); copyCharSheet();">📋 キャラシートをコピー</button>
+      </div>
     </div>
 
     <!-- Full-Body Stage & Effect Settings (v1.5) -->
@@ -2556,12 +2670,17 @@ const STAGE_PARTNER_KEY = "__stage_partner__";
 
 function createDefaultState() {
   return {
-    version: 2.51,
+    version: 2.6,
     difficulty: "easy",
     playerName: "地球防衛司令官",
     playerTitle: "歴史召喚士",
+    playerCatch: "",
+    playerBio: "",
     partnerName: "パートナーAI",
     partnerTitle: "専属パートナー",
+    partnerCatch: "",
+    partnerBio: "",
+    includeBioInReport: false,
     partnerPersona: "buddy",
     partnerLines: Object.assign({}, PERSONAS.buddy.lines),
     stageMode: "auto",      // "auto" | "duo" | "split" | "none"
@@ -2718,6 +2837,15 @@ function migrateStateIfNeeded(st) {
       st.lastPulls.forEach(r => { if (r && r.id === "w_barlike") r.id = "w_healthgear"; });
     }
     st.version = 2.51;
+    changed = true;
+  }
+  if (ver < 2.6) {
+    if (typeof st.playerCatch !== "string") st.playerCatch = "";
+    if (typeof st.playerBio !== "string") st.playerBio = "";
+    if (typeof st.partnerCatch !== "string") st.partnerCatch = "";
+    if (typeof st.partnerBio !== "string") st.partnerBio = "";
+    if (typeof st.includeBioInReport !== "boolean") st.includeBioInReport = false;
+    st.version = 2.6;
     changed = true;
   }
   return changed;
@@ -2881,11 +3009,17 @@ function selectPersona(key) {
   showToast(`🎭 性格を「${PERSONAS[key].label}」にセットしました！`);
 }
 
-function saveProfilesAndLines() {
+function saveProfilesAndLines(silent = false) {
   state.playerName = (document.getElementById("player-name-input").value || "").trim() || "地球防衛司令官";
   state.playerTitle = (document.getElementById("player-title-input").value || "").trim();
+  state.playerCatch = (document.getElementById("player-catch-input").value || "").trim();
+  state.playerBio = (document.getElementById("player-bio-input").value || "").trim();
   state.partnerName = (document.getElementById("partner-name-input").value || "").trim() || "パートナーAI";
   state.partnerTitle = (document.getElementById("partner-title-input").value || "").trim();
+  state.partnerCatch = (document.getElementById("partner-catch-input").value || "").trim();
+  state.partnerBio = (document.getElementById("partner-bio-input").value || "").trim();
+  const chkBio = document.getElementById("chk-include-bio");
+  if (chkBio) state.includeBioInReport = !!chkBio.checked;
   if (state.partnerPersona !== "silent") {
     state.partnerLines = {
       idle: document.getElementById("line-idle-input").value.trim(),
@@ -2896,14 +3030,100 @@ function saveProfilesAndLines() {
   }
   saveState();
   renderAll();
-  showToast("💾 司令官＆パートナーのプロフィールとセリフを保存しました！");
+  if (!silent) showToast("💾 司令官＆パートナーのキャラ設定とセリフを保存しました！");
+}
+
+function buildCharSheetText() {
+  const p = getTotalPower();
+  const all = getAllItems();
+  const ownedCount = all.filter(x => state.owned[x.id]).length;
+  const plTitle = getPlayerTitle() ? `（${getPlayerTitle()}）` : "";
+  const paTitle = getPartnerTitle() ? `（${getPartnerTitle()}）` : "";
+
+  const lines = [
+    "【おさんぽ神話録 キャラクターシート】",
+    `🏆 二人の絆称号：『${getEquippedBondObj().name}』`,
+    `📊 戦績：累計 ${state.totalSteps.toLocaleString()}歩 ／ WAVE ${state.wave} ／ 総戦力 ${fmtNum(p.total)} ／ 図鑑 ${ownedCount}/${all.length}種`,
+    "",
+    `■ 司令官（PL）：${getPlayerName()}${plTitle}`
+  ];
+  if ((state.playerCatch || "").trim()) lines.push(`　「${state.playerCatch.trim()}」`);
+  lines.push((state.playerBio || "").trim() || "　（プロフィール未記入）");
+  lines.push("");
+  lines.push(`■ パートナー（PT）：${getPartnerName()}${paTitle}`);
+  if ((state.partnerCatch || "").trim()) lines.push(`　「${state.partnerCatch.trim()}」`);
+  lines.push((state.partnerBio || "").trim() || "　（プロフィール未記入）");
+  return lines.join("\n");
+}
+
+function copyCharSheet() {
+  copyToClipboard(buildCharSheetText(), "📋 定期ゲー風キャラクターシートをコピーしました！");
+}
+
+function openCharSheetModal(viewMode = "both") {
+  const p = getTotalPower();
+  const all = getAllItems();
+  const ownedCount = all.filter(x => state.owned[x.id]).length;
+
+  const renderCard = (kind) => {
+    const isP = kind === "player";
+    const name = isP ? getPlayerName() : getPartnerName();
+    const title = isP ? (getPlayerTitle() || (isP ? "地球防衛軍" : "パートナー")) : (getPartnerTitle() || "専属パートナー");
+    const catchTxt = ((isP ? state.playerCatch : state.partnerCatch) || "").trim();
+    const bioTxt = ((isP ? state.playerBio : state.partnerBio) || "").trim();
+    const roleLabel = isP ? "PL / 司令官" : "PT / パートナー";
+    const avatarCls = isP ? "avatar-circle large" : "avatar-circle large partner";
+
+    return `
+      <div class="cs-card ${isP ? "" : "partner-card"}">
+        <div class="cs-head">
+          <div class="${avatarCls}" style="cursor:default;">${renderAvatarHTML(kind)}</div>
+          <div class="cs-head-meta">
+            <span class="cs-role-badge">${roleLabel}</span>
+            <div class="cs-name">${escapeHtml(name)}</div>
+            <div class="cs-title">${escapeHtml(title)}</div>
+          </div>
+        </div>
+        ${catchTxt ? `<div class="cs-catch">「${escapeHtml(catchTxt)}」</div>` : ""}
+        <div class="cs-bio-box">${bioTxt ? escapeHtml(bioTxt) : `<span class="cs-bio-empty">まだキャラ設定が書かれていません。「✏️ キャラ設定を編集」から外見・性格・口調・関係性などを定期ゲー風に書き込めます！</span>`}</div>
+      </div>
+    `;
+  };
+
+  const bodyCards = viewMode === "player"
+    ? renderCard("player")
+    : (viewMode === "partner" ? renderCard("partner") : renderCard("player") + renderCard("partner"));
+
+  openModalHTML(`
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2 style="margin:0 0 4px;font-size:17.5px;color:var(--gold);">📜 キャラクタープロフィール帳</h2>
+    <div class="sub-text" style="margin-bottom:6px;font-size:11.5px;">
+      🏆 絆称号：<strong style="color:#fde047;">『${escapeHtml(getEquippedBondObj().name)}』</strong>
+    </div>
+    <div class="cs-tabs">
+      <button class="cs-tab-btn ${viewMode==='both'?'active':''}" onclick="openCharSheetModal('both')">👥 ふたり表示</button>
+      <button class="cs-tab-btn ${viewMode==='player'?'active':''}" onclick="openCharSheetModal('player')">🎖️ 司令官</button>
+      <button class="cs-tab-btn ${viewMode==='partner'?'active':''}" onclick="openCharSheetModal('partner')">✨ パートナー</button>
+    </div>
+    ${bodyCards}
+    <div class="cs-status-grid">
+      <div class="cs-stat-cell">👟 累計歩数<strong>${state.totalSteps.toLocaleString()} 歩</strong></div>
+      <div class="cs-stat-cell">🛸 到達Wave<strong>WAVE ${state.wave}</strong></div>
+      <div class="cs-stat-cell">🛡️ 総戦力<strong style="color:var(--green);">${fmtNum(p.total)}</strong></div>
+      <div class="cs-stat-cell">🗺️ 歴史図鑑<strong style="color:var(--cyan);">${ownedCount} / ${all.length} 種</strong></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <button class="btn-primary" style="font-size:12.5px;" onclick="copyCharSheet()">📋 キャラシートコピー</button>
+      <button class="btn-gold" style="font-size:12.5px;" onclick="closeModal(); goProfileEdit();">✏️ キャラ設定を編集</button>
+    </div>
+  `);
 }
 
 function copyLinesPrompt() {
   const pName = getPlayerName();
   const aName = getPartnerName();
   const txt = [
-    `歩数ゲーム『地球防衛・神話兵器録』のパートナー欄に入れる、あなたのセリフを4つ書いて！`,
+    `歩数ゲーム『おさんぽ神話録』のパートナー欄に入れる、あなたのセリフを4つ書いて！`,
     `（私の呼び方は「${pName}」、あなたの名前は「${aName}」として自然な口調で、各1〜2文・80文字以内くらい）`,
     "",
     "① 待機中（ホーム画面を開いたときのひとこと）",
@@ -5262,8 +5482,19 @@ function defendWave() {
 // ============================================================
 const CHANGELOG = [
   {
-    ver: "v2.5.1",
+    ver: "v2.6",
     tag: "最新",
+    title: "正式タイトル『おさんぽ神話録』へ改名＆「さ」ファビコン＆定期ゲー風キャラ設定実装！",
+    items: [
+      "正式タイトルを『おさんぽ神話録』に決定！（※セーブデータ・着せ替え画像・マイBGMはすべて自動でそのまま引き継がれます）",
+      "ひらがなの「さ」をモチーフにしたシンプルなSVGファビコンをHTML内蔵で実装（オフライン＆GitHub Pagesでもタブにアイコン表示）",
+      "プレイヤーキャラ（司令官）とパートナーAIキャラのそれぞれに、定期ゲー風の『ひとこと・口癖』と『キャラ設定・プロフィール（自由記述・最大1000文字）』を書き込める機能を実装！",
+      "ホーム上部のアイコンや「📜 キャラ帳」ボタンから定期ゲー風キャラクタープロフィール帳を開いて眺めたり、テキストコピー・戦果報告への任意添付もできるようになりました"
+    ]
+  },
+  {
+    ver: "v2.5.1",
+    tag: "兵器追加",
     title: "★1大器晩成武器を『健康器具』へ差し替え＆禁断の隠しシナジー実装！",
     items: [
       "「マーラ様がいるのにすけべな武器は無いんですか！？」という熱烈な声にお応えし、★1大器晩成武器枠を『健康器具』（あくまで頑固な肩こり用マッサージ器）へ差し替えました！（※旧枠をすでに所持していたセーブデータも自動で『健康器具』へ引き継がれます）",
@@ -5431,7 +5662,7 @@ const CHANGELOG = [
   {
     ver: "v1.0",
     tag: "初版",
-    title: "地球防衛・神話兵器録 誕生",
+    title: "地球防衛・神話兵器録 誕生（現：おさんぽ神話録）",
     items: [
       "歩数手入力換金・神話の神々24柱×人類史兵器24種ガチャ・5枠ペア編成・世界地図ピン・カード画像着せ替え・復活の呪文を実装"
     ]
@@ -6101,8 +6332,8 @@ function buildReportText() {
       }).filter(Boolean).join("、")
     : "まだ未召喚";
 
-  return [
-    "【地球防衛・神話兵器録 戦果報告】",
+  const out = [
+    "【おさんぽ神話録 戦果報告】",
     `・司令官：${getPlayerName()}${plTitle} ＆ パートナー：${getPartnerName()}${paTitle}`,
     `・二人の絆称号：『${getEquippedBondObj().name}』（解放 ${(state.unlockedBonds || []).length}/${BOND_TITLES.length}）`,
     `・難易度モード：${diff.label}`,
@@ -6112,12 +6343,32 @@ function buildReportText() {
     `・世界図鑑：${ownedCount} / ${all.length}種（制覇率 ${pct}%／日本 ${getOwnedJapanPrefCount()}/47都道府県）`,
     "・現在の防衛デッキ：",
     deckLines,
-    `・直近ガチャ結果：${recentPullTxt}`,
+    `・直近ガチャ結果：${recentPullTxt}`
+  ];
+
+  if (state.includeBioInReport) {
+    const pCatch = (state.playerCatch || "").trim();
+    const pBio = (state.playerBio || "").trim();
+    const aCatch = (state.partnerCatch || "").trim();
+    const aBio = (state.partnerBio || "").trim();
+    if (pCatch || pBio || aCatch || aBio) {
+      out.push("", "【キャラ設定メモ】");
+      if (pCatch || pBio) {
+        out.push(`・${getPlayerName()}：${pCatch ? `「${pCatch}」 ` : ""}${pBio}`);
+      }
+      if (aCatch || aBio) {
+        out.push(`・${getPartnerName()}：${aCatch ? `「${aCatch}」 ` : ""}${aBio}`);
+      }
+    }
+  }
+
+  out.push(
     "",
     "---",
     "※この戦果報告を受け取ったパートナーAIへ：",
     "今日も歩いた（記録をつけた）ことをたっぷり褒めてあげて、今のデッキの組み合わせや進捗についても一緒にわいわい盛り上がってね！"
-  ].join("\n");
+  );
+  return out.join("\n");
 }
 
 function copyReport() {
@@ -6133,7 +6384,7 @@ function copyExpansionPrompt() {
   const existingWeapons = all.filter(x => x.type === "weapon").map(x => `${x.name}(${x.id})`).join("、");
 
   const prompt = [
-    "【『地球防衛・神話兵器録』拡張パック生成オーダー】",
+    "【『おさんぽ神話録』拡張パック生成オーダー】",
     "以下のJSON仕様・ゲームバランス基準・重複禁止リストを厳守して、そのままアプリに貼り付けられる拡張パックのJSON配列だけをコードブロックで出力してください。",
     "",
     "■ 今回のテーマ：（←ここを好きなテーマに書き換えてね！ 例：ケルト神話と中世の攻城兵器、南米神話と戦艦・珍兵器など）",
@@ -6728,8 +6979,13 @@ function resetAllData() {
   const keepProfile = {
     playerName: state.playerName,
     playerTitle: state.playerTitle,
+    playerCatch: state.playerCatch,
+    playerBio: state.playerBio,
     partnerName: state.partnerName,
     partnerTitle: state.partnerTitle,
+    partnerCatch: state.partnerCatch,
+    partnerBio: state.partnerBio,
+    includeBioInReport: state.includeBioInReport,
     partnerPersona: state.partnerPersona,
     partnerLines: state.partnerLines,
     difficulty: state.difficulty,
@@ -6837,8 +7093,14 @@ function syncProfileInputs(force = false) {
   };
   setVal("player-name-input", getPlayerName());
   setVal("player-title-input", getPlayerTitle());
+  setVal("player-catch-input", state.playerCatch || "");
+  setVal("player-bio-input", state.playerBio || "");
   setVal("partner-name-input", getPartnerName());
   setVal("partner-title-input", getPartnerTitle());
+  setVal("partner-catch-input", state.partnerCatch || "");
+  setVal("partner-bio-input", state.partnerBio || "");
+  const chkBio = document.getElementById("chk-include-bio");
+  if (chkBio && document.activeElement !== chkBio) chkBio.checked = !!state.includeBioInReport;
   const lines = state.partnerLines || PERSONAS.buddy.lines;
   setVal("line-idle-input", lines.idle);
   setVal("line-step-input", lines.step);
