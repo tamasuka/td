@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0d111a">
-<title>地球防衛・神話兵器録 v2.5</title>
+<title>地球防衛・神話兵器録 v2.5.1</title>
 <style>
 :root {
   --bg: #0c1018;
@@ -1425,7 +1425,7 @@ textarea.code-area.drag-over {
 
 <header class="app-header">
   <div class="header-top">
-    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v2.5</span></div>
+    <div class="app-title">🌍 地球防衛・神話兵器録 <span style="font-size:10px;opacity:0.7;">v2.5.1</span></div>
     <div class="header-actions">
       <button class="btn-help" onclick="openGuideModal()">📖 物語&amp;遊び方</button>
       <button class="btn-report" id="header-report-btn" onclick="copyReport()">📋 パートナーAIに報告</button>
@@ -2486,11 +2486,11 @@ const BASE_ITEMS = [
     lore: "『敵が来たらヤバいけどウチに戦車がない！ よし、トラクターに屋根用のトタン板を貼り付けて軽機関銃を6挺ぶっ刺そう！』とニュージーランドの建設大臣が気合で急造した伝説のDIY戦車。ギアを変えるたびにいちいち完全停車が必要で、乗員はマットレスの上で寝そべって撃つ愛すべき珍作。"
   },
   {
-    id: "w_barlike", type: "weapon", name: "バールのようなもの", rarity: 1, baseAtk: 4, lateBloomer: true,
-    awakeSkill: "all_dex_mult", awakeTitle: "報道規制の物理突破",
-    awakeDesc: "【Lv.10覚醒】図鑑の全発見数（神様＋兵器）× 18% をこの武器の乗算火力に加算！（あらゆる概念と鍵をこじ開ける）",
-    group: "現代兵器", region: "日本（現場付近）", lat: 35.69, lon: 139.69,
-    lore: "日本の報道番組でなぜか必ず『バール』と言い切られず、絶妙な曖昧さをまとって登場する謎の物理ツール。一見ただのホームセンター工具（鉄の棒）だが、テコの原理という宇宙の絶対物理を体現しており、Lv.10で覚醒すると鍵も城門も宇宙戦艦のハッチも片っ端からこじ開ける最強の概念兵器へ変貌する。"
+    id: "w_healthgear", type: "weapon", name: "健康器具", rarity: 1, baseAtk: 4, lateBloomer: true,
+    awakeSkill: "all_dex_mult", awakeTitle: "超絶ハイパワー・煩悩共振モード",
+    awakeDesc: "【Lv.10覚醒】図鑑の全発見数（神様＋兵器）× 18% をこの武器の乗算火力に加算！（最強レベルの微振動で宇宙戦艦の装甲すらほぐし落とす）",
+    group: "現代兵器", region: "日本（家電量販店の奥）", lat: 35.70, lon: 139.77,
+    lore: "あくまで頑固な肩こりと腰の疲れをほぐすための家庭用マッサージ器（無段階ダイヤル＋謎の波状パルス機能付き）である。誰が何と言おうと健全な健康器具である。通販の段ボールには『精密機械』と記載されて届く仕様。なぜかヤマタノオロチンチンと並べて編成すると異様なほど親和性が高く、Lv.10で覚醒すると毎分1万回超の禁忌振動で敵宇宙戦艦のボルトごと理性を緩め落とす。"
   }
 ];
 
@@ -2556,7 +2556,7 @@ const STAGE_PARTNER_KEY = "__stage_partner__";
 
 function createDefaultState() {
   return {
-    version: 2.5,
+    version: 2.51,
     difficulty: "easy",
     playerName: "地球防衛司令官",
     playerTitle: "歴史召喚士",
@@ -2699,6 +2699,25 @@ function migrateStateIfNeeded(st) {
   }
   if (ver < 2.5) {
     st.version = 2.5;
+    changed = true;
+  }
+  if (ver < 2.51) {
+    if (st.owned && st.owned.w_barlike) {
+      if (!st.owned.w_healthgear) {
+        st.owned.w_healthgear = st.owned.w_barlike;
+      } else {
+        st.owned.w_healthgear.lv = Math.max(st.owned.w_healthgear.lv || 1, st.owned.w_barlike.lv || 1);
+        st.owned.w_healthgear.dup = (st.owned.w_healthgear.dup || 0) + (st.owned.w_barlike.dup || 0) + 1;
+      }
+      delete st.owned.w_barlike;
+    }
+    if (Array.isArray(st.deck)) {
+      st.deck.forEach(s => { if (s && s.weapon === "w_barlike") s.weapon = "w_healthgear"; });
+    }
+    if (Array.isArray(st.lastPulls)) {
+      st.lastPulls.forEach(r => { if (r && r.id === "w_barlike") r.id = "w_healthgear"; });
+    }
+    st.version = 2.51;
     changed = true;
   }
   return changed;
@@ -3787,6 +3806,10 @@ function getSlotPower(slot) {
     if (gReg && wReg && gReg === wReg) {
       total *= 1.15;
       tags.push(`地元シナジー(${gReg}) ×1.15`);
+    }
+    if (g.id === "g_orochinchin" && w.id === "w_healthgear") {
+      total *= 1.19;
+      tags.push("🔞 禁断の煩悩シナジー ×1.19");
     }
     if (w.awakeSkill === "pair_boost" && (state.owned[w.id].lv || 1) >= 10) {
       total *= 3.8;
@@ -5168,7 +5191,7 @@ function defendWave() {
   const wName = sample && sample.weapon ? getItemById(sample.weapon)?.name : "得体の知れない兵器";
   const hasPanja = state.deck.some(s => s.weapon === "w_panjandrum");
   const hasOrochin = state.deck.some(s => s.god === "g_orochinchin");
-  const hasBarlike = state.deck.some(s => s.weapon === "w_barlike");
+  const hasHealthGear = state.deck.some(s => s.weapon === "w_healthgear");
   const plName = escapeHtml(getPlayerName());
 
   const lines = [
@@ -5178,11 +5201,15 @@ function defendWave() {
   ];
   let speech = lines[state.wave % lines.length];
   const specials = [];
-  if (hasOrochin) {
-    specials.push(`「うわああああ！！ 画面にモザイクをかけろ！！ <strong>ヤマタノオロチンチン</strong>が緑の黄金戦車でこっちへ突っ込んでくるぞ！！ 放送コード違反だ！！ 全艦、直ちに目を逸らして撤退ーッ！！」`);
-  }
-  if (hasBarlike) {
-    specials.push(`「おい待て！！ <strong>${escapeHtml(gName)}</strong>が<strong>バールのようなもの</strong>でウチの最新宇宙戦艦のハッチを普通にこじ開けようとしているぞ！！ 物理のテコに勝てるわけないだろ！！ 撤退だ撤退ーッ！！」`);
+  if (hasOrochin && hasHealthGear) {
+    specials.push(`「やめろおおおおお！！ <strong>ヤマタノオロチンチン</strong>と<strong>健康器具</strong>を同時にフィールドに出すなあああ！！ 完全にR-18指定で銀河連邦からBANされる！！ 光学センサーを全部閉じろ！！ 総員、目と耳を塞いで超光速撤退ーッ！！」`);
+  } else {
+    if (hasOrochin) {
+      specials.push(`「うわああああ！！ 画面にモザイクをかけろ！！ <strong>ヤマタノオロチンチン</strong>が緑の黄金戦車でこっちへ突っ込んでくるぞ！！ 放送コード違反だ！！ 全艦、直ちに目を逸らして撤退ーッ！！」`);
+    }
+    if (hasHealthGear) {
+      specials.push(`「うわああああ！！ なんで<strong>${escapeHtml(gName)}</strong>が<strong>健康器具</strong>を最大出力でこっちに向けて構えているんだ！？ しかも妙なリズムでブゥンブゥン唸ってるぞ！！ うちの戦艦の装甲ボルトまで全部緩んで外れてきた！！ 変な意味で放送できない！！ 撤退ーッ！！」`);
+    }
   }
   if (hasPanja) {
     specials.push(`「やめろおおお！！ <strong>${escapeHtml(gName)}</strong>が<strong>パンジャンドラム</strong>に火をつけたぞ！！ どこに飛んでくるか計算できなくて逆に一番怖いんだわ！！ 逃げるぞーッ！！」`);
@@ -5235,8 +5262,18 @@ function defendWave() {
 // ============================================================
 const CHANGELOG = [
   {
-    ver: "v2.5",
+    ver: "v2.5.1",
     tag: "最新",
+    title: "★1大器晩成武器を『健康器具』へ差し替え＆禁断の隠しシナジー実装！",
+    items: [
+      "「マーラ様がいるのにすけべな武器は無いんですか！？」という熱烈な声にお応えし、★1大器晩成武器枠を『健康器具』（あくまで頑固な肩こり用マッサージ器）へ差し替えました！（※旧枠をすでに所持していたセーブデータも自動で『健康器具』へ引き継がれます）",
+      "『ヤマタノオロチンチン × 健康器具』をペア編成すると発動する隠し効果『🔞 禁断の煩悩シナジー ×1.19』を実装！",
+      "『健康器具』単体編成時および『ヤマタノオロチンチン＋健康器具』同時編成時のトンチキ王専用パニック台詞を追加しました"
+    ]
+  },
+  {
+    ver: "v2.5",
+    tag: "ガチャ増量",
     title: "ガチャ大幅増量アプデ！（神々10柱＆神話・珍兵器10種の計20種を追加・全68種へ）",
     items: [
       "神話の神々10柱を追加：ホルス(★5)、トト(★4)、タカオカミ(★4)、ベス(★3)、ケプリ(★3)、アメノウズメ(★3)、パズズ(★3)、カマプアア(★2)、ロビグス(★2)、そして謎の★1大器晩成ネタ枠『ヤマタノオロチンチン』！",
