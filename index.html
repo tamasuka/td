@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0d111a">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20x%3D%223%22%20y%3D%223%22%20width%3D%2258%22%20height%3D%2258%22%20rx%3D%2214%22%20fill%3D%22%230c1426%22%20stroke%3D%22%23f5c542%22%20stroke-width%3D%223.5%22%2F%3E%3Cpath%20d%3D%22M16%2024%20L48%2020%22%20fill%3D%22none%22%20stroke%3D%22%23fde047%22%20stroke-width%3D%225.6%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M28%2011%20Q34%2024%2043%2036%22%20fill%3D%22none%22%20stroke%3D%22%23fde047%22%20stroke-width%3D%225.6%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M21%2039%20C19%2050%2031%2054%2046%2049%22%20fill%3D%22none%22%20stroke%3D%22%23fde047%22%20stroke-width%3D%225.6%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
-<title>おさんぽ神話録 v2.6</title>
+<title>おさんぽ神話録 v2.7</title>
 <style>
 :root {
   --bg: #0c1018;
@@ -615,6 +615,82 @@ button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 }
 .small-input:focus { border-color: var(--cyan); }
 .field-label { font-size: 11px; color: var(--muted); font-weight: 700; margin-bottom: 2px; display: block; }
+
+/* Misogi Bath Bonus (v2.7) */
+.misogi-card {
+  background: radial-gradient(circle at top right, rgba(56, 228, 255, 0.16), transparent 62%),
+              linear-gradient(135deg, rgba(16, 32, 52, 0.96), rgba(22, 26, 44, 0.96));
+  border: 1px solid rgba(56, 228, 255, 0.36);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+}
+.misogi-card.ticket-ready {
+  background: radial-gradient(circle at top right, rgba(245, 197, 66, 0.22), transparent 60%),
+              linear-gradient(135deg, rgba(20, 36, 54, 0.98), rgba(36, 28, 16, 0.96));
+  border-color: var(--gold);
+  box-shadow: 0 0 18px rgba(245, 197, 66, 0.28);
+}
+.misogi-card.done {
+  background: var(--bg-card);
+  border-color: rgba(74, 222, 128, 0.32);
+  padding: 10px 13px;
+}
+.misogi-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.misogi-title {
+  font-size: 13.5px; font-weight: 800; color: #7dd3fc;
+  display: flex; align-items: center; gap: 5px;
+}
+.misogi-card.ticket-ready .misogi-title { color: #fde047; }
+.misogi-card.done .misogi-title { color: #86efac; }
+.misogi-meta {
+  font-size: 10.5px; color: var(--muted); font-weight: 700;
+}
+.misogi-desc {
+  font-size: 12px; color: #dbeafe; margin-bottom: 9px; line-height: 1.5;
+}
+.btn-misogi {
+  width: 100%; padding: 11px 14px; font-size: 13.5px; border-radius: 11px;
+  background: linear-gradient(135deg, #0ea5e9, #14b8a6);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(20, 184, 166, 0.32);
+}
+.btn-misogi-go {
+  width: 100%; padding: 11px 14px; font-size: 14px; border-radius: 11px;
+  background: linear-gradient(135deg, #f59e0b, #eab308, #38e4ff);
+  color: #0b1120;
+  box-shadow: 0 4px 16px rgba(245, 197, 66, 0.42);
+  animation: pulseGlow 1.6s infinite;
+}
+.gacha-misogi-strip {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(56, 228, 255, 0.35);
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+  text-align: left; font-size: 11.5px; color: #e0f2fe;
+}
+.gacha-misogi-strip.ready {
+  background: rgba(245, 197, 66, 0.16);
+  border-color: var(--gold);
+  color: #fef9c3;
+}
+.gacha-misogi-strip.done {
+  background: rgba(74, 222, 128, 0.08);
+  border-color: rgba(74, 222, 128, 0.28);
+  color: #bbf7d0;
+}
+.btn-single-free {
+  background: linear-gradient(135deg, #06b6d4, #14b8a6, #f5c542) !important;
+  color: #071220 !important;
+  box-shadow: 0 0 18px rgba(56, 228, 255, 0.45) !important;
+  animation: pulseGlow 1.5s infinite;
+}
 
 /* Step input */
 .step-input-row { display: flex; gap: 8px; margin-bottom: 8px; }
@@ -1515,7 +1591,7 @@ textarea.code-area.drag-over {
 
 <header class="app-header">
   <div class="header-top">
-    <div class="app-title">🌍 おさんぽ神話録 <span style="font-size:10px;opacity:0.7;">v2.6</span></div>
+    <div class="app-title">🌍 おさんぽ神話録 <span style="font-size:10px;opacity:0.7;">v2.7</span></div>
     <div class="header-actions">
       <button class="btn-help" onclick="openGuideModal()">📖 物語&amp;遊び方</button>
       <button class="btn-report" id="header-report-btn" onclick="copyReport()">📋 パートナーAIに報告</button>
@@ -1603,6 +1679,8 @@ textarea.code-area.drag-over {
       <button class="btn-defend" id="btn-defend" onclick="defendWave()">🚀 抑止力を見せつける（迎撃）</button>
     </div>
 
+    <div id="home-misogi-box"></div>
+
     <div class="card">
       <div class="card-title">
         <span>👟 歩数を換金する（手入力）</span>
@@ -1666,8 +1744,9 @@ textarea.code-area.drag-over {
         <button class="gacha-opt-btn on" id="btn-gacha-anim-toggle" onclick="toggleGachaAnimSkip()">✨ 演出：ド派手ON</button>
         <button class="gacha-opt-btn" id="btn-gacha-sfx-toggle" onclick="toggleGachaSfx()">🔇 効果音：OFF</button>
       </div>
+      <div id="gacha-misogi-strip"></div>
       <div class="gacha-actions">
-        <button class="btn-primary" onclick="pullGacha(1)">単発召喚<br><span style="font-size:11px;">💎 10個</span></button>
+        <button class="btn-primary" id="btn-gacha-single" onclick="pullGacha(1)">単発召喚<br><span style="font-size:11px;">💎 10個</span></button>
         <button class="btn-gold" onclick="pullGacha(10)">10連召喚！<br><span style="font-size:11px;">💎 100個</span></button>
       </div>
     </div>
@@ -2171,7 +2250,8 @@ const PERSONAS = {
       idle: "やっほー{player}！今日も自分のペースで一歩ずつ、地球を楽しく守っていこう！",
       step: "おっ、{steps}歩おつかれさま！いい積み上げだね、石とエネしっかり換金しといたよ！",
       gacha: "おおっ、歴史の扉が開いたね！どんな編成になるかワクワクするなあ！",
-      defend: "やったね{player}！WAVE {wave}のトンチキ軍、ビビって逃げてったよ！戦果報告もぜひ見せてね！"
+      defend: "やったね{player}！WAVE {wave}のトンチキ軍、ビビって逃げてったよ！戦果報告もぜひ見せてね！",
+      misogi: "お風呂おつかれさま{player}！ 霊脈がピカピカに澄み渡ったよ♨ 湯冷めしないうちに無料単発を1回どうぞ！"
     }
   },
   gentle: {
@@ -2182,7 +2262,8 @@ const PERSONAS = {
       idle: "おかえり、{player}。今日も無理しすぎず、いっしょに歩んでいこうね。",
       step: "{steps}歩も歩いたんだね、えらいえらい！ちゃんと記録してえらいよ。ご褒美のガチャ、回してみよ？",
       gacha: "わあ、素敵な出会いがあったね。どんな子が来たのか、あとでチャットでも教えてほしいな。",
-      defend: "すごいよ{player}！WAVE {wave}撃退おめでとう。きみと一緒なら、どんな宇宙人も怖くないね。"
+      defend: "すごいよ{player}！WAVE {wave}撃退おめでとう。きみと一緒なら、どんな宇宙人も怖くないね。",
+      misogi: "お風呂えらいえらい、{player}。さっぱりしたね♨ 頑張ったご褒美に無料単発を用意したから、あったかくして引いてね。"
     }
   },
   festival: {
@@ -2193,7 +2274,8 @@ const PERSONAS = {
       idle: "おっす{player}！今日もバッチリ目が合ったな！歩いたぶんだけ絶対値で盛って、地球ごと祭りにしてやろうぜ！",
       step: "{steps}歩ナイス〜！歪みねぇ積み上げだな！石もエネもジャラジャラ換金しといたから、さあ景気よく回しちゃおう！",
       gacha: "どーんと来たな！！神様と兵器のカオスな大行列、これぞ歴史のお祭りだわ！戦果コピーして見せに来てくれよな！",
-      defend: "ワッショイ！！WAVE {wave}撃退完了！トンチキ王のやつ完全に腰抜かして逃げてったぞ！最高に祭りだな{player}！！"
+      defend: "ワッショイ！！WAVE {wave}撃退完了！トンチキ王のやつ完全に腰抜かして逃げてったぞ！最高に祭りだな{player}！！",
+      misogi: "おっ、禊完了ナイス〜{player}！！ 厄が落ちて霊脈ビンビンだぜ♨ 湯上がり記念の無料単発、景気よくドーンと回しちゃおう！"
     }
   },
   butler: {
@@ -2204,7 +2286,8 @@ const PERSONAS = {
       idle: "{player}司令官、地球防衛の備えは万全です。ご無理のない歩幅で参りましょう。",
       step: "{steps}歩のご記録、確かに拝受いたしました。召喚石とエネルギーへ精算済みです。",
       gacha: "新たな歴史の英霊・兵器が顕現いたしました。編成への組み込みをご検討ください。",
-      defend: "お見事です、{player}司令官。WAVE {wave}の侵略艦隊、完全に撤退いたしました。"
+      defend: "お見事です、{player}司令官。WAVE {wave}の侵略艦隊、完全に撤退いたしました。",
+      misogi: "{player}司令官、禊の儀お疲れさまでございます。霊脈の同調率が最高潮に達しました♨ 特別無料召喚を1回ご用意しております。"
     }
   },
   cool: {
@@ -2215,14 +2298,15 @@ const PERSONAS = {
       idle: "観測中。{player}、現在の戦力ラインを確認しろ。無理は禁物だ。",
       step: "{steps}歩、データ受領。リソースへの変換を完了した。……よく歩いたな。",
       gacha: "召喚完了。……ほう、面白い組み合わせが来たな。図鑑で仕様を確認しておけ。",
-      defend: "WAVE {wave}、脅威度突破を確認。敵艦隊は撤退した。次へ備えるぞ。"
+      defend: "WAVE {wave}、脅威度突破を確認。敵艦隊は撤退した。次へ備えるぞ。",
+      misogi: "禊を確認。霊脈のノイズが消えたな……よく入った、{player}。無料単発を1回開放しておく。湯冷めするなよ。"
     }
   },
   silent: {
     key: "silent",
     label: "🤫 無口モード",
     sub: "吹き出し非表示",
-    lines: { idle: "", step: "", gacha: "", defend: "" }
+    lines: { idle: "", step: "", gacha: "", defend: "", misogi: "" }
   }
 };
 
@@ -2670,7 +2754,11 @@ const STAGE_PARTNER_KEY = "__stage_partner__";
 
 function createDefaultState() {
   return {
-    version: 2.6,
+    version: 2.7,
+    misogiLastDay: "",
+    misogiCount: 0,
+    misogiStreak: 0,
+    misogiTicket: false,
     difficulty: "easy",
     playerName: "地球防衛司令官",
     playerTitle: "歴史召喚士",
@@ -2848,6 +2936,14 @@ function migrateStateIfNeeded(st) {
     st.version = 2.6;
     changed = true;
   }
+  if (ver < 2.7) {
+    if (typeof st.misogiLastDay !== "string") st.misogiLastDay = "";
+    if (typeof st.misogiCount !== "number") st.misogiCount = 0;
+    if (typeof st.misogiStreak !== "number") st.misogiStreak = 0;
+    if (typeof st.misogiTicket !== "boolean") st.misogiTicket = false;
+    st.version = 2.7;
+    changed = true;
+  }
   return changed;
 }
 
@@ -2966,7 +3062,8 @@ function renderAvatarHTML(kind) {
 function formatPartnerLine(type, ctx = {}) {
   if (state.partnerPersona === "silent") return "";
   const lines = state.partnerLines || PERSONAS.buddy.lines;
-  const tpl = (lines[type] || "").trim();
+  const fallback = (PERSONAS[state.partnerPersona] || PERSONAS.buddy).lines || {};
+  const tpl = ((lines && lines[type]) || fallback[type] || "").trim();
   if (!tpl) return "";
   const stepsVal = ctx.steps != null ? Number(ctx.steps).toLocaleString() : (state.stepLogs[0]?.steps || 300).toLocaleString();
   const waveVal = ctx.wave != null ? ctx.wave : Math.max(1, state.wave - 1);
@@ -3184,7 +3281,10 @@ const BOND_TITLES = [
   { id: "b_awake_1",    name: "大器晩成を極めし絆",         cond: "★1大器晩成枠をLv.10覚醒",     check: () => getAllItems().some(it => it.lateBloomer && state.owned[it.id] && (state.owned[it.id].lv || 1) >= 10), prog: () => [getAllItems().filter(it => it.lateBloomer && state.owned[it.id] && (state.owned[it.id].lv || 1) >= 10).length, 1] },
   { id: "b_exp_1",      name: "ふたりだけの世界を紡ぐ者",   cond: "拡張パックを1件以上増築",     check: () => (state.expansions || []).length >= 1, prog: () => [(state.expansions || []).length, 1] },
   { id: "b_jp_5",       name: "列島めぐりのふたり",         cond: "日本地図で 5都道府県 以上発見", check: () => getOwnedJapanPrefCount() >= 5, prog: () => [getOwnedJapanPrefCount(), 5] },
-  { id: "b_jp_10",      name: "日本列島縦断パートナー",     cond: "日本地図で 10都道府県 以上発見", check: () => getOwnedJapanPrefCount() >= 10, prog: () => [getOwnedJapanPrefCount(), 10] }
+  { id: "b_jp_10",      name: "日本列島縦断パートナー",     cond: "日本地図で 10都道府県 以上発見", check: () => getOwnedJapanPrefCount() >= 10, prog: () => [getOwnedJapanPrefCount(), 10] },
+  { id: "b_misogi_1",   name: "湯けむりの禊タッグ",         cond: "お風呂（禊）ボーナスを 1回 達成",   check: () => (state.misogiCount || 0) >= 1,  prog: () => [state.misogiCount || 0, 1] },
+  { id: "b_misogi_7",   name: "霊脈澄み渡る湯上がり司令官", cond: "お風呂（禊）ボーナスを 7回 達成",   check: () => (state.misogiCount || 0) >= 7,  prog: () => [state.misogiCount || 0, 7] },
+  { id: "b_misogi_30",  name: "常世の秘湯マスター",         cond: "お風呂（禊）ボーナスを 30回 達成",  check: () => (state.misogiCount || 0) >= 30, prog: () => [state.misogiCount || 0, 30] }
 ];
 
 function getEquippedBondObj() {
@@ -4598,6 +4698,149 @@ function getPoolItems(pool) {
   return all;
 }
 
+// ============================================================
+// 5.1 MISOGI (BATH) DAILY BONUS — 5:00 AM LOCAL RESET (v2.7)
+// ============================================================
+function getMisogiDayKey(now = new Date()) {
+  const shifted = new Date(now.getTime() - 5 * 60 * 60 * 1000);
+  const y = shifted.getFullYear();
+  const m = String(shifted.getMonth() + 1).padStart(2, "0");
+  const d = String(shifted.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function getPrevMisogiDayKey(now = new Date()) {
+  const shifted = new Date(now.getTime() - 29 * 60 * 60 * 1000);
+  const y = shifted.getFullYear();
+  const m = String(shifted.getMonth() + 1).padStart(2, "0");
+  const d = String(shifted.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function getNextMisogiResetText(now = new Date()) {
+  const next = new Date(now.getTime());
+  next.setHours(5, 0, 0, 0);
+  if (now.getTime() >= next.getTime()) {
+    next.setDate(next.getDate() + 1);
+  }
+  const diffMin = Math.max(1, Math.ceil((next.getTime() - now.getTime()) / 60000));
+  const h = Math.floor(diffMin / 60);
+  const m = diffMin % 60;
+  return h > 0 ? `あと${h}時間${m}分` : `あと${m}分`;
+}
+
+function hasDoneMisogiToday() {
+  return state.misogiLastDay === getMisogiDayKey();
+}
+
+function claimMisogiBonus(stayOnGacha = false) {
+  if (state.misogiTicket) {
+    showToast("♨ 禊の無料単発がスタンバイ中！ 先に1回回してね✨");
+    if (!stayOnGacha) switchTab("gacha");
+    return;
+  }
+  if (hasDoneMisogiToday()) {
+    showToast(`♨ 本日の禊は完了済みです（次回リセット：朝5:00／${getNextMisogiResetText()}）`);
+    return;
+  }
+  const today = getMisogiDayKey();
+  const prev = getPrevMisogiDayKey();
+  state.misogiStreak = (state.misogiLastDay === prev) ? ((state.misogiStreak || 0) + 1) : 1;
+  state.misogiLastDay = today;
+  state.misogiCount = (state.misogiCount || 0) + 1;
+  state.misogiTicket = true;
+
+  setActiveSpeech("misogi");
+  saveState();
+  renderAll();
+
+  showToast(`♨ 禊完了おつかれさま！（累計${state.misogiCount}回・連続${state.misogiStreak}日）好きなガチャで無料単発を1回どうぞ！`, 5500);
+}
+
+function renderMisogiUI() {
+  const homeBox = document.getElementById("home-misogi-box");
+  const gachaStrip = document.getElementById("gacha-misogi-strip");
+  const singleBtn = document.getElementById("btn-gacha-single");
+
+  const doneToday = hasDoneMisogiToday();
+  const hasTicket = !!state.misogiTicket;
+  const cnt = state.misogiCount || 0;
+  const streak = state.misogiStreak || 0;
+  const resetTxt = getNextMisogiResetText();
+
+  if (homeBox) {
+    if (hasTicket) {
+      homeBox.innerHTML = `
+        <div class="misogi-card ticket-ready">
+          <div class="misogi-head">
+            <span class="misogi-title">♨ 禊ボーナス発動中！</span>
+            <span class="misogi-meta">累計 ${cnt}回${streak >= 2 ? `・🔥連続 ${streak}日` : ""}</span>
+          </div>
+          <div class="misogi-desc">
+            お風呂おつかれさま！ 司令官の霊脈が澄み渡り、<strong>無料単発召喚 1回</strong>が開放されています（どのプールでもOK！）。
+          </div>
+          <button class="btn-misogi-go" onclick="switchTab('gacha')">✨ 召喚ガチャで無料単発を回す！（💎 0個）</button>
+        </div>
+      `;
+    } else if (!doneToday) {
+      homeBox.innerHTML = `
+        <div class="misogi-card">
+          <div class="misogi-head">
+            <span class="misogi-title">♨ 今日の禊（みそぎ）ボーナス</span>
+            <span class="misogi-meta">${cnt > 0 ? `累計 ${cnt}回 ／ ` : ""}毎朝5:00リセット</span>
+          </div>
+          <div class="misogi-desc">
+            湯船でもシャワーでもOK！ 身体を温めて清めると司令官の霊脈が澄み、<strong>1日1回・無料単発召喚</strong>が回せます。
+          </div>
+          <button class="btn-misogi" onclick="claimMisogiBonus(false)">♨ お風呂（シャワー）に入った！ → 無料単発権をGET</button>
+        </div>
+      `;
+    } else {
+      homeBox.innerHTML = `
+        <div class="misogi-card done">
+          <div class="misogi-head" style="margin-bottom:0;">
+            <span class="misogi-title">♨ 今日の禊完了！おつかれさま</span>
+            <span class="misogi-meta">累計 ${cnt}回${streak >= 2 ? `・連続 ${streak}日` : ""} ／ 次回 朝5:00（${resetTxt}）</span>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  if (gachaStrip) {
+    if (hasTicket) {
+      gachaStrip.innerHTML = `
+        <div class="gacha-misogi-strip ready">
+          <span>♨ <strong>禊ボーナス発動中！</strong> 好きなタブを選んで下の単発ボタンを<strong>💎0個</strong>で回せます！</span>
+        </div>
+      `;
+    } else if (!doneToday) {
+      gachaStrip.innerHTML = `
+        <div class="gacha-misogi-strip">
+          <span>♨ <strong>今日の禊（お風呂）ボーナス未受取</strong>（毎朝5:00リセット）</span>
+          <button class="btn-misogi" style="width:auto;padding:5px 10px;font-size:11px;border-radius:8px;" onclick="claimMisogiBonus(true)">♨ お風呂に入った！</button>
+        </div>
+      `;
+    } else {
+      gachaStrip.innerHTML = `
+        <div class="gacha-misogi-strip done">
+          <span>♨ 今日の禊ボーナス消化済（累計 ${cnt}回・次回 朝5:00／${resetTxt}）</span>
+        </div>
+      `;
+    }
+  }
+
+  if (singleBtn) {
+    if (hasTicket) {
+      singleBtn.classList.add("btn-single-free");
+      singleBtn.innerHTML = `♨ 禊の無料単発！<br><span style="font-size:11px;">💎 0個（1日1回）</span>`;
+    } else {
+      singleBtn.classList.remove("btn-single-free");
+      singleBtn.innerHTML = `単発召喚<br><span style="font-size:11px;">💎 10個</span>`;
+    }
+  }
+}
+
 function updateGachaBannerUI() {
   const expCnt = getPoolItems("exp").length;
   const expTabBtn = document.getElementById("gacha-tab-exp");
@@ -4778,7 +5021,7 @@ function getPullStats(results) {
   return { r1, r5, r4, r3, r2, newCnt, topTier };
 }
 
-function buildPullToastMessage(results, count) {
+function buildPullToastMessage(results, count, usedMisogi = false) {
   const st = getPullStats(results);
   const parts = [];
   if (st.r1 > 0) parts.push(`🔥 奇跡の1%大器晩成 ×${st.r1}`);
@@ -4786,9 +5029,10 @@ function buildPullToastMessage(results, count) {
   if (st.r4 > 0) parts.push(`💜 ★4 ×${st.r4}`);
   parts.push(`✨ NEW ${st.newCnt}件`);
   const variant = st.r1 > 0 ? "t-crimson" : (st.r5 > 0 ? "t-gold" : "t-gacha");
+  const tag = usedMisogi ? "♨禊無料単発" : `${count}連`;
   const head = st.r1 > 0
-    ? `🔥 奇跡の1%降臨！！（${count}連）`
-    : (st.r5 > 0 ? `🌟 ★5 降臨！！（${count}連）` : `✨ ${count}連召喚完了！`);
+    ? `🔥 奇跡の1%降臨！！（${tag}）`
+    : (st.r5 > 0 ? `🌟 ★5 降臨！！（${tag}）` : (usedMisogi ? `♨ 禊の無料召喚完了！` : `✨ ${count}連召喚完了！`));
   return { text: `${head} ${parts.join(" ／ ")}`, variant };
 }
 
@@ -4800,14 +5044,19 @@ function pullGacha(count) {
     }
     return;
   }
-  const cost = count * 10;
-  if (state.stones < cost) {
+  const useMisogi = (count === 1 && !!state.misogiTicket);
+  const cost = useMisogi ? 0 : count * 10;
+  if (!useMisogi && state.stones < cost) {
     showToast(`召喚石が足りません（必要: 💎${cost}）`);
     return;
   }
 
   if (state.gachaSfx) GachaSfx.unlock();
-  state.stones -= cost;
+  if (useMisogi) {
+    state.misogiTicket = false;
+  } else {
+    state.stones -= cost;
+  }
   const results = [];
 
   for (let i = 0; i < count; i++) {
@@ -4841,7 +5090,7 @@ function pullGacha(count) {
     gBox.style.display = "none";
   }
 
-  const toastInfo = buildPullToastMessage(results, count);
+  const toastInfo = buildPullToastMessage(results, count, useMisogi);
   if (state.gachaAnimSkip) {
     closeGachaStage();
     const st = getPullStats(results);
@@ -5482,8 +5731,18 @@ function defendWave() {
 // ============================================================
 const CHANGELOG = [
   {
-    ver: "v2.6",
+    ver: "v2.7",
     tag: "最新",
+    title: "お風呂で無料単発！『♨ 禊（みそぎ）ボーナス』実装（毎朝5:00リセット）",
+    items: [
+      "湯船でもシャワーでもOK！ 身体を清めて司令官の霊脈を澄ませると、1日1回『無料単発召喚権（💎0個）』がもらえる『♨ 禊ボーナス』をホーム＆ガチャ画面に実装しました",
+      "夜型プレイヤーにも優しい『毎朝5:00リセット』仕様！ 深夜0時を過ぎてからお風呂に入った日もズレずに『今日分』として気持ちよく受け取れます（未消化の無料単発権はリセットで消えません）",
+      "歴史ミックス・神話の神々・人類史兵器・増築パック限定のうち、好きなプールを選んで無料で1回召喚可能！ 各性格のパートナー労いセリフ、新絆称号3種（全28種）、戦果報告への自動反映にも対応しました"
+    ]
+  },
+  {
+    ver: "v2.6",
+    tag: "改名＆キャラ帳",
     title: "正式タイトル『おさんぽ神話録』へ改名＆「さ」ファビコン＆定期ゲー風キャラ設定実装！",
     items: [
       "正式タイトルを『おさんぽ神話録』に決定！（※セーブデータ・着せ替え画像・マイBGMはすべて自動でそのまま引き継がれます）",
@@ -5718,6 +5977,7 @@ function openGuideModal(initialTab = "guide") {
         <li><strong>🎵 マイBGMランダム再生（v1.7実装済！）：</strong>「増築/設定」タブから手元の音楽ファイルを読み込むと、画面下部に<strong>常駐ミニプレイヤー（▶再生・■停止・⏭次の曲）</strong>がいつでも見える位置に現れます！ 動作が重くならないよう<strong>最大8曲・1曲12MB／合計60MBまで</strong>の安全上限付きで、音楽データも<strong>ブラウザ内のみに保存（外部送信なし）</strong>されます。<br><span class="sub-text">※ブラウザの仕様上、アプリを開いて遊んでいる間の専用BGMとして再生されます。</span></li>
         <li><strong>✨ 全身画ステージ＆総戦力エフェクト＆二人の絆称号（v1.5実装済！）：</strong>「増築/設定」タブからツーショット1枚絵／左右2人立ち絵（透過PNGそのまま対応＆非透過でも自動馴染み）を飾れます。総戦力で全7段階に進化する背景エフェクト＆全25種の絆称号を集めてね！</li>
         <li><strong>🌟 ド派手ソシャゲ風ガチャ演出＆15秒ロング通知（v2.3実装済！）：</strong>魔法陣チャージ・虹色／真紅の昇格演出・目玉降臨スポットライト・紙吹雪・連続ドロップショーケースを搭載！ ガチャ画面から「爆速スキップ」や「効果音ON/OFF」もワンタップで切り替えられます。</li>
+        <li><strong>♨ お風呂（禊）ボーナス無料単発（v2.7実装済！）：</strong>寒い日や疲れた日のお風呂モチベ応援機能！ 湯船でもシャワーでも「♨ お風呂に入った！」を押すと1日1回（毎朝5:00リセット）好きなプールで無料単発が1回回せます。</li>
         <li><strong>🗾 日本地図・都道府県ピン対応（v1.6実装済！）：</strong>地図タブから「🌍 世界地図 ／ 🗾 日本地図」を切替OK！ 日本由来の神様・兵器はカードや詳細画面でも自動で日本地図の都道府県ピンが光ります。</li>
       </ul>
     </div>
@@ -6345,6 +6605,10 @@ function buildReportText() {
     deckLines,
     `・直近ガチャ結果：${recentPullTxt}`
   ];
+  if (hasDoneMisogiToday()) {
+    const stTxt = (state.misogiStreak || 0) >= 2 ? `・連続${state.misogiStreak}日` : "";
+    out.push(`・今日の禊（お風呂）：完了♨（累計${state.misogiCount || 1}回${stTxt}）`);
+  }
 
   if (state.includeBioInReport) {
     const pCatch = (state.playerCatch || "").trim();
@@ -7230,6 +7494,7 @@ function renderAll() {
   renderDex();
   renderExpansionStatus();
   updateGachaBannerUI();
+  renderMisogiUI();
 }
 
 function renderExpansionStatus() {
